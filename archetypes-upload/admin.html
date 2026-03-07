@@ -130,6 +130,7 @@
           <h3>Links — Architectuur</h3>
           <div class="radio-row">
             <label><input type="radio" name="vl-type" value="placeholder" checked onchange="toggleVideoInputs('left',this.value)"> Placeholder</label>
+            <label><input type="radio" name="vl-type" value="youtube" onchange="toggleVideoInputs('left',this.value)"> YouTube</label>
             <label><input type="radio" name="vl-type" value="video" onchange="toggleVideoInputs('left',this.value)"> Video</label>
             <label><input type="radio" name="vl-type" value="image" onchange="toggleVideoInputs('left',this.value)"> Afbeelding</label>
           </div>
@@ -137,6 +138,12 @@
             <div class="form-group">
               <label>Label tekst</label>
               <input type="text" id="vl-label" placeholder="VIDEO ARCHITECTUUR" value="VIDEO ARCHITECTUUR">
+            </div>
+          </div>
+          <div id="vl-youtube-opts" style="display:none">
+            <div class="form-group">
+              <label>YouTube URL of video ID</label>
+              <input type="text" id="vl-yt" placeholder="https://youtube.com/watch?v=... of video ID">
             </div>
           </div>
           <div id="vl-video-opts" style="display:none">
@@ -167,6 +174,7 @@
           <h3>Rechts — Objecten</h3>
           <div class="radio-row">
             <label><input type="radio" name="vr-type" value="placeholder" checked onchange="toggleVideoInputs('right',this.value)"> Placeholder</label>
+            <label><input type="radio" name="vr-type" value="youtube" onchange="toggleVideoInputs('right',this.value)"> YouTube</label>
             <label><input type="radio" name="vr-type" value="video" onchange="toggleVideoInputs('right',this.value)"> Video</label>
             <label><input type="radio" name="vr-type" value="image" onchange="toggleVideoInputs('right',this.value)"> Afbeelding</label>
           </div>
@@ -174,6 +182,12 @@
             <div class="form-group">
               <label>Label tekst</label>
               <input type="text" id="vr-label" placeholder="VIDEO OBJECTEN" value="VIDEO OBJECTEN">
+            </div>
+          </div>
+          <div id="vr-youtube-opts" style="display:none">
+            <div class="form-group">
+              <label>YouTube URL of video ID</label>
+              <input type="text" id="vr-yt" placeholder="https://youtube.com/watch?v=... of video ID">
             </div>
           </div>
           <div id="vr-video-opts" style="display:none">
@@ -303,6 +317,7 @@ function showPage(id) {
 function toggleVideoInputs(side, type) {
   const p = side==='left'?'vl':'vr';
   document.getElementById(p+'-placeholder-opts').style.display = type==='placeholder'?'block':'none';
+  document.getElementById(p+'-youtube-opts').style.display     = type==='youtube'?'block':'none';
   document.getElementById(p+'-video-opts').style.display       = type==='video'?'block':'none';
   document.getElementById(p+'-image-opts').style.display       = type==='image'?'block':'none';
 }
@@ -326,11 +341,13 @@ function saveVideos() {
 
   const left = { type: vl_type };
   if (vl_type === 'placeholder') left.label = document.getElementById('vl-label').value || 'VIDEO ARCHITECTUUR';
-  else if (vl_type === 'video')   left.src   = document.getElementById('vl-src').value;
-  else if (vl_type === 'image')   left.src   = document.getElementById('vl-img-data').value;
+  else if (vl_type === 'youtube') left.src  = document.getElementById('vl-yt').value;
+  else if (vl_type === 'video')   left.src  = document.getElementById('vl-src').value;
+  else if (vl_type === 'image')   left.src  = document.getElementById('vl-img-data').value;
 
   const right = { type: vr_type };
   if (vr_type === 'placeholder') right.label = document.getElementById('vr-label').value || 'VIDEO OBJECTEN';
+  else if (vr_type === 'youtube') right.src  = document.getElementById('vr-yt').value;
   else if (vr_type === 'video')   right.src  = document.getElementById('vr-src').value;
   else if (vr_type === 'image')   right.src  = document.getElementById('vr-img-data').value;
 
@@ -347,6 +364,7 @@ function loadVideosForm() {
     const radio  = document.querySelector(`input[name="${name}"][value="${vd.type}"]`);
     if (radio) { radio.checked=true; toggleVideoInputs(side, vd.type); }
     if (vd.type==='placeholder') document.getElementById(prefix+'-label').value = vd.label||'';
+    else if (vd.type==='youtube') document.getElementById(prefix+'-yt').value   = vd.src||'';
     else if (vd.type==='video')  document.getElementById(prefix+'-src').value   = vd.src||'';
     else if (vd.type==='image' && vd.src) {
       const prev = document.getElementById(prefix+'-img-preview');
