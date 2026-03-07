@@ -63,10 +63,13 @@
     .project-card{
       position:relative;cursor:none;
       display:grid;grid-template-columns:1fr 1fr;
-      border-bottom:1px solid rgba(240,237,230,.04);
-      min-height:280px;
+      min-height:300px;
+      margin:2.5rem 1rem;
     }
-    .project-card:last-child{border-bottom:none}
+    /* Alternating indent for playful rhythm */
+    .project-card:nth-child(odd) { margin-left:0; margin-right:2rem; }
+    .project-card:nth-child(even){ margin-left:2rem; margin-right:0; }
+    .project-card:last-child{margin-bottom:4rem}
 
     /* Image half */
     .project-img-wrap{
@@ -239,12 +242,29 @@ if (localStorage.getItem('at_version') !== DATA_VERSION) {
 
 function load(key) { try { const v=localStorage.getItem('at_'+key); return v?JSON.parse(v):DEFAULTS[key]; } catch(e){return DEFAULTS[key];} }
 
+function getYouTubeId(url) {
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
 function renderVideos() {
   ['left','right'].forEach(side => {
     const wrap = document.getElementById('video-'+side);
     const vd = load('videos')[side];
     wrap.innerHTML = '';
-    if (vd && vd.type==='video' && vd.src) {
+
+    if (vd && vd.type==='youtube' && vd.src) {
+      const ytId = getYouTubeId(vd.src) || vd.src;
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&modestbranding=1&playsinline=1`;
+      iframe.allow = 'autoplay; encrypted-media';
+      iframe.allowFullscreen = false;
+      iframe.style.cssText = 'width:100%;height:100%;border:none;filter:grayscale(1);transition:filter .5s ease;pointer-events:none';
+      wrap.appendChild(iframe);
+      // Color on hover
+      wrap.addEventListener('mouseenter', () => iframe.style.filter = 'grayscale(0)');
+      wrap.addEventListener('mouseleave', () => iframe.style.filter = 'grayscale(1)');
+    } else if (vd && vd.type==='video' && vd.src) {
       const vid=document.createElement('video'); vid.autoplay=true;vid.muted=true;vid.loop=true;vid.playsInline=true;
       vid.innerHTML=`<source src="${vd.src}" type="video/mp4">`;
       wrap.appendChild(vid);
