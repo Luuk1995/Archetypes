@@ -3,7 +3,7 @@ backend:
   branch: main
 
 media_folder: "archetypes-upload/images"
-public_folder: "images"
+public_folder: "/images"
 
 collections:
   - name: "instellingen"
@@ -22,7 +22,7 @@ collections:
         label: "Hero Video's"
         file: "archetypes-upload/data/videos.json"
         fields:
-          - label: "Video Links (YouTube URL of bestandsnaam)"
+          - label: "Video Links"
             name: "left"
             widget: "object"
             fields:
@@ -42,6 +42,7 @@ collections:
     folder: "archetypes-upload/data/projecten"
     create: true
     slug: "{{slug}}"
+    identifier_field: "title"
     fields:
       - { label: "Titel", name: "title", widget: "string" }
       - { label: "Ondertitel / locatie", name: "sub", widget: "string" }
@@ -57,6 +58,7 @@ collections:
     folder: "archetypes-upload/data/objecten"
     create: true
     slug: "{{slug}}"
+    identifier_field: "title"
     fields:
       - { label: "Titel", name: "title", widget: "string" }
       - { label: "Ondertitel / prijs", name: "sub", widget: "string" }
