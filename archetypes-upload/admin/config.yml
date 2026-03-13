@@ -42,6 +42,8 @@ collections:
     folder: "archetypes-upload/data/projecten"
     create: true
     slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
     identifier_field: "title"
     fields:
       - { label: "Titel", name: "title", widget: "string" }
@@ -58,6 +60,8 @@ collections:
     folder: "archetypes-upload/data/objecten"
     create: true
     slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
     identifier_field: "title"
     fields:
       - { label: "Titel", name: "title", widget: "string" }

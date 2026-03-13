@@ -234,39 +234,70 @@ const DEFAULTS = {
   ]
 };
 
-// Load all data from JSON files, then render
+// Parse YAML frontmatter from markdown files
+function parseFrontmatter(text) {
+  const match = text.match(/^---\n([\s\S]*?)\n---/);
+  if (!match) return {};
+  const yaml = match[1];
+  const result = {};
+  yaml.split('\n').forEach(line => {
+    const m = line.match(/^(\w+):\s*"?([^"]*)"?\s*$/);
+    if (m) result[m[1]] = m[2].replace(/\\n/g, '\n');
+    const n = line.match(/^(\w+):\s*(\d+)\s*$/);
+    if (n) result[n[1]] = parseInt(n[2]);
+  });
+  return result;
+}
+
+// Load all data from files, then render
 async function loadAll() {
   try {
-    const [info, videos, projectenFiles, objectenFiles] = await Promise.all([
+    // Load info and videos (JSON)
+    const [info, videos] = await Promise.all([
       fetch('data/info.json').then(r=>r.json()).catch(()=>null),
       fetch('data/videos.json').then(r=>r.json()).catch(()=>null),
-      fetch('data/projecten/').then(r=>r.text()).catch(()=>''),
-      fetch('data/objecten/').then(r=>r.text()).catch(()=>'')
     ]);
 
-    // Parse project filenames from directory listing
-    const getJsonFiles = (html, folder) => {
-      const matches = [...html.matchAll(/href="([^"]+\.json)"/g)];
-      return Promise.all(matches.map(m => {
-        const name = m[1].replace(/.*\//, '');
-        return fetch(`data/${folder}/${name}`).then(r=>r.json()).catch(()=>null);
-      }));
+    // Load markdown project files by trying known filenames + fetching index
+    const loadMdFolder = async (folder) => {
+      // Try to get a list via a directory fetch, fall back to known files
+      const items = [];
+      const knownProjecten = ['viking-surf-shack','woonhuis-poldervaartstraat','last-paradise'];
+      const knownObjecten  = ['big-picknick','bielzen-bank'];
+      const names = folder === 'projecten' ? knownProjecten : knownObjecten;
+
+      // First try known files, then also try to discover extras via GitHub API
+      const fetches = names.map(n =>
+        fetch(`data/${folder}/${n}.md`).then(r => r.ok ? r.text() : null).catch(()=>null)
+      );
+
+      // Also try to discover files via Netlify's own listing (works when deployed)
+      try {
+        const dirRes = await fetch(`data/${folder}/`);
+        const dirText = await dirRes.text();
+        const extra = [...dirText.matchAll(/href="([^"]+\.md)"/g)]
+          .map(m => m[1].replace(/.*\//, '').replace('.md',''))
+          .filter(n => !names.includes(n));
+        extra.forEach(n => fetches.push(
+          fetch(`data/${folder}/${n}.md`).then(r => r.ok ? r.text() : null).catch(()=>null)
+        ));
+      } catch(e) {}
+
+      const texts = await Promise.all(fetches);
+      texts.forEach(t => { if (t) { const p = parseFrontmatter(t); if (p.title) items.push(p); } });
+      return items.sort((a,b) => (a.order||99)-(b.order||99));
     };
 
     const [projecten, objecten] = await Promise.all([
-      getJsonFiles(projectenFiles, 'projecten'),
-      getJsonFiles(objectenFiles, 'objecten')
+      loadMdFolder('projecten'),
+      loadMdFolder('objecten')
     ]);
 
-    const sortedProjecten = projecten.filter(Boolean).sort((a,b)=>(a.order||99)-(b.order||99));
-    const sortedObjecten  = objecten.filter(Boolean).sort((a,b)=>(a.order||99)-(b.order||99));
-
     renderVideos(videos || DEFAULTS.videos);
-    renderProjects(sortedProjecten.length ? sortedProjecten : DEFAULTS.arche,
-                   sortedObjecten.length  ? sortedObjecten  : DEFAULTS.types);
+    renderProjects(projecten.length ? projecten : DEFAULTS.arche,
+                   objecten.length  ? objecten  : DEFAULTS.types);
     renderInfo(info || DEFAULTS.info);
   } catch(e) {
-    // Fallback to defaults if fetch fails
     renderVideos(DEFAULTS.videos);
     renderProjects(DEFAULTS.arche, DEFAULTS.types);
     renderInfo(DEFAULTS.info);
