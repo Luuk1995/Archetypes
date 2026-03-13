@@ -1,0 +1,68 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "archetypes-upload/images"
+public_folder: "images"
+
+collections:
+  - name: "instellingen"
+    label: "⚙️ Instellingen"
+    files:
+      - name: "algemeen"
+        label: "Info & Contact"
+        file: "archetypes-upload/data/info.json"
+        fields:
+          - { label: "Titel", name: "title", widget: "string", default: "ARCHE!TYPES" }
+          - { label: "Eerste alinea", name: "p1", widget: "text" }
+          - { label: "Tweede alinea", name: "p2", widget: "text" }
+          - { label: "Contact / meta (één per regel)", name: "meta", widget: "text" }
+
+      - name: "videos"
+        label: "Hero Video's"
+        file: "archetypes-upload/data/videos.json"
+        fields:
+          - label: "Video Links (YouTube URL of bestandsnaam)"
+            name: "left"
+            widget: "object"
+            fields:
+              - { label: "Type", name: "type", widget: "select", options: ["youtube", "video", "image", "placeholder"], default: "placeholder" }
+              - { label: "URL / bestandsnaam", name: "src", widget: "string", required: false }
+              - { label: "Label (bij placeholder)", name: "label", widget: "string", default: "VIDEO ARCHITECTUUR", required: false }
+          - label: "Video Rechts"
+            name: "right"
+            widget: "object"
+            fields:
+              - { label: "Type", name: "type", widget: "select", options: ["youtube", "video", "image", "placeholder"], default: "placeholder" }
+              - { label: "URL / bestandsnaam", name: "src", widget: "string", required: false }
+              - { label: "Label (bij placeholder)", name: "label", widget: "string", default: "VIDEO OBJECTEN", required: false }
+
+  - name: "projecten"
+    label: "🏗️ Architectuur Projecten"
+    folder: "archetypes-upload/data/projecten"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Titel", name: "title", widget: "string" }
+      - { label: "Ondertitel / locatie", name: "sub", widget: "string" }
+      - { label: "Beschrijving", name: "desc", widget: "text" }
+      - { label: "Opdrachtgever", name: "opdrachtgever", widget: "string" }
+      - { label: "Programma / oppervlak", name: "programma", widget: "string" }
+      - { label: "Ontwerp", name: "ontwerp", widget: "string", default: "Arche!Types" }
+      - { label: "Afbeelding", name: "image", widget: "image", required: false }
+      - { label: "Volgorde", name: "order", widget: "number", default: 99 }
+
+  - name: "objecten"
+    label: "🪑 Objecten / Types"
+    folder: "archetypes-upload/data/objecten"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Titel", name: "title", widget: "string" }
+      - { label: "Ondertitel / prijs", name: "sub", widget: "string" }
+      - { label: "Beschrijving", name: "desc", widget: "text" }
+      - { label: "Opdrachtgever", name: "opdrachtgever", widget: "string", default: "Eigen productie" }
+      - { label: "Afmeting / programma", name: "programma", widget: "string" }
+      - { label: "Ontwerp", name: "ontwerp", widget: "string", default: "Arche!Types" }
+      - { label: "Afbeelding", name: "image", widget: "image", required: false }
+      - { label: "Volgorde", name: "order", widget: "number", default: 99 }

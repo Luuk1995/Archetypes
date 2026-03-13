@@ -155,6 +155,7 @@
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:rgba(240,237,230,.15)}
   </style>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
 <div id="grain"></div>
@@ -233,24 +234,54 @@ const DEFAULTS = {
   ]
 };
 
-// Version reset — bump this number to force fresh defaults
-const DATA_VERSION = '2';
-if (localStorage.getItem('at_version') !== DATA_VERSION) {
-  ['videos','info','arche','types'].forEach(k => localStorage.removeItem('at_'+k));
-  localStorage.setItem('at_version', DATA_VERSION);
-}
+// Load all data from JSON files, then render
+async function loadAll() {
+  try {
+    const [info, videos, projectenFiles, objectenFiles] = await Promise.all([
+      fetch('data/info.json').then(r=>r.json()).catch(()=>null),
+      fetch('data/videos.json').then(r=>r.json()).catch(()=>null),
+      fetch('data/projecten/').then(r=>r.text()).catch(()=>''),
+      fetch('data/objecten/').then(r=>r.text()).catch(()=>'')
+    ]);
 
-function load(key) { try { const v=localStorage.getItem('at_'+key); return v?JSON.parse(v):DEFAULTS[key]; } catch(e){return DEFAULTS[key];} }
+    // Parse project filenames from directory listing
+    const getJsonFiles = (html, folder) => {
+      const matches = [...html.matchAll(/href="([^"]+\.json)"/g)];
+      return Promise.all(matches.map(m => {
+        const name = m[1].replace(/.*\//, '');
+        return fetch(`data/${folder}/${name}`).then(r=>r.json()).catch(()=>null);
+      }));
+    };
+
+    const [projecten, objecten] = await Promise.all([
+      getJsonFiles(projectenFiles, 'projecten'),
+      getJsonFiles(objectenFiles, 'objecten')
+    ]);
+
+    const sortedProjecten = projecten.filter(Boolean).sort((a,b)=>(a.order||99)-(b.order||99));
+    const sortedObjecten  = objecten.filter(Boolean).sort((a,b)=>(a.order||99)-(b.order||99));
+
+    renderVideos(videos || DEFAULTS.videos);
+    renderProjects(sortedProjecten.length ? sortedProjecten : DEFAULTS.arche,
+                   sortedObjecten.length  ? sortedObjecten  : DEFAULTS.types);
+    renderInfo(info || DEFAULTS.info);
+  } catch(e) {
+    // Fallback to defaults if fetch fails
+    renderVideos(DEFAULTS.videos);
+    renderProjects(DEFAULTS.arche, DEFAULTS.types);
+    renderInfo(DEFAULTS.info);
+  }
+}
 
 function getYouTubeId(url) {
   const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   return m ? m[1] : null;
 }
 
-function renderVideos() {
+function renderVideos(videos) {
   ['left','right'].forEach(side => {
     const wrap = document.getElementById('video-'+side);
-    const vd = load('videos')[side];
+    const vd = videos[side];
     wrap.innerHTML = '';
 
     if (vd && vd.type==='youtube' && vd.src) {
@@ -345,15 +376,14 @@ function makeCard(p) {
   return card;
 }
 
-function renderProjects() {
+function renderProjects(arche, types) {
   const la=document.getElementById('list-arche'); la.innerHTML='';
   const lt=document.getElementById('list-types'); lt.innerHTML='';
-  load('arche').forEach(p=>la.appendChild(makeCard(p)));
-  load('types').forEach(p=>lt.appendChild(makeCard(p)));
+  arche.forEach(p=>la.appendChild(makeCard(p)));
+  types.forEach(p=>lt.appendChild(makeCard(p)));
 }
 
-function renderInfo() {
-  const info=load('info');
+function renderInfo(info) {
   document.getElementById('info-title').textContent=info.title;
   document.getElementById('info-p1').textContent=info.p1;
   document.getElementById('info-p2').textContent=info.p2;
@@ -515,7 +545,8 @@ function toggleAudio(){if(!ip){ip=true;at.classList.add('playing');startAmbient(
   projObs.observe(document.getElementById('projects'));
 })();
 
-renderVideos(); renderProjects(); renderInfo();
+renderVideos(DEFAULTS.videos); renderProjects(DEFAULTS.arche, DEFAULTS.types); renderInfo(DEFAULTS.info);
+loadAll();
 </script>
 </body>
 </html>
