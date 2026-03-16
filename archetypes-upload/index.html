@@ -105,87 +105,81 @@
     .col-header{display:none} /* hidden per request */
 
     /* ── PROJECT CARD ── */
-    /* Alternating: left col → img left / text right. right col → text left / img right */
     .project-card{
       position:relative;cursor:none;
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      min-height:55vh;
-      margin:3rem 0;
+      margin:0 0 3rem 0;
     }
-    #col-arche .project-card:nth-child(even){grid-template-columns:1fr 1fr;direction:rtl}
-    #col-arche .project-card:nth-child(even) > *{direction:ltr}
-    #col-types .project-card{grid-template-columns:1fr 1fr;direction:rtl}
-    #col-types .project-card > *{direction:ltr}
-    #col-types .project-card:nth-child(even){direction:ltr}
-    #col-types .project-card:nth-child(even) > *{direction:ltr}
 
-    /* Image */
+    /* Image: full width of column */
     .project-img-wrap{
       position:relative;overflow:hidden;
-      min-height:50vh;
+      width:100%;aspect-ratio:3/2;
     }
     .project-img-wrap img{
       position:absolute;inset:0;width:100%;height:100%;
       object-fit:cover;filter:grayscale(1);
       transition:filter .7s ease,transform .8s ease;
     }
-    .project-card:hover .project-img-wrap img{filter:grayscale(0);transform:scale(1.04)}
+    .project-card:hover .project-img-wrap img{filter:grayscale(0);transform:scale(1.03)}
     .img-placeholder{
       position:absolute;inset:0;
       background:#181818;display:flex;align-items:center;justify-content:center;
       font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.1);
     }
 
-    /* Crosshair — more visible, subtle */
+    /* Crosshair */
     .project-img-wrap::before,
     .project-img-wrap::after{
       content:'';position:absolute;
-      background:rgba(240,237,230,.5);
+      background:rgba(240,237,230,.55);
       pointer-events:none;z-index:2;
-      opacity:0;transition:opacity .5s ease;
+      opacity:0;transition:opacity .4s ease;
     }
-    .project-img-wrap::before{top:50%;left:calc(50% - 16px);width:32px;height:1px}
-    .project-img-wrap::after{top:calc(50% - 16px);left:50%;width:1px;height:32px}
+    .project-img-wrap::before{top:50%;left:calc(50% - 18px);width:36px;height:1px}
+    .project-img-wrap::after{top:calc(50% - 18px);left:50%;width:1px;height:36px}
     .project-card:hover .project-img-wrap::before,
     .project-card:hover .project-img-wrap::after{opacity:1}
 
-    /* Text panel — overlays image on hover, typed in */
-    .project-text{
-      position:relative;
-      padding:2rem 1.5rem;
-      display:flex;flex-direction:column;
-      justify-content:flex-end;
-      min-height:50vh;
-      background:transparent;
+    /* Hover overlay — typed text appears on top of image */
+    .project-hover{
+      position:absolute;inset:0;
+      padding:1.8rem 1.5rem;
+      display:flex;flex-direction:column;justify-content:flex-end;
+      background:linear-gradient(to top,rgba(8,8,14,.85) 0%,rgba(8,8,14,.3) 50%,transparent 100%);
+      opacity:0;transition:opacity .4s ease;
+      pointer-events:none;
+      z-index:3;
     }
+    .project-card:hover .project-hover{opacity:1}
     .project-desc{
       font-size:.62rem;line-height:1.9;letter-spacing:.06em;
-      color:rgba(240,237,230,.85);
-      margin-bottom:1rem;
+      color:rgba(240,237,230,.9);
+      margin-bottom:.8rem;
     }
     .project-meta{
       font-size:.55rem;letter-spacing:.14em;
-      color:rgba(240,237,230,.4);line-height:2;
+      color:rgba(240,237,230,.5);line-height:1.9;
     }
     .project-meta strong{
-      color:rgba(240,237,230,.22);text-transform:uppercase;font-weight:400;
-      display:block;margin-top:.3rem;
+      color:rgba(240,237,230,.28);text-transform:uppercase;
+      font-weight:400;display:block;margin-top:.25rem;
     }
     .project-meta strong:first-child{margin-top:0}
 
-    /* Title/subtitle OUTSIDE the card, below the row */
+    /* Title row below image: title left, subtitle right — like screenshot 2 */
     .project-label{
-      padding:.8rem 0 0;
-      border-top:1px solid rgba(240,237,230,.05);
+      display:grid;grid-template-columns:1fr auto;
+      align-items:baseline;gap:1rem;
+      padding:.7rem 0 0;
     }
     .project-title{
-      font-size:clamp(.7rem,1.1vw,.9rem);font-weight:600;
+      font-size:clamp(.7rem,1.1vw,.88rem);font-weight:600;
       letter-spacing:.14em;text-transform:uppercase;
     }
     .project-subtitle{
-      font-size:.55rem;letter-spacing:.16em;
-      color:rgba(240,237,230,.3);text-transform:uppercase;margin-top:.15rem;
+      font-size:.52rem;letter-spacing:.14em;
+      color:rgba(240,237,230,.3);text-transform:uppercase;
+      text-align:right;white-space:nowrap;
     }
 
     /* ── INFO OVERLAY — no border, centered, big ! logo ── */
@@ -471,12 +465,12 @@ function renderVideos(videos) {
 // ── MAKE CARD ──
 function makeCard(p) {
   const wrap = document.createElement('div');
-  wrap.style.cssText = 'padding:0 1rem';
+  wrap.style.cssText = 'padding:0 1.2rem';
 
   const card = document.createElement('div');
   card.className = 'project-card';
 
-  // Image
+  // Image wrap
   const iw = document.createElement('div');
   iw.className = 'project-img-wrap';
   if (p.image) {
@@ -490,23 +484,26 @@ function makeCard(p) {
     iw.appendChild(ph);
   }
 
-  // Text panel
-  const text = document.createElement('div');
-  text.className = 'project-text';
+  // Hover overlay (appears on top of image)
+  const hover = document.createElement('div');
+  hover.className = 'project-hover';
   const descEl = document.createElement('div');
   descEl.className = 'project-desc';
   const metaEl = document.createElement('div');
   metaEl.className = 'project-meta';
-  text.appendChild(descEl);
-  text.appendChild(metaEl);
+  hover.appendChild(descEl);
+  hover.appendChild(metaEl);
 
+  iw.appendChild(hover);
   card.appendChild(iw);
-  card.appendChild(text);
 
-  // Label BELOW the card
+  // Label row below image
   const label = document.createElement('div');
   label.className = 'project-label';
-  label.innerHTML = `<div class="project-title">${p.title}</div><div class="project-subtitle">${p.sub}</div>`;
+  label.innerHTML = `
+    <div class="project-title">${p.title}</div>
+    <div class="project-subtitle">${p.sub}</div>
+  `;
 
   wrap.appendChild(card);
   wrap.appendChild(label);
