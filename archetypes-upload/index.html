@@ -108,7 +108,8 @@
       position:relative;cursor:none;
       display:grid;
       grid-template-columns:55% 45%;
-      padding:2.5rem 1.5rem;
+      padding:3.5rem 1.5rem;
+      align-items:start;
     }
     /* Alternating: odd = image left, even = image right */
     .project-card:nth-child(even){
@@ -116,13 +117,14 @@
       direction:rtl;
     }
     .project-card:nth-child(even) > *{ direction:ltr; }
-    .project-card:first-child{ padding-top:4rem; }
-    .project-card:last-child{ padding-bottom:6rem; }
+    .project-card:first-child{ padding-top:5rem; }
+    .project-card:last-child{ padding-bottom:8rem; }
 
     /* LEFT: image */
     .project-img-wrap{
       position:relative;overflow:hidden;
       aspect-ratio:4/3;
+      width:100%;
     }
     .project-img-wrap img{
       position:absolute;inset:0;width:100%;height:100%;
@@ -152,51 +154,56 @@
     .project-card.hovered .project-img-wrap::before,
     .project-card.hovered .project-img-wrap::after{opacity:1}
 
-    /* RIGHT: always shows title+sub at bottom, shows typed text above on hover */
+    /* RIGHT: full height of image, flex column */
     .project-right{
       display:flex;flex-direction:column;
-      justify-content:flex-end;
-      padding:0 0 0 1.2rem;
+      justify-content:space-between;
+      padding:0 0 0 1.4rem;
+      min-height:0;
     }
 
-    /* Typed text — only visible on hover */
+    /* Typed text — only visible on hover, fills available space */
     .project-hover{
       flex:1;
       display:flex;flex-direction:column;justify-content:flex-end;
-      padding-bottom:.8rem;
+      padding-bottom:1rem;
       opacity:0;transition:opacity .4s ease;
+      overflow:visible;
     }
     .project-card:hover .project-hover,
     .project-card.hovered .project-hover{opacity:1}
 
     .project-desc{
-      font-size:.6rem;line-height:1.9;letter-spacing:.06em;
+      font-size:.72rem;line-height:1.9;letter-spacing:.05em;
       color:rgba(240,237,230,.85);
-      margin-bottom:.7rem;
+      margin-bottom:.9rem;
+      word-break:break-word;
+      white-space:normal;
     }
     .project-meta{
-      font-size:.52rem;letter-spacing:.13em;
-      color:rgba(240,237,230,.4);line-height:1.9;
+      font-size:.62rem;letter-spacing:.12em;
+      color:rgba(240,237,230,.45);line-height:2;
     }
     .project-meta strong{
-      color:rgba(240,237,230,.22);text-transform:uppercase;
-      font-weight:400;display:block;margin-top:.2rem;
+      color:rgba(240,237,230,.25);text-transform:uppercase;
+      font-weight:400;display:block;margin-top:.3rem;
     }
     .project-meta strong:first-child{margin-top:0}
 
     /* Title + subtitle — always visible at bottom of right panel */
     .project-label{
-      padding:.5rem 0 0;
+      padding:.6rem 0 0;
+      flex-shrink:0;
     }
     .project-title{
-      font-size:clamp(.65rem,1vw,.85rem);font-weight:600;
+      font-size:clamp(.75rem,1.1vw,.95rem);font-weight:600;
       letter-spacing:.14em;text-transform:uppercase;
       line-height:1.4;
     }
     .project-subtitle{
-      font-size:.5rem;letter-spacing:.14em;
+      font-size:.58rem;letter-spacing:.13em;
       color:rgba(240,237,230,.3);text-transform:uppercase;
-      margin-top:.2rem;
+      margin-top:.25rem;
     }
 
     /* ── INFO OVERLAY — no border, centered, big ! logo ── */
