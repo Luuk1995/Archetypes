@@ -78,41 +78,45 @@
     .projects-col{
       position:relative;
       height:100vh;
-      overflow:hidden; /* clip — JS handles scroll */
+      overflow-y:auto;
+      overflow-x:hidden;
+      scrollbar-width:none;
+      scroll-snap-type:none; /* don't interfere with outer snap */
+      transition:opacity .5s,filter .5s;
     }
-    .projects-col.dimmed{opacity:.1;filter:blur(3px);pointer-events:none;transition:opacity .5s,filter .5s}
+    .projects-col::-webkit-scrollbar{display:none}
+    .projects-col.dimmed{opacity:.1;filter:blur(3px);pointer-events:none}
 
     /* Scrollbar sidebar indicator */
     .col-scrollbar{
-      position:absolute;right:0;top:0;bottom:0;width:2px;
-      background:rgba(240,237,230,.06);z-index:20;
+      position:fixed;width:2px;top:0;bottom:0;
+      background:rgba(240,237,230,.06);z-index:20;pointer-events:none;
     }
+    #col-arche .col-scrollbar{right:50%}
+    #col-types .col-scrollbar{right:0}
     .col-scrollbar-thumb{
       position:absolute;right:0;width:2px;
       background:rgba(240,237,230,.3);border-radius:1px;
-      transition:top .1s ease;
     }
 
-    /* The inner scroll container */
-    .col-inner{
-      height:100%;
-      overflow-y:auto;
-      scrollbar-width:none;
-      padding-bottom:4rem;
-    }
-    .col-inner::-webkit-scrollbar{display:none}
-
-    .col-header{display:none} /* hidden per request */
+    .col-header{display:none}
 
     /* ── PROJECT CARD ── */
+    /* Card = image (left) + title/sub (right), always visible.
+       On hover: image gets color + typed text appears in right panel */
     .project-card{
       position:relative;cursor:none;
-      margin:0 0 3rem 0;
       display:grid;
-      grid-template-columns:1fr 1fr;
+      grid-template-columns:55% 45%;
+      margin:0 0 0 0;
+      padding:2rem 1.2rem 0;
     }
+    /* Extra space before very first card */
+    .project-card:first-child{ padding-top:3rem; }
+    /* Space after last card */
+    .project-card:last-child{ margin-bottom:5rem; }
 
-    /* Image: left half */
+    /* LEFT: image */
     .project-img-wrap{
       position:relative;overflow:hidden;
       aspect-ratio:4/3;
@@ -123,13 +127,14 @@
       transition:filter .7s ease,transform .8s ease;
     }
     .project-card:hover .project-img-wrap img{filter:grayscale(0);transform:scale(1.03)}
+    .project-card.hovered .project-img-wrap img{filter:grayscale(0);transform:scale(1.03)}
     .img-placeholder{
       position:absolute;inset:0;
       background:#181818;display:flex;align-items:center;justify-content:center;
       font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.1);
     }
 
-    /* Crosshair on image */
+    /* Crosshair */
     .project-img-wrap::before,
     .project-img-wrap::after{
       content:'';position:absolute;
@@ -140,46 +145,55 @@
     .project-img-wrap::before{top:50%;left:calc(50% - 18px);width:36px;height:1px}
     .project-img-wrap::after{top:calc(50% - 18px);left:50%;width:1px;height:36px}
     .project-card:hover .project-img-wrap::before,
-    .project-card:hover .project-img-wrap::after{opacity:1}
+    .project-card:hover .project-img-wrap::after,
+    .project-card.hovered .project-img-wrap::before,
+    .project-card.hovered .project-img-wrap::after{opacity:1}
 
-    /* Right half: text — only on hover */
+    /* RIGHT: always shows title+sub at bottom, shows typed text above on hover */
+    .project-right{
+      display:flex;flex-direction:column;
+      justify-content:flex-end;
+      padding:0 0 0 1.2rem;
+    }
+
+    /* Typed text — only visible on hover */
     .project-hover{
-      padding:1.8rem 1.5rem;
+      flex:1;
       display:flex;flex-direction:column;justify-content:flex-end;
+      padding-bottom:.8rem;
       opacity:0;transition:opacity .4s ease;
     }
-    .project-card:hover .project-hover{opacity:1}
+    .project-card:hover .project-hover,
+    .project-card.hovered .project-hover{opacity:1}
+
     .project-desc{
-      font-size:.62rem;line-height:1.9;letter-spacing:.06em;
+      font-size:.6rem;line-height:1.9;letter-spacing:.06em;
       color:rgba(240,237,230,.85);
-      margin-bottom:.8rem;
+      margin-bottom:.7rem;
     }
     .project-meta{
-      font-size:.55rem;letter-spacing:.14em;
-      color:rgba(240,237,230,.45);line-height:1.9;
+      font-size:.52rem;letter-spacing:.13em;
+      color:rgba(240,237,230,.4);line-height:1.9;
     }
     .project-meta strong{
-      color:rgba(240,237,230,.25);text-transform:uppercase;
-      font-weight:400;display:block;margin-top:.25rem;
+      color:rgba(240,237,230,.22);text-transform:uppercase;
+      font-weight:400;display:block;margin-top:.2rem;
     }
     .project-meta strong:first-child{margin-top:0}
 
-    /* Title + subtitle below — always visible, spans full width */
+    /* Title + subtitle — always visible at bottom of right panel */
     .project-label{
-      grid-column:1 / -1;
-      display:grid;grid-template-columns:1fr auto;
-      align-items:baseline;gap:1rem;
-      padding:.6rem 0 0;
-      border-top:1px solid rgba(240,237,230,.05);
+      padding:.5rem 0 0;
     }
     .project-title{
-      font-size:clamp(.7rem,1.1vw,.88rem);font-weight:600;
+      font-size:clamp(.65rem,1vw,.85rem);font-weight:600;
       letter-spacing:.14em;text-transform:uppercase;
+      line-height:1.4;
     }
     .project-subtitle{
-      font-size:.52rem;letter-spacing:.14em;
+      font-size:.5rem;letter-spacing:.14em;
       color:rgba(240,237,230,.3);text-transform:uppercase;
-      text-align:right;white-space:nowrap;
+      margin-top:.2rem;
     }
 
     /* ── INFO OVERLAY — no border, centered, big ! logo ── */
@@ -246,15 +260,11 @@
 <section id="projects">
   <div class="projects-col" id="col-arche">
     <div class="col-scrollbar"><div class="col-scrollbar-thumb" id="thumb-arche"></div></div>
-    <div class="col-inner" id="inner-arche">
-      <div id="list-arche"></div>
-    </div>
+    <div id="list-arche"></div>
   </div>
   <div class="projects-col" id="col-types">
     <div class="col-scrollbar"><div class="col-scrollbar-thumb" id="thumb-types"></div></div>
-    <div class="col-inner" id="inner-types">
-      <div id="list-types"></div>
-    </div>
+    <div id="list-types"></div>
   </div>
 </section>
 
@@ -361,34 +371,22 @@ new IntersectionObserver(e=>{
   ls.style.display=h?'none':'inline';
 },{threshold:.3}).observe(document.getElementById('hero'));
 
-// ── SCROLLBAR THUMB UPDATER ──
-function initScrollbar(innerId, thumbId) {
-  const inner = document.getElementById(innerId);
+// ── SCROLLBAR THUMB ──
+function initScrollbar(colId, thumbId) {
+  const col = document.getElementById(colId);
   const thumb = document.getElementById(thumbId);
   const update = () => {
-    const ratio = inner.clientHeight / inner.scrollHeight;
-    const thumbH = Math.max(ratio * inner.clientHeight, 30);
-    const maxTop = inner.clientHeight - thumbH;
-    const scrollRatio = inner.scrollTop / (inner.scrollHeight - inner.clientHeight);
+    if (!col || !thumb) return;
+    const ratio = col.clientHeight / col.scrollHeight;
+    const thumbH = Math.max(ratio * col.clientHeight, 30);
+    const maxTop = col.clientHeight - thumbH;
+    const scrolled = col.scrollTop / Math.max(1, col.scrollHeight - col.clientHeight);
     thumb.style.height = thumbH + 'px';
-    thumb.style.top = (scrollRatio * maxTop) + 'px';
+    thumb.style.top = (scrolled * maxTop) + 'px';
   };
-  inner.addEventListener('scroll', update);
+  col.addEventListener('scroll', update);
   window.addEventListener('resize', update);
-  setTimeout(update, 100);
-}
-
-// ── LOOPING SCROLL ──
-function initLoopScroll(innerId) {
-  const inner = document.getElementById(innerId);
-  inner.addEventListener('scroll', () => {
-    const maxScroll = inner.scrollHeight - inner.clientHeight;
-    if (inner.scrollTop >= maxScroll - 2) {
-      inner.scrollTop = 1;
-    } else if (inner.scrollTop <= 0) {
-      inner.scrollTop = maxScroll - 2;
-    }
-  });
+  setTimeout(update, 200);
 }
 
 // ── NAV FILTER — no scroll jump, blur only ──
@@ -464,9 +462,6 @@ function renderVideos(videos) {
 
 // ── MAKE CARD ──
 function makeCard(p) {
-  const outer = document.createElement('div');
-  outer.style.cssText = 'padding:0 1.2rem;margin-bottom:3rem';
-
   const card = document.createElement('div');
   card.className = 'project-card';
 
@@ -484,7 +479,10 @@ function makeCard(p) {
     iw.appendChild(ph);
   }
 
-  // RIGHT: text panel (only visible on hover)
+  // RIGHT: hover text + always-visible title
+  const right = document.createElement('div');
+  right.className = 'project-right';
+
   const hover = document.createElement('div');
   hover.className = 'project-hover';
   const descEl = document.createElement('div');
@@ -494,20 +492,19 @@ function makeCard(p) {
   hover.appendChild(descEl);
   hover.appendChild(metaEl);
 
-  card.appendChild(iw);
-  card.appendChild(hover);
-
-  // BELOW: title + subtitle (always visible, spans full width)
   const label = document.createElement('div');
   label.className = 'project-label';
   label.innerHTML = `<div class="project-title">${p.title}</div><div class="project-subtitle">${p.sub}</div>`;
 
-  outer.appendChild(card);
-  outer.appendChild(label);
+  right.appendChild(hover);
+  right.appendChild(label);
 
-  // Typing on hover
+  card.appendChild(iw);
+  card.appendChild(right);
+
+  // Typing — only triggers when hovering the image
   let ti = null;
-  card.addEventListener('mouseenter', () => {
+  iw.addEventListener('mouseenter', () => {
     metaEl.innerHTML =
       `<strong>Opdrachtgever:</strong>${p.opdrachtgever}` +
       `<strong>Programma:</strong>${p.programma}` +
@@ -518,12 +515,14 @@ function makeCard(p) {
       if (i < p.desc.length) descEl.textContent += p.desc[i++];
       else clearInterval(ti);
     }, 16);
+    card.classList.add('hovered');
   });
-  card.addEventListener('mouseleave', () => {
+  iw.addEventListener('mouseleave', () => {
     clearInterval(ti); descEl.textContent = ''; metaEl.innerHTML = '';
+    card.classList.remove('hovered');
   });
 
-  return outer;
+  return card;
 }
 
 // ── RENDER PROJECTS ──
@@ -532,13 +531,10 @@ function renderProjects(arche, types) {
   const lt = document.getElementById('list-types');  lt.innerHTML = '';
   arche.forEach(p => la.appendChild(makeCard(p)));
   types.forEach(p => lt.appendChild(makeCard(p)));
-  // Init scroll features after render
   setTimeout(() => {
-    initScrollbar('inner-arche','thumb-arche');
-    initScrollbar('inner-types','thumb-types');
-    initLoopScroll('inner-arche');
-    initLoopScroll('inner-types');
-  }, 50);
+    initScrollbar('col-arche','thumb-arche');
+    initScrollbar('col-types','thumb-types');
+  }, 100);
 }
 
 // ── RENDER INFO ──
