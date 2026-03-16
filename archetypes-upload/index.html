@@ -108,12 +108,14 @@
     .project-card{
       position:relative;cursor:none;
       margin:0 0 3rem 0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
     }
 
-    /* Image: full width of column */
+    /* Image: left half */
     .project-img-wrap{
       position:relative;overflow:hidden;
-      width:100%;aspect-ratio:3/2;
+      aspect-ratio:4/3;
     }
     .project-img-wrap img{
       position:absolute;inset:0;width:100%;height:100%;
@@ -127,7 +129,7 @@
       font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.1);
     }
 
-    /* Crosshair */
+    /* Crosshair on image */
     .project-img-wrap::before,
     .project-img-wrap::after{
       content:'';position:absolute;
@@ -140,37 +142,35 @@
     .project-card:hover .project-img-wrap::before,
     .project-card:hover .project-img-wrap::after{opacity:1}
 
-    /* Hover overlay — typed text appears on top of image */
+    /* Right half: text — only on hover */
     .project-hover{
-      position:absolute;inset:0;
       padding:1.8rem 1.5rem;
       display:flex;flex-direction:column;justify-content:flex-end;
-      background:linear-gradient(to top,rgba(8,8,14,.85) 0%,rgba(8,8,14,.3) 50%,transparent 100%);
       opacity:0;transition:opacity .4s ease;
-      pointer-events:none;
-      z-index:3;
     }
     .project-card:hover .project-hover{opacity:1}
     .project-desc{
       font-size:.62rem;line-height:1.9;letter-spacing:.06em;
-      color:rgba(240,237,230,.9);
+      color:rgba(240,237,230,.85);
       margin-bottom:.8rem;
     }
     .project-meta{
       font-size:.55rem;letter-spacing:.14em;
-      color:rgba(240,237,230,.5);line-height:1.9;
+      color:rgba(240,237,230,.45);line-height:1.9;
     }
     .project-meta strong{
-      color:rgba(240,237,230,.28);text-transform:uppercase;
+      color:rgba(240,237,230,.25);text-transform:uppercase;
       font-weight:400;display:block;margin-top:.25rem;
     }
     .project-meta strong:first-child{margin-top:0}
 
-    /* Title row below image: title left, subtitle right — like screenshot 2 */
+    /* Title + subtitle below — always visible, spans full width */
     .project-label{
+      grid-column:1 / -1;
       display:grid;grid-template-columns:1fr auto;
       align-items:baseline;gap:1rem;
-      padding:.7rem 0 0;
+      padding:.6rem 0 0;
+      border-top:1px solid rgba(240,237,230,.05);
     }
     .project-title{
       font-size:clamp(.7rem,1.1vw,.88rem);font-weight:600;
@@ -464,13 +464,13 @@ function renderVideos(videos) {
 
 // ── MAKE CARD ──
 function makeCard(p) {
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'padding:0 1.2rem';
+  const outer = document.createElement('div');
+  outer.style.cssText = 'padding:0 1.2rem;margin-bottom:3rem';
 
   const card = document.createElement('div');
   card.className = 'project-card';
 
-  // Image wrap
+  // LEFT: image
   const iw = document.createElement('div');
   iw.className = 'project-img-wrap';
   if (p.image) {
@@ -484,7 +484,7 @@ function makeCard(p) {
     iw.appendChild(ph);
   }
 
-  // Hover overlay (appears on top of image)
+  // RIGHT: text panel (only visible on hover)
   const hover = document.createElement('div');
   hover.className = 'project-hover';
   const descEl = document.createElement('div');
@@ -494,19 +494,16 @@ function makeCard(p) {
   hover.appendChild(descEl);
   hover.appendChild(metaEl);
 
-  iw.appendChild(hover);
   card.appendChild(iw);
+  card.appendChild(hover);
 
-  // Label row below image
+  // BELOW: title + subtitle (always visible, spans full width)
   const label = document.createElement('div');
   label.className = 'project-label';
-  label.innerHTML = `
-    <div class="project-title">${p.title}</div>
-    <div class="project-subtitle">${p.sub}</div>
-  `;
+  label.innerHTML = `<div class="project-title">${p.title}</div><div class="project-subtitle">${p.sub}</div>`;
 
-  wrap.appendChild(card);
-  wrap.appendChild(label);
+  outer.appendChild(card);
+  outer.appendChild(label);
 
   // Typing on hover
   let ti = null;
@@ -526,7 +523,7 @@ function makeCard(p) {
     clearInterval(ti); descEl.textContent = ''; metaEl.innerHTML = '';
   });
 
-  return wrap;
+  return outer;
 }
 
 // ── RENDER PROJECTS ──
