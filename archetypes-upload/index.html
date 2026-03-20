@@ -137,23 +137,18 @@
     .project-card:first-child{padding-top:5rem}
     .project-card:last-child{padding-bottom:8rem}
 
-    /* Card inner: always image 63% | text 37% */
-    /* We never use direction:rtl — instead we manually swap column order for even */
     .card-inner{
       display:grid;
       grid-template-columns:var(--img-w) calc(100% - var(--img-w));
       align-items:start;
       gap:0;
     }
-    /* Even cards: image column goes SECOND via column-reverse */
     .project-card:nth-child(even) .card-inner{
       grid-template-columns:calc(100% - var(--img-w)) var(--img-w);
     }
-    /* For even: text is first col, image is second col */
     .project-card:nth-child(even) .card-inner .project-img-wrap{order:2}
     .project-card:nth-child(even) .card-inner .project-right{order:1}
 
-    /* Image — always full width of its grid cell, consistent ratio */
     .project-img-wrap{
       position:relative;overflow:hidden;
       width:100%;aspect-ratio:4/3;
@@ -166,33 +161,27 @@
     .project-img-wrap:hover img{filter:grayscale(0);transform:scale(1.03)}
     .img-placeholder{position:absolute;inset:0;background:#181818;display:flex;align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.1)}
 
-    /* Crosshair */
     .project-img-wrap::before,.project-img-wrap::after{content:'';position:absolute;background:rgba(240,237,230,.6);pointer-events:none;z-index:2;opacity:0;transition:opacity .4s ease}
     .project-img-wrap::before{top:50%;left:calc(50% - 20px);width:40px;height:1px}
     .project-img-wrap::after{top:calc(50% - 20px);left:50%;width:1px;height:40px}
     .project-img-wrap:hover::before,.project-img-wrap:hover::after{opacity:1}
 
-    /* Text panel — same layout for all cards, padding from image edge */
+    /* Text panel — padding creates space from edge */
     .project-right{
       display:flex;flex-direction:column;
       justify-content:space-between;
       align-self:stretch;
-      padding:0 1.5rem;
+      padding:0 2rem;
       text-align:left;
     }
-    /* Even cards: text is on LEFT side, right-align it */
-    .project-card:nth-child(even) .project-right{
-      text-align:right;
-    }
+    .project-card:nth-child(even) .project-right{text-align:right}
 
-    /* Typed text — starts from TOP, same for all cards */
+    /* Typed text — triggered via JS class only (no CSS sibling selector) */
     .project-hover{
       flex:1;
       opacity:0;transition:opacity .4s ease;
-      padding-top:0;
       display:flex;flex-direction:column;justify-content:flex-start;
     }
-    .project-img-wrap:hover ~ .project-right .project-hover,
     .project-card.img-hovered .project-hover{opacity:1}
 
     .project-desc{
@@ -359,7 +348,7 @@ async function loadMdFolder(folder) {
   if (names.length === 0) {
     names = folder === 'projecten'
       ? ['viking-surf-shack','woonhuis-poldervaartstraat','last-paradise']
-      : ['big-picknick','bielzen-bank'];
+      : ['big-picknick','bielzen-bank','zit-sta-bureau'];
   }
 
   const texts = await Promise.all(
@@ -494,19 +483,17 @@ function makeCard(p) {
   inner.appendChild(iw);inner.appendChild(right);
   card.appendChild(inner);
 
-  // Typing only on IMAGE hover
+  // Typing only on IMAGE hover — consistent speed for all cards
   let ti=null;
   iw.addEventListener('mouseenter',()=>{
     card.classList.add('img-hovered');
     metaEl.innerHTML=`<strong>Opdrachtgever:</strong>${p.opdrachtgever}<strong>Programma:</strong>${p.programma}<strong>Ontwerp:</strong>${p.ontwerp}`;
     const fullText=p.desc||'';
     descEl.innerHTML='';let i=0;clearInterval(ti);
-    // Type character by character, but render as HTML at the end for markdown
-    const plainText=fullText;
     ti=setInterval(()=>{
-      if(i<plainText.length){i++;descEl.innerHTML=renderMd(plainText.substring(0,i));}
+      if(i<fullText.length){i++;descEl.innerHTML=renderMd(fullText.substring(0,i));}
       else clearInterval(ti);
-    },14);
+    },20);
   });
   iw.addEventListener('mouseleave',()=>{clearInterval(ti);descEl.innerHTML='';metaEl.innerHTML='';card.classList.remove('img-hovered');});
 
