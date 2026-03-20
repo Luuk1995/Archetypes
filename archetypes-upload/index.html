@@ -132,25 +132,28 @@
     /* ── PROJECT CARD ── */
     .project-card{
       position:relative;cursor:none;
-      padding:3rem 1.5rem;
+      padding:3rem 2.5rem;
     }
     .project-card:first-child{padding-top:5rem}
     .project-card:last-child{padding-bottom:8rem}
 
-    /* Card inner: image + right panel side by side */
+    /* Card inner: always image 63% | text 37% */
+    /* We never use direction:rtl — instead we manually swap column order for even */
     .card-inner{
       display:grid;
       grid-template-columns:var(--img-w) calc(100% - var(--img-w));
       align-items:start;
+      gap:0;
     }
-    /* Even cards: flip order — image right, text left */
+    /* Even cards: image column goes SECOND via column-reverse */
     .project-card:nth-child(even) .card-inner{
       grid-template-columns:calc(100% - var(--img-w)) var(--img-w);
-      direction:rtl;
     }
-    .project-card:nth-child(even) .card-inner > *{direction:ltr}
+    /* For even: text is first col, image is second col */
+    .project-card:nth-child(even) .card-inner .project-img-wrap{order:2}
+    .project-card:nth-child(even) .card-inner .project-right{order:1}
 
-    /* Image */
+    /* Image — always full width of its grid cell, consistent ratio */
     .project-img-wrap{
       position:relative;overflow:hidden;
       width:100%;aspect-ratio:4/3;
@@ -169,23 +172,25 @@
     .project-img-wrap::after{top:calc(50% - 20px);left:50%;width:1px;height:40px}
     .project-img-wrap:hover::before,.project-img-wrap:hover::after{opacity:1}
 
-    /* Right panel: typed text on top, label at bottom */
+    /* Text panel — same layout for all cards, padding from image edge */
     .project-right{
       display:flex;flex-direction:column;
       justify-content:space-between;
-      padding:0 0 0 1.2rem;
       align-self:stretch;
+      padding:0 1.5rem;
+      text-align:left;
     }
-    /* For even cards (image right), padding flips */
+    /* Even cards: text is on LEFT side, right-align it */
     .project-card:nth-child(even) .project-right{
-      padding:0 1.2rem 0 0;
       text-align:right;
     }
 
-    /* Typed text — starts from TOP of panel, hidden until hover */
+    /* Typed text — starts from TOP, same for all cards */
     .project-hover{
+      flex:1;
       opacity:0;transition:opacity .4s ease;
-      padding-top:.2rem;
+      padding-top:0;
+      display:flex;flex-direction:column;justify-content:flex-start;
     }
     .project-img-wrap:hover ~ .project-right .project-hover,
     .project-card.img-hovered .project-hover{opacity:1}
