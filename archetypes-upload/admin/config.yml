@@ -5,6 +5,9 @@ backend:
 media_folder: "archetypes-upload/images"
 public_folder: "/images"
 
+# Disable auto-deploy on every save — use Netlify's deploy control instead
+publish_mode: editorial_workflow
+
 collections:
   - name: "instellingen"
     label: "⚙️ Instellingen"
@@ -48,10 +51,25 @@ collections:
     fields:
       - { label: "Titel", name: "title", widget: "string" }
       - { label: "Ondertitel / locatie", name: "sub", widget: "string" }
-      - { label: "Beschrijving", name: "desc", widget: "text" }
-      - { label: "Opdrachtgever", name: "opdrachtgever", widget: "string" }
-      - { label: "Programma / oppervlak", name: "programma", widget: "string" }
-      - { label: "Ontwerp", name: "ontwerp", widget: "string", default: "Arche!Types" }
+      - { label: "Beschrijving (markdown: **vet**, *schuin*, enters)", name: "desc", widget: "text" }
+      - label: "Label 1 naam"
+        name: "label1"
+        widget: "string"
+        default: "Opdrachtgever"
+        required: false
+      - { label: "Label 1 waarde", name: "opdrachtgever", widget: "string" }
+      - label: "Label 2 naam"
+        name: "label2"
+        widget: "string"
+        default: "Programma"
+        required: false
+      - { label: "Label 2 waarde", name: "programma", widget: "string" }
+      - label: "Label 3 naam"
+        name: "label3"
+        widget: "string"
+        default: "Ontwerp"
+        required: false
+      - { label: "Label 3 waarde", name: "ontwerp", widget: "string", default: "Arche!Types" }
       - { label: "Afbeelding", name: "image", widget: "image", required: false }
       - { label: "Volgorde", name: "order", widget: "number", default: 99 }
 
@@ -66,9 +84,24 @@ collections:
     fields:
       - { label: "Titel", name: "title", widget: "string" }
       - { label: "Ondertitel / prijs", name: "sub", widget: "string" }
-      - { label: "Beschrijving", name: "desc", widget: "text" }
-      - { label: "Opdrachtgever", name: "opdrachtgever", widget: "string", default: "Eigen productie" }
-      - { label: "Afmeting / programma", name: "programma", widget: "string" }
-      - { label: "Ontwerp", name: "ontwerp", widget: "string", default: "Arche!Types" }
+      - { label: "Beschrijving (markdown: **vet**, *schuin*, enters)", name: "desc", widget: "text" }
+      - label: "Label 1 naam"
+        name: "label1"
+        widget: "string"
+        default: "Opdrachtgever"
+        required: false
+      - { label: "Label 1 waarde", name: "opdrachtgever", widget: "string", default: "Eigen productie" }
+      - label: "Label 2 naam"
+        name: "label2"
+        widget: "string"
+        default: "Afmeting"
+        required: false
+      - { label: "Label 2 waarde", name: "programma", widget: "string" }
+      - label: "Label 3 naam"
+        name: "label3"
+        widget: "string"
+        default: "Ontwerp"
+        required: false
+      - { label: "Label 3 waarde", name: "ontwerp", widget: "string", default: "Arche!Types" }
       - { label: "Afbeelding", name: "image", widget: "image", required: false }
       - { label: "Volgorde", name: "order", widget: "number", default: 99 }
