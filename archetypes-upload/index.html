@@ -508,7 +508,14 @@ function makeCard(p) {
     const l1 = p.label1||'Opdrachtgever';
     const l2 = p.label2||'Programma';
     const l3 = p.label3||'Ontwerp';
-    metaEl.innerHTML=`<strong>${l1}:</strong>${p.opdrachtgever||''}<strong>${l2}:</strong>${p.programma||''}<strong>${l3}:</strong>${p.ontwerp||''}`;
+    const v1 = p.waarde1||p.opdrachtgever||'';
+    const v2 = p.waarde2||p.programma||'';
+    const v3 = p.waarde3||p.ontwerp||'';
+    let metaHtml = '';
+    if(v1) metaHtml += `<strong>${l1}:</strong>${v1}`;
+    if(v2) metaHtml += `<strong>${l2}:</strong>${v2}`;
+    if(v3) metaHtml += `<strong>${l3}:</strong>${v3}`;
+    metaEl.innerHTML = metaHtml;
     const fullText = p.desc||'';
     descEl.innerHTML='';let i=0;clearInterval(ti);
     ti=setInterval(()=>{
