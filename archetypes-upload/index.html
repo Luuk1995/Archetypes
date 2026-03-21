@@ -162,45 +162,44 @@
     .project-img-wrap:hover img{filter:grayscale(0);transform:scale(1.03)}
     .img-placeholder{position:absolute;inset:0;background:#181818;display:flex;align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.1)}
 
-    .project-img-wrap::before,.project-img-wrap::after{content:'';position:absolute;background:rgba(240,237,230,.6);pointer-events:none;z-index:2;opacity:0;transition:opacity .4s ease}
-    .project-img-wrap::before{top:50%;left:calc(50% - 20px);width:40px;height:1px}
-    .project-img-wrap::after{top:calc(50% - 20px);left:50%;width:1px;height:40px}
-    .project-img-wrap:hover::before,.project-img-wrap:hover::after{opacity:1}
-
-    /* Text panel — padding creates space from edge */
+    /* Text panel — desc on top, meta+label fixed at bottom */
     .project-right{
       display:flex;flex-direction:column;
-      justify-content:space-between;
       align-self:stretch;
       padding:0 2rem;
       text-align:left;
     }
     .project-card:nth-child(even) .project-right{text-align:right}
 
-    /* Typed text — triggered via JS class only (no CSS sibling selector) */
+    /* Typed text — triggered via JS class only */
     .project-hover{
       flex:1;
       opacity:0;transition:opacity .4s ease;
       display:flex;flex-direction:column;justify-content:flex-start;
+      overflow:visible;
     }
     .project-card.img-hovered .project-hover{opacity:1}
 
     .project-desc{
       font-size:.68rem;line-height:1.9;letter-spacing:.05em;
-      color:rgba(240,237,230,.85);margin-bottom:.8rem;
-      word-break:break-word;
+      color:rgba(240,237,230,.85);margin-bottom:.6rem;
+      word-break:break-word;white-space:normal;
     }
-    /* Markdown support */
     .project-desc strong{font-weight:700;color:var(--fg)}
     .project-desc em{font-style:italic}
-    .project-desc br{display:block;content:'';margin-top:.4em}
 
-    .project-meta{font-size:.58rem;letter-spacing:.12em;color:rgba(240,237,230,.45);line-height:2}
-    .project-meta strong{color:rgba(240,237,230,.25);text-transform:uppercase;font-weight:400;display:block;margin-top:.3rem}
+    /* Meta — attached directly above the label at bottom */
+    .project-meta{
+      font-size:.58rem;letter-spacing:.12em;
+      color:rgba(240,237,230,.45);line-height:2;
+      margin-top:auto;
+      padding-bottom:.5rem;
+    }
+    .project-meta strong{color:rgba(240,237,230,.25);text-transform:uppercase;font-weight:400;display:block;margin-top:.2rem}
     .project-meta strong:first-child{margin-top:0}
 
-    /* Label: title + subtitle always visible at BOTTOM */
-    .project-label{padding:.6rem 0 0;flex-shrink:0;margin-top:auto}
+    /* Label: title + subtitle always at BOTTOM, right next to meta */
+    .project-label{padding:.5rem 0 0;flex-shrink:0;border-top:1px solid rgba(240,237,230,.06)}
     .project-card:nth-child(even) .project-label{text-align:right}
     .project-title{font-size:clamp(.72rem,1vw,.9rem);font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.4}
     .project-subtitle{font-size:.54rem;letter-spacing:.13em;color:rgba(240,237,230,.3);text-transform:uppercase;margin-top:.2rem}
@@ -334,21 +333,19 @@ function parseFrontmatter(text) {
 }
 
 // ── DYNAMIC FOLDER DISCOVERY ──
-// Uses GitHub API to list all .md files — works reliably on Netlify
 async function loadMdFolder(folder) {
   const items = [];
   let names = [];
 
-  // Strategy 1: GitHub API (most reliable when deployed via GitHub)
+  // Strategy 1: GitHub API (works for public repos)
   try {
-    // Extract repo info from current URL or use known repo
     const apiUrl = `https://api.github.com/repos/Luuk1995/Archetypes/contents/archetypes-upload/data/${folder}`;
     const resp = await fetch(apiUrl, {headers:{'Accept':'application/vnd.github.v3+json'}});
     if (resp.ok) {
       const files = await resp.json();
-      names = files
-        .filter(f => f.name.endsWith('.md'))
-        .map(f => f.name.replace('.md',''));
+      if (Array.isArray(files)) {
+        names = files.filter(f=>f.name.endsWith('.md')).map(f=>f.name.replace('.md',''));
+      }
     }
   } catch(e) {}
 
@@ -358,21 +355,24 @@ async function loadMdFolder(folder) {
       const resp = await fetch(`data/${folder}/`);
       const text = await resp.text();
       const matches = [...text.matchAll(/href="([^"?#]*\.md)"/g)];
-      names = matches.map(m => m[1].replace(/.*\//,'').replace('.md',''));
+      names = matches.map(m=>m[1].replace(/.*\//,'').replace('.md',''));
     } catch(e) {}
   }
 
-  // Strategy 3: hardcoded fallback
+  // Strategy 3: hardcoded fallback with ALL known items
   if (names.length === 0) {
     names = folder === 'projecten'
-      ? ['viking-surf-shack','woonhuis-poldervaartstraat','last-paradise']
-      : ['big-picknick','bielzen-bank','zit-sta-bureau','test'];
+      ? ['viking-surf-shack','woonhuis-poldervaartstraat','last-paradise',
+         'last-paradise-surfstay','viking-surfcenter-amstelmeer','woonhuis-menno-poldervaartstraat']
+      : ['big-picknick','bielzen-bank','zit-sta-bureau','test',
+         'bielzen-bank-2','bigpicnic-amsterdam','mokummer-troon',
+         'pergola-tafel','monochromatische-industrie-kast','kruiden-tafel'];
   }
 
   const texts = await Promise.all(
-    names.map(n => fetch(`data/${folder}/${n}.md`).then(r=>r.ok?r.text():null).catch(()=>null))
+    names.map(n=>fetch(`data/${folder}/${n}.md`).then(r=>r.ok?r.text():null).catch(()=>null))
   );
-  texts.forEach(t => { if(t){ const p=parseFrontmatter(t); if(p.title) items.push(p); } });
+  texts.forEach(t=>{if(t){const p=parseFrontmatter(t);if(p.title)items.push(p);}});
   return items.sort((a,b)=>(a.order||99)-(b.order||99));
 }
 
@@ -501,12 +501,15 @@ function makeCard(p) {
   inner.appendChild(iw);inner.appendChild(right);
   card.appendChild(inner);
 
-  // Typing only on IMAGE hover — consistent speed for all cards
+  // Typing only on IMAGE hover — full text, no truncation
   let ti=null;
   iw.addEventListener('mouseenter',()=>{
     card.classList.add('img-hovered');
-    metaEl.innerHTML=`<strong>Opdrachtgever:</strong>${p.opdrachtgever}<strong>Programma:</strong>${p.programma}<strong>Ontwerp:</strong>${p.ontwerp}`;
-    const fullText=p.desc||'';
+    const l1 = p.label1||'Opdrachtgever';
+    const l2 = p.label2||'Programma';
+    const l3 = p.label3||'Ontwerp';
+    metaEl.innerHTML=`<strong>${l1}:</strong>${p.opdrachtgever||''}<strong>${l2}:</strong>${p.programma||''}<strong>${l3}:</strong>${p.ontwerp||''}`;
+    const fullText = p.desc||'';
     descEl.innerHTML='';let i=0;clearInterval(ti);
     ti=setInterval(()=>{
       if(i<fullText.length){i++;descEl.innerHTML=renderMd(fullText.substring(0,i));}
