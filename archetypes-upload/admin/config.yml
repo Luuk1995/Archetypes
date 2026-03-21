@@ -47,11 +47,14 @@ collections:
     identifier_field: "title"
     fields:
       - { label: "Titel", name: "title", widget: "string" }
-      - { label: "Ondertitel / locatie", name: "sub", widget: "string" }
-      - { label: "Beschrijving", name: "desc", widget: "text" }
-      - { label: "Opdrachtgever", name: "opdrachtgever", widget: "string" }
-      - { label: "Programma / oppervlak", name: "programma", widget: "string" }
-      - { label: "Ontwerp", name: "ontwerp", widget: "string", default: "Arche!Types" }
+      - { label: "Ondertitel / locatie", name: "sub", widget: "string", required: false }
+      - { label: "Beschrijving", name: "desc", widget: "text", required: false }
+      - { label: "Label 1 naam", name: "label1", widget: "string", default: "Opdrachtgever", required: false }
+      - { label: "Label 1 waarde", name: "waarde1", widget: "string", required: false }
+      - { label: "Label 2 naam", name: "label2", widget: "string", default: "Programma", required: false }
+      - { label: "Label 2 waarde", name: "waarde2", widget: "string", required: false }
+      - { label: "Label 3 naam", name: "label3", widget: "string", default: "Ontwerp", required: false }
+      - { label: "Label 3 waarde", name: "waarde3", widget: "string", required: false }
       - { label: "Afbeelding", name: "image", widget: "image", required: false }
       - { label: "Volgorde", name: "order", widget: "number", default: 99 }
 
@@ -65,10 +68,13 @@ collections:
     identifier_field: "title"
     fields:
       - { label: "Titel", name: "title", widget: "string" }
-      - { label: "Ondertitel / prijs", name: "sub", widget: "string" }
-      - { label: "Beschrijving", name: "desc", widget: "text" }
-      - { label: "Opdrachtgever", name: "opdrachtgever", widget: "string", default: "Eigen productie" }
-      - { label: "Afmeting / programma", name: "programma", widget: "string" }
-      - { label: "Ontwerp", name: "ontwerp", widget: "string", default: "Arche!Types" }
+      - { label: "Ondertitel / prijs", name: "sub", widget: "string", required: false }
+      - { label: "Beschrijving", name: "desc", widget: "text", required: false }
+      - { label: "Label 1 naam", name: "label1", widget: "string", default: "Opdrachtgever", required: false }
+      - { label: "Label 1 waarde", name: "waarde1", widget: "string", required: false }
+      - { label: "Label 2 naam", name: "label2", widget: "string", default: "Afmeting", required: false }
+      - { label: "Label 2 waarde", name: "waarde2", widget: "string", required: false }
+      - { label: "Label 3 naam", name: "label3", widget: "string", default: "Ontwerp", required: false }
+      - { label: "Label 3 waarde", name: "waarde3", widget: "string", required: false }
       - { label: "Afbeelding", name: "image", widget: "image", required: false }
       - { label: "Volgorde", name: "order", widget: "number", default: 99 }
