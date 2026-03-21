@@ -9,7 +9,7 @@ label1: Client
 opdrachtgever: Private - Municipality tender
 label2: Materials
 programma: Supplied by Grachtenhout
-ontwerp: Arche!Types
+ontwerp: " "
 image: /images/types_picknick.jpg
 order: 1
 ---
