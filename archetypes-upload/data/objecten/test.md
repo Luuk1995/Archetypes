@@ -1,12 +1,13 @@
 ---
-title: "Test "
-sub: Sick mooi huis
-desc: "Bureau zichtbaar — toegevoegd aan de fallback lijst. Maar nog beter: de
-  auto-discovery via de directory listing zou hem ook al moeten vinden — als dat
-  niet werkt op Netlify, staat hij nu ook in de fallback"
-opdrachtgever: Eigen productie
-programma: dwwe
+title: MONOCHROMATISCHE INDUSTRIE KAST
+sub: test
+desc: -Constructive outdoor table designed for long lasting durability and heavy
+  usages. Made from old wooden beams formerly used in the foundation of
+  Amsterdam. Harvested during renovation of city quays. Project with help from
+  Social Return woodworkers
+opdrachtgever: Private
+programma: Supplied by Grachtenhout
 ontwerp: Arche!Types
-image: /images/arche_viking.jpg
+image: /images/object_industrie-kast_1.jpg
 order: 99
 ---
