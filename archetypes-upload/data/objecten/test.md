@@ -1,6 +1,6 @@
 ---
-title: MONOCHROMATISCHE INDUSTRIE KAST
-sub: test
+title: MONOCHROMATISCHE
+sub: INDUSTRIE KAST
 desc: -Constructive outdoor table designed for long lasting durability and heavy
   usages. Made from old wooden beams formerly used in the foundation of
   Amsterdam. Harvested during renovation of city quays. Project with help from
