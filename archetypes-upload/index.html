@@ -314,54 +314,35 @@ function parseFrontmatter(text) {
   const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return {};
   const result = {};
-  const yaml = match[1];
-  const lines = yaml.split('\n');
+  const lines = match[1].split('\n');
   let i = 0;
   while (i < lines.length) {
     const line = lines[i];
-    // Match key: value
     const keyMatch = line.match(/^(\w+):\s*(.*)/);
     if (!keyMatch) { i++; continue; }
     const key = keyMatch[1];
     let val = keyMatch[2].trim();
+    i++;
 
-    // Multi-line quoted string starting with "
-    if (val === '"' || (val.startsWith('"') && !val.endsWith('"'))) {
-      // Strip opening quote
-      val = val.startsWith('"') ? val.slice(1) : '';
-      i++;
-      // Keep reading until closing quote
-      while (i < lines.length) {
-        const nextLine = lines[i];
-        if (nextLine.endsWith('"')) {
-          val += (val ? '\n' : '') + nextLine.slice(0,-1);
-          i++;
-          break;
-        } else {
-          val += (val ? '\n' : '') + nextLine;
-          i++;
-        }
-      }
-    }
-    // Single-line quoted string
-    else if (val.startsWith('"') && val.endsWith('"') && val.length > 1) {
-      val = val.slice(1,-1);
-      // Unescape \" inside
-      val = val.replace(/\\"/g, '"');
-      i++;
-    }
-    // Number
-    else if (/^\d+$/.test(val)) {
-      result[key] = parseInt(val);
-      i++;
-      continue;
-    }
-    // Plain unquoted value
-    else {
+    // Collect continuation lines (indented or starting without a key:)
+    while (i < lines.length) {
+      const next = lines[i];
+      // If next line starts a new key, stop
+      if (/^\w+:\s/.test(next) || /^\w+:$/.test(next)) break;
+      // If next line is empty, stop
+      if (next.trim() === '') break;
+      // Continuation line — append with space
+      val += ' ' + next.trim();
       i++;
     }
 
-    result[key] = val;
+    // Remove surrounding quotes if present
+    if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1,-1);
+    else if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1,-1);
+    val = val.replace(/\\"/g, '"').replace(/\\n/g, '\n');
+
+    if (/^\d+$/.test(val)) result[key] = parseInt(val);
+    else result[key] = val;
   }
   return result;
 }
