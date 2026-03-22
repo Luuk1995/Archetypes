@@ -32,8 +32,8 @@
     /* ── INTRO ── */
     #intro{position:fixed;inset:0;z-index:5000;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 1.2s ease}
     #intro.fade-out{opacity:0;pointer-events:none}
-    #intro-logo{font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;letter-spacing:.18em;color:var(--fg);overflow:hidden;white-space:nowrap;width:0;border-right:2px solid var(--fg);animation:tl 1.6s steps(20,end) .4s forwards,bc .7s step-end .4s 5}
-    @keyframes tl{from{width:0}to{width:16ch;border-right-color:transparent}}
+    #intro-logo{font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;letter-spacing:.18em;color:var(--fg);overflow:hidden;white-space:nowrap;width:0;border-right:2px solid var(--fg);animation:tl 1.4s steps(12,end) .4s forwards,bc .7s step-end .4s 5}
+    @keyframes tl{from{width:0}to{width:13ch;border-right-color:transparent}}
     @keyframes bc{50%{border-right-color:transparent}}
     #intro-sub{font-size:clamp(.65rem,1.2vw,.85rem);letter-spacing:.25em;color:var(--fg);margin-top:1rem;opacity:0;animation:fi .8s ease 2.2s forwards}
     @keyframes fi{to{opacity:.5}}
