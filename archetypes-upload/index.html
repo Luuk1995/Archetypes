@@ -228,10 +228,15 @@
       body{cursor:auto}
       #cursor,#cursor-glow{display:none}
 
-      /* Nav compact */
-      #nav{padding:1rem 1.2rem}
+      /* Nav: zwarte balk bovenaan */
+      #nav{
+        padding:.9rem 1.2rem;
+        background:rgba(0,0,0,.85);
+        backdrop-filter:blur(8px);
+        border-bottom:1px solid rgba(240,237,230,.08);
+      }
       #nav-left{gap:1.2rem}
-      .nav-link{font-size:.6rem}
+      .nav-link{font-size:.65rem}
       #logo-full,#logo-short{font-size:.75rem}
 
       /* Corners smaller */
@@ -266,7 +271,6 @@
         height:auto;
         overflow-y:visible;
       }
-      /* Hide col dividers on mobile */
       .col-scrollbar{display:none}
 
       /* Cards: stack image above text */
@@ -277,7 +281,7 @@
       }
       .project-card:nth-child(even) .card-inner .project-img-wrap{order:0}
       .project-card:nth-child(even) .card-inner .project-right{order:1}
-      .project-card{padding:2rem 1.2rem}
+      .project-card{padding:2rem 1.2rem;cursor:pointer}
       .project-card:first-child{padding-top:3rem}
       .project-card:last-child{padding-bottom:4rem}
 
@@ -291,8 +295,17 @@
       }
       .project-card:nth-child(even) .project-label{text-align:left}
 
-      /* On mobile: show text always (no hover) */
-      .project-hover{opacity:1 !important}
+      /* On mobile: text hidden by default, shown on tap */
+      .project-hover{
+        opacity:0;
+        max-height:0;
+        overflow:hidden;
+        transition:opacity .4s ease, max-height .4s ease;
+      }
+      .project-card.tapped .project-hover{
+        opacity:1;
+        max-height:600px;
+      }
       .project-img-wrap:hover img{filter:grayscale(1);transform:none}
       .project-label{border-top:none;padding-top:.4rem}
 
@@ -310,7 +323,7 @@
       #intro-logo{font-size:clamp(1.2rem,6vw,1.8rem)}
       #intro-sub{font-size:.7rem;letter-spacing:.15em}
 
-      /* Scroll root on mobile can just be normal flow */
+      /* Scroll root on mobile */
       #scroll-root{
         scroll-snap-type:none;
         overflow-y:auto;
@@ -564,7 +577,11 @@ function initScrollbar(colId,thumbId){
 // ── NAV FILTER ──
 let af=null;
 document.querySelectorAll('[data-filter]').forEach(l=>{
-  l.addEventListener('click',e=>{e.preventDefault();scrollToProjects();applyFilter(l.dataset.filter);});
+  l.addEventListener('click',e=>{
+    e.preventDefault();
+    scrollToProjects();
+    applyFilter(l.dataset.filter);
+  });
 });
 document.getElementById('corner-bl').addEventListener('click',()=>{scrollToProjects();applyFilter('arche');});
 document.getElementById('corner-br').addEventListener('click',()=>{scrollToProjects();applyFilter('types');});
@@ -625,19 +642,32 @@ function makeCard(p) {
   inner.appendChild(iw);inner.appendChild(right);
   card.appendChild(inner);
 
-  // Typing only on IMAGE hover — full text, no truncation
-  let ti=null;
   const isMobile = () => window.innerWidth <= 768;
 
-  // On mobile: show full text immediately on load
-  if(isMobile()){
-    const l1=p.label1||'Opdrachtgever',l2=p.label2||'Programma',l3=p.label3||'Ontwerp';
-    const v1=p.waarde1||p.opdrachtgever||'',v2=p.waarde2||p.programma||'',v3=p.waarde3||p.ontwerp||'';
-    let mh='';if(v1)mh+=`<strong>${l1}:</strong>${v1}`;if(v2)mh+=`<strong>${l2}:</strong>${v2}`;if(v3)mh+=`<strong>${l3}:</strong>${v3}`;
-    metaEl.innerHTML=mh;
-    descEl.innerHTML=renderMd(p.desc||'');
-  }
+  // Mobile tap: toggle text visibility
+  card.addEventListener('click', () => {
+    if (!isMobile()) return;
+    // Fill text on first tap
+    if (!card.classList.contains('tapped')) {
+      const l1=p.label1||'Opdrachtgever',l2=p.label2||'Programma',l3=p.label3||'Ontwerp';
+      const v1=p.waarde1||p.opdrachtgever||'',v2=p.waarde2||p.programma||'',v3=p.waarde3||p.ontwerp||'';
+      let mh='';if(v1)mh+=`<strong>${l1}:</strong>${v1}`;if(v2)mh+=`<strong>${l2}:</strong>${v2}`;if(v3)mh+=`<strong>${l3}:</strong>${v3}`;
+      metaEl.innerHTML=mh;
+      descEl.innerHTML=renderMd(p.desc||'');
+    }
+    card.classList.toggle('tapped');
+    // Collapse image on tap (color effect)
+    if(card.classList.contains('tapped')) {
+      const img = iw.querySelector('img');
+      if(img) img.style.filter='grayscale(0)';
+    } else {
+      const img = iw.querySelector('img');
+      if(img) img.style.filter='grayscale(1)';
+    }
+  });
 
+  // Desktop hover
+  let ti=null;
   iw.addEventListener('mouseenter',()=>{
     if(isMobile()) return;
     card.classList.add('img-hovered');
