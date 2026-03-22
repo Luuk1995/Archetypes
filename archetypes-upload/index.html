@@ -221,6 +221,111 @@
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:rgba(240,237,230,.12)}
+
+    /* ── MOBILE ── */
+    @media (max-width:768px){
+      /* Cursor off on touch */
+      body{cursor:auto}
+      #cursor,#cursor-glow{display:none}
+
+      /* Nav compact */
+      #nav{padding:1rem 1.2rem}
+      #nav-left{gap:1.2rem}
+      .nav-link{font-size:.6rem}
+      #logo-full,#logo-short{font-size:.75rem}
+
+      /* Corners smaller */
+      .corner{font-size:.65rem;padding:1rem 1.2rem}
+      #audio-toggle{font-size:.55rem;bottom:1rem}
+
+      /* Hero: stack ! and tagline vertically */
+      #hero-center{
+        grid-template-columns:1fr;
+        grid-template-rows:auto auto;
+        padding:0 2rem;
+        gap:1rem;
+        text-align:center;
+      }
+      #hero-exclaim{
+        justify-content:center;
+        font-size:clamp(5rem,20vw,8rem);
+      }
+      #hero-tagline{
+        justify-content:center;
+        font-size:clamp(.75rem,3.5vw,1rem);
+      }
+
+      /* Projects: single column, full width */
+      #projects-snap{
+        grid-template-columns:1fr;
+        height:auto;
+        min-height:100vh;
+        overflow-y:auto;
+      }
+      .projects-col{
+        height:auto;
+        overflow-y:visible;
+      }
+      /* Hide col dividers on mobile */
+      .col-scrollbar{display:none}
+
+      /* Cards: stack image above text */
+      .card-inner{
+        grid-template-columns:1fr !important;
+        grid-template-rows:auto auto;
+        direction:ltr !important;
+      }
+      .project-card:nth-child(even) .card-inner .project-img-wrap{order:0}
+      .project-card:nth-child(even) .card-inner .project-right{order:1}
+      .project-card{padding:2rem 1.2rem}
+      .project-card:first-child{padding-top:3rem}
+      .project-card:last-child{padding-bottom:4rem}
+
+      /* Image full width */
+      .project-img-wrap{width:100%;aspect-ratio:3/2}
+
+      /* Text panel below image, left aligned always */
+      .project-right{
+        padding:1rem 0 0;
+        text-align:left !important;
+      }
+      .project-card:nth-child(even) .project-label{text-align:left}
+
+      /* On mobile: show text always (no hover) */
+      .project-hover{opacity:1 !important}
+      .project-img-wrap:hover img{filter:grayscale(1);transform:none}
+      .project-label{border-top:none;padding-top:.4rem}
+
+      /* Bigger touch-friendly text */
+      .project-desc{font-size:.75rem;line-height:1.8}
+      .project-meta{font-size:.65rem}
+      .project-title{font-size:.85rem}
+      .project-subtitle{font-size:.6rem}
+
+      /* Info overlay */
+      #info-box{padding:0 1rem}
+      #info-close{top:1rem;right:1.2rem}
+
+      /* Intro */
+      #intro-logo{font-size:clamp(1.2rem,6vw,1.8rem)}
+      #intro-sub{font-size:.7rem;letter-spacing:.15em}
+
+      /* Scroll root on mobile can just be normal flow */
+      #scroll-root{
+        scroll-snap-type:none;
+        overflow-y:auto;
+        height:100vh;
+      }
+      #hero{scroll-snap-align:none}
+      #projects-snap{scroll-snap-align:none}
+    }
+
+    /* Very small screens */
+    @media (max-width:400px){
+      #nav-left{gap:.8rem}
+      .nav-link{font-size:.55rem;letter-spacing:.08em}
+      #hero-exclaim{font-size:clamp(4rem,18vw,6rem)}
+    }
   </style>
 </head>
 <body>
@@ -522,27 +627,38 @@ function makeCard(p) {
 
   // Typing only on IMAGE hover — full text, no truncation
   let ti=null;
+  const isMobile = () => window.innerWidth <= 768;
+
+  // On mobile: show full text immediately on load
+  if(isMobile()){
+    const l1=p.label1||'Opdrachtgever',l2=p.label2||'Programma',l3=p.label3||'Ontwerp';
+    const v1=p.waarde1||p.opdrachtgever||'',v2=p.waarde2||p.programma||'',v3=p.waarde3||p.ontwerp||'';
+    let mh='';if(v1)mh+=`<strong>${l1}:</strong>${v1}`;if(v2)mh+=`<strong>${l2}:</strong>${v2}`;if(v3)mh+=`<strong>${l3}:</strong>${v3}`;
+    metaEl.innerHTML=mh;
+    descEl.innerHTML=renderMd(p.desc||'');
+  }
+
   iw.addEventListener('mouseenter',()=>{
+    if(isMobile()) return;
     card.classList.add('img-hovered');
-    const l1 = p.label1||'Opdrachtgever';
-    const l2 = p.label2||'Programma';
-    const l3 = p.label3||'Ontwerp';
-    const v1 = p.waarde1||p.opdrachtgever||'';
-    const v2 = p.waarde2||p.programma||'';
-    const v3 = p.waarde3||p.ontwerp||'';
-    let metaHtml = '';
-    if(v1) metaHtml += `<strong>${l1}:</strong>${v1}`;
-    if(v2) metaHtml += `<strong>${l2}:</strong>${v2}`;
-    if(v3) metaHtml += `<strong>${l3}:</strong>${v3}`;
-    metaEl.innerHTML = metaHtml;
-    const fullText = p.desc||'';
+    const l1=p.label1||'Opdrachtgever',l2=p.label2||'Programma',l3=p.label3||'Ontwerp';
+    const v1=p.waarde1||p.opdrachtgever||'',v2=p.waarde2||p.programma||'',v3=p.waarde3||p.ontwerp||'';
+    let metaHtml='';
+    if(v1)metaHtml+=`<strong>${l1}:</strong>${v1}`;
+    if(v2)metaHtml+=`<strong>${l2}:</strong>${v2}`;
+    if(v3)metaHtml+=`<strong>${l3}:</strong>${v3}`;
+    metaEl.innerHTML=metaHtml;
+    const fullText=p.desc||'';
     descEl.innerHTML='';let i=0;clearInterval(ti);
     ti=setInterval(()=>{
       if(i<fullText.length){i++;descEl.innerHTML=renderMd(fullText.substring(0,i));}
       else clearInterval(ti);
     },20);
   });
-  iw.addEventListener('mouseleave',()=>{clearInterval(ti);descEl.innerHTML='';metaEl.innerHTML='';card.classList.remove('img-hovered');});
+  iw.addEventListener('mouseleave',()=>{
+    if(isMobile()) return;
+    clearInterval(ti);descEl.innerHTML='';metaEl.innerHTML='';card.classList.remove('img-hovered');
+  });
 
   return card;
 }
