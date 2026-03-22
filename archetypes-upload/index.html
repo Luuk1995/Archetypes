@@ -554,7 +554,21 @@ document.getElementById('nav-home').addEventListener('click',e=>{e.preventDefaul
 document.getElementById('logo-full').addEventListener('click',e=>{e.preventDefault();scrollRoot.scrollTo({top:0,behavior:'smooth'});});
 document.getElementById('logo-short').addEventListener('click',e=>{e.preventDefault();scrollRoot.scrollTo({top:0,behavior:'smooth'});});
 
-function scrollToProjects(){scrollRoot.scrollTo({top:window.innerHeight,behavior:'smooth'});}
+function scrollToProjects(filter){
+  const isMobile = window.innerWidth <= 768;
+  if(isMobile && filter==='types'){
+    // On mobile, types is below arche — scroll to types column
+    const typesCol = document.getElementById('col-types');
+    if(typesCol) typesCol.scrollIntoView({behavior:'smooth',block:'start'});
+  } else {
+    // Desktop or arche: scroll to projects snap
+    scrollRoot.scrollTo({top:window.innerHeight,behavior:'smooth'});
+    if(isMobile){
+      const archeCol = document.getElementById('col-arche');
+      if(archeCol) archeCol.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  }
+}
 
 // ── SCROLLBAR ──
 function initScrollbar(colId,thumbId){
@@ -579,12 +593,13 @@ let af=null;
 document.querySelectorAll('[data-filter]').forEach(l=>{
   l.addEventListener('click',e=>{
     e.preventDefault();
-    scrollToProjects();
-    applyFilter(l.dataset.filter);
+    const f = l.dataset.filter;
+    scrollToProjects(f);
+    applyFilter(f);
   });
 });
-document.getElementById('corner-bl').addEventListener('click',()=>{scrollToProjects();applyFilter('arche');});
-document.getElementById('corner-br').addEventListener('click',()=>{scrollToProjects();applyFilter('types');});
+document.getElementById('corner-bl').addEventListener('click',()=>{scrollToProjects('arche');applyFilter('arche');});
+document.getElementById('corner-br').addEventListener('click',()=>{scrollToProjects('types');applyFilter('types');});
 
 // Click dimmed col to reset filter
 document.getElementById('col-arche').addEventListener('click',()=>{if(af==='types')applyFilter('types');});
