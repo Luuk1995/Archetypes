@@ -1,18 +1,19 @@
 ---
-title: LAST PARADISE SURFSTAY
-sub: OFFGRID - ARCHIPEL
+sub: OFFGRID - VERNACULAIR
 ontwerp: Arche!Types
 opdrachtgever: Last Paradise
-desc: Avontuurlijke vernaculaire architectuur. De plattegrond heeft een open en
-  pragmatische opzet, georiënteerd op de beachbreak en ontworpen voor optimale
-  beschaduwing. Gebouwd met lokale ambachtsmannen.
-waarde1: Last Paradise
-waarde2: Sleeping residence – detached bathhouse – kitchen / hangou
-waarde3: Local craftsmen
+title: LAST PARADISE SURFSTAY
+desc: "Op een afgelegen eiland in de Mentawai-archipel, is een off-grid verblijf
+  gebouwd voor avonturiers op zee. De plattegrond heeft een open en pragmatische
+  opzet, optimaal georiënteerd voor uitzicht en optimale beschaduwing. Gebouwd
+  met lokale ambachtsmannen. "
+label1: ""
+waarde1: ""
+label2: ""
+waarde2: ""
+label3: ""
+waarde3: ""
+image: /images/Project_Last Paradise_1.jpg
 order: 1
 programma: Sleeping residence – detached bathhouse – kitchen / hangout
-label1: Client
-label2: Program
-label3: Contractor
-image: /images/Project_Last Paradise_1.jpg
 ---
