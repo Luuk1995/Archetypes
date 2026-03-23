@@ -1,9 +1,12 @@
 ---
 title: Woonhuis Menno Poldervaartstraat
 sub: Verbouwing & Exterieur
-desc: Een nieuwbouwwoning met karakter. Verticale gevelbekleding, een pergola
-  vol klimplanten en een tuin die uitnodigt tot leven. Ontworpen voor een jong
-  gezin. Er wordt lokaal materiaal gebruikt.
+desc: >-
+  Onderzoek voor de uitbreiding van een jaren 90 woning. De twee-onder-een-kap
+  woning kan worden opgewaardeerd met extra ruimte in de aanbouw en vergroening
+  van de voorgevel.
+
+  Middels de gevelrenovatie krijgt de woning een eigen karakter passend bij de bewoners zonder verrommeling van het straatbeeld.
 opdrachtgever: Menno
 programma: Woning 180m²
 ontwerp: Arche!Types
