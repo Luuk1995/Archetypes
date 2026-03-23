@@ -1,8 +1,8 @@
 ---
-sub: " SPORT SHOP"
+sub: " SPORT SHOP - AMSTELMEER"
 ontwerp: Arche!Types
 opdrachtgever: Viking Surfcenter
-title: VIKING SURFCENTER AMSTELMEER
+title: VIKING OUTDOOR CENTER
 desc: Een surf shack aan het water van het Amstelmeer. Voor deze outdoor shop is
   gebruik gemaakt van een prefab bouwmethode. Lokale houtsoorten zijn toegepast
   in de rabat geplaatste gevelplanken. Het ontwerp is een inpassing van
