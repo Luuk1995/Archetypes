@@ -9,5 +9,5 @@ label1: ""
 label2: ""
 label3: ""
 image: /images/kalverdijk-gevel_visu_lr.jpg
-order: 99
+order: 5
 ---
