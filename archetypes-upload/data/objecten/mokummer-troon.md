@@ -1,19 +1,17 @@
 ---
-title: MOKUMMER TROON
 sub: BALKEN STOEL VAN JORDANEES HOUT
 ontwerp: Arche!Types
 opdrachtgever: Private
-desc: Constructive outdoor table designed for long lasting durability and heavy
-  usages. Made from old wooden beams formerly used in the foundation of
-  Amsterdam. Harvested during renovation of city quays. Project with help from
-  Social Return woodworkers.
-waarde1: Private
-waarde2: Supplied by Grachtenhout
-waarde3: Imme van Straaten
+title: MOKUMMER TROON
+desc: "Constructieve balken stoel die verassend lekker zit. Gemaakt van oude
+  balken vanuit een Jordanees grachtenpand. "
+label1: ""
+waarde1: ""
+label2: ""
+waarde2: ""
+label3: ""
+waarde3: ""
+image: /images/object_xl-lounge_1.png
 order: 5
 programma: Supplied by Grachtenhout
-label1: Client
-label2: Materials
-label3: Video / photography
-image: /images/object_xl-lounge_1.png
 ---
