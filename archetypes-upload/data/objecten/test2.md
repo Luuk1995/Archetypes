@@ -1,19 +1,19 @@
 ---
-title: KRUIDEN TAFEL
 sub: TAFELBLAD MET GROENSTROOK
 ontwerp: Arche!Types
 opdrachtgever: Private
-desc: Constructive outdoor table designed for long lasting durability and heavy
-  usages. Made from old wooden beams formerly used in the foundation of
-  Amsterdam. Harvested during renovation of city quays. Project with help from
-  Social Return woodworkers
-waarde1: Private
-waarde2: Supplied by Grachtenhout
-waarde3: Imme van Straaten
+title: KRUIDEN TAFEL
+desc: Tafel met groenstrook tussen de twee schaaldelen bladen. Het grondvolume
+  onder de goot is berekend op de groei van wilde bloemen en diverse soorten
+  kruidenplanten om te plukken tijdens het eten. Ontwikkeld tijdens een Artist
+  in Residence verblijf bij fort Penningsveer.
+label1: ""
+waarde1: ""
+label2: ""
+waarde2: ""
+label3: ""
+waarde3: ""
+image: /images/tafel-photoshop.jpg
 order: 4
 programma: " Supplied by Grachtenhout"
-label1: Client
-label2: Materials
-label3: Video / photography
-image: /images/object_wilde-kruiden-tafel.jpg
 ---
