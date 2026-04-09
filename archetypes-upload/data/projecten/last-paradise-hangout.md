@@ -9,5 +9,5 @@ label1: ""
 label2: ""
 label3: ""
 image: /images/hangout_last-paradise_arche-types.jpg
-order: 99
+order: 5
 ---
