@@ -13,7 +13,7 @@ label2: ""
 waarde2: ""
 label3: ""
 waarde3: ""
-image: /images/arche_viking.jpg
+image: /images/viking_outdoor-center_arche-types.jpg
 order: 2
 programma: Winkel 30m²
 ---
