@@ -12,7 +12,7 @@ label2: ""
 waarde2: ""
 label3: ""
 waarde3: ""
-image: /images/object_bielzen-bank-1-.png
+image: /images/bielzenbank_arche-types.jpg
 order: 2
 programma: L 120 × D 65 × H 35 cm
 ---
