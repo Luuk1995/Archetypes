@@ -13,7 +13,7 @@ label2: ""
 waarde2: ""
 label3: ""
 waarde3: ""
-image: /images/object_pergola-tafel_1.png
+image: /images/pergola-tafel-ex_arche-types.jpg
 order: 6
 programma: Supplied by Grachtenhout
 ---
