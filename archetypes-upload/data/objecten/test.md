@@ -12,7 +12,7 @@ label2: ""
 waarde2: ""
 label3: ""
 waarde3: ""
-image: /images/object_industrie-kast_1.jpg
+image: /images/monocabinet_arche-types.jpg
 order: 3
 programma: Supplied by Grachtenhout
 ---
