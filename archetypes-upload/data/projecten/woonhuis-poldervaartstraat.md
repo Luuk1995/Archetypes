@@ -10,6 +10,6 @@ desc: >-
 opdrachtgever: Menno
 programma: Woning 180m²
 ontwerp: Arche!Types
-image: /images/Project_Menno Poldervaartstraat.jpg
+image: /images/menno-poldervaartstraat_archetypes.jpg
 order: 2
 ---
