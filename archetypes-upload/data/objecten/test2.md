@@ -13,7 +13,7 @@ label2: ""
 waarde2: ""
 label3: ""
 waarde3: ""
-image: /images/tafel-photoshop.jpg
+image: /images/goottafel_arche-types.jpg
 order: 4
 programma: " Supplied by Grachtenhout"
 ---
