@@ -5,8 +5,8 @@ opdrachtgever: Private
 title: KRUIDEN TAFEL
 desc: Tafel met groenstrook tussen de twee schaaldelen bladen. Het grondvolume
   onder de goot is berekend op de groei van wilde bloemen en diverse soorten
-  kruidenplanten om te plukken tijdens het eten. Ontwikkeld tijdens een Artist
-  in Residence verblijf bij fort Penningsveer.
+  eetbare kruidenplanten om te plukken. Ontwikkeld tijdens een Artist in
+  Residence verblijf bij fort Penningsveer.
 label1: ""
 waarde1: ""
 label2: ""
