@@ -10,6 +10,6 @@ desc: >-
 opdrachtgever: PK Waterbouw
 programma: 5 bureaus
 ontwerp: Arche!Types
-image: /images/renderai-immevanstraaten-0312-2030.jpg
+image: /images/zit-sta-bureau_arche-types.jpg
 order: 99
 ---
