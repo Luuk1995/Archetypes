@@ -14,7 +14,7 @@ label2: ""
 waarde2: ""
 label3: ""
 waarde3: ""
-image: /images/object_xl-lounge_1.png
+image: /images/mokummer-troon_arche-types.jpg
 order: 5
 programma: Supplied by Grachtenhout
 ---
