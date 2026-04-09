@@ -1,6 +1,6 @@
 ---
-title: Woonhuis Menno Poldervaartstraat
-sub: Verbouwing & Exterieur
+title: MENNO POLDERVAARTSTRAAT
+sub: UITBOUW - GEVELRENOVATIE
 desc: >-
   Onderzoek voor de uitbreiding van een jaren 90 woning. De twee-onder-een-kap
   woning kan worden opgewaardeerd met extra ruimte in de aanbouw en vergroening
