@@ -13,7 +13,7 @@ label2: ""
 waarde2: ""
 label3: ""
 waarde3: ""
-image: /images/Project_Last Paradise_1.jpg
+image: /images/surfstay_last-paradise_arche-types.jpg
 order: 1
 programma: Sleeping residence – detached bathhouse – kitchen / hangout
 ---
