@@ -18,12 +18,14 @@
     html{background:var(--bg)}
     body{font-family:var(--font);color:var(--fg);cursor:none;overflow:hidden;height:100vh}
 
-    /* Italic ! always from SometypeMono italic */
-    .exclaim{font-style:italic;font-family:'SometypeMono',monospace}
+    /* All ! marks always italic */
+    .exclaim, .nav-exclaim, .corner-exclaim,
+    #hero-exclaim, #info-logo-mark,
+    em.exclaim { font-style:italic; font-family:'SometypeMono',monospace; }
 
     /* ── CURSOR ── */
     #cursor{position:fixed;pointer-events:none;z-index:9999;width:10px;height:10px;border-radius:50%;background:var(--fg);transform:translate(-50%,-50%)}
-    #cursor-glow{position:fixed;pointer-events:none;z-index:9998;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(212,185,106,.22) 0%,rgba(212,185,106,.08) 35%,transparent 70%);transform:translate(-50%,-50%)}
+    #cursor-glow{position:fixed;pointer-events:none;z-index:9998;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(212,185,106,.18) 0%,rgba(212,185,106,.07) 40%,transparent 70%);transform:translate(-50%,-50%);transition:left .12s ease-out,top .12s ease-out}
 
     /* ── GRAIN ── */
     #grain{position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px;animation:gs .5s steps(2) infinite}
@@ -55,7 +57,15 @@
     #corner-bl{bottom:0;left:0}
     #corner-br{bottom:0;right:0}
 
-    /* ── AUDIO ── */
+    /* ── HERO LOGO — stays visible over videos ── */
+    #hero-logo{
+      position:absolute;z-index:10;
+      top:50%;left:50%;transform:translate(-50%,-50%);
+      font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;
+      letter-spacing:.18em;color:var(--fg);
+      pointer-events:none;
+      white-space:nowrap;
+    }
     #audio-toggle{position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);z-index:500;font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.3);cursor:none;transition:color .3s;text-transform:uppercase}
     #audio-toggle:hover{color:rgba(240,237,230,.7)}
     #audio-toggle::before{content:'◎ '}
@@ -170,7 +180,7 @@
     .project-right{
       display:flex;flex-direction:column;
       align-self:stretch;
-      padding:0 2rem;
+      padding:0 1rem;
       text-align:left;
     }
     .project-card:nth-child(even) .project-right{text-align:right}
@@ -203,10 +213,10 @@
     .project-meta strong:first-child{margin-top:0}
 
     /* Label: title + subtitle always at BOTTOM, right next to meta */
-    .project-label{padding:.5rem 0 0;flex-shrink:0;border-top:1px solid rgba(240,237,230,.06)}
+    .project-label{padding:.5rem 0 0;flex-shrink:0}
     .project-card:nth-child(even) .project-label{text-align:right}
     .project-title{font-size:clamp(.72rem,1vw,.9rem);font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.4}
-    .project-subtitle{font-size:.54rem;letter-spacing:.13em;color:rgba(240,237,230,.3);text-transform:uppercase;margin-top:.2rem}
+    .project-subtitle{font-size:.65rem;letter-spacing:.13em;color:rgba(240,237,230,.3);text-transform:uppercase;margin-top:.2rem}
 
     /* ── INFO OVERLAY ── */
     #info-overlay{position:fixed;inset:0;z-index:2000;background:rgba(8,8,14,.95);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding-top:10vh;opacity:0;pointer-events:none;transition:opacity .5s ease}
@@ -376,6 +386,8 @@
       <div class="hero-video-wrap" id="video-left"></div>
       <div class="hero-video-wrap" id="video-right"></div>
     </div>
+    <!-- Logo stays on hero permanently -->
+    <div id="hero-logo">ARCHE<em class="exclaim">!</em>TYPES</div>
     <div id="hero-center">
       <div id="hero-exclaim">!</div>
       <div id="hero-tagline">Venturous Interior &amp;<br>Exterior Design</div>
@@ -424,6 +436,8 @@ const DEFAULTS = {
 // ── SIMPLE MARKDOWN RENDERER ──
 function renderMd(text) {
   if (!text) return '';
+  // Strip leading >- or > - (CMS artifact)
+  text = text.replace(/^>\s*-?\s*/gm, '');
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
@@ -500,10 +514,13 @@ async function loadMdFolder(folder) {
   if (names.length === 0) {
     names = folder === 'projecten'
       ? ['viking-surf-shack','woonhuis-poldervaartstraat','last-paradise',
-         'last-paradise-surfstay','viking-surfcenter-amstelmeer','woonhuis-menno-poldervaartstraat']
+         'last-paradise-surfstay','last-paradise-hangout','viking-surfcenter-amstelmeer',
+         'viking-outdoor-center','woonhuis-menno-poldervaartstraat','ambachtsdijk',
+         'menno-poldervaartstraat']
       : ['big-picknick','bielzen-bank','zit-sta-bureau','test',
          'bielzen-bank-2','bigpicnic-amsterdam','mokummer-troon',
-         'pergola-tafel','monochromatische-industrie-kast','kruiden-tafel'];
+         'pergola-tafel','pergola-tafel-02','monochromatische-industrie-kast',
+         'mono-cabinet-01','kruiden-tafel','groene-landmark'];
   }
 
   const texts = await Promise.all(
@@ -729,12 +746,111 @@ document.getElementById('nav-info').addEventListener('click',e=>{e.preventDefaul
 document.getElementById('info-close').addEventListener('click',()=>document.getElementById('info-overlay').classList.remove('active'));
 document.getElementById('info-overlay').addEventListener('click',e=>{if(e.target.id==='info-overlay')document.getElementById('info-overlay').classList.remove('active');});
 
-// ── AUDIO ──
+// ── AUDIO — Night forest soundscape ──
 let ac=null,mg=null,ip=false;const at=document.getElementById('audio-toggle');
-function startAmbient(){ac=new(window.AudioContext||window.webkitAudioContext)();mg=ac.createGain();mg.gain.setValueAtTime(0,ac.currentTime);mg.gain.linearRampToValueAtTime(.4,ac.currentTime+3);mg.connect(ac.destination);const bs=ac.sampleRate*4;const nb=ac.createBuffer(1,bs,ac.sampleRate);const nd=nb.getChannelData(0);for(let i=0;i<bs;i++)nd[i]=Math.random()*2-1;const w=ac.createBufferSource();w.buffer=nb;w.loop=true;const wf=ac.createBiquadFilter();wf.type='bandpass';wf.frequency.value=400;wf.Q.value=.3;const wg=ac.createGain();wg.gain.value=.12;w.connect(wf);wf.connect(wg);wg.connect(mg);w.start();const rb=ac.createBuffer(1,bs,ac.sampleRate);const rd=rb.getChannelData(0);for(let i=0;i<bs;i++)rd[i]=Math.random()<.003?(Math.random()*2-1)*.6:0;const r=ac.createBufferSource();r.buffer=rb;r.loop=true;const rg=ac.createGain();rg.gain.value=.25;r.connect(rg);rg.connect(mg);r.start();sv();}
-function sv(){if(!ip)return;setTimeout(()=>{if(ip&&ac){const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=600;o.type='sawtooth';o.frequency.value=[196,220,246,261][Math.floor(Math.random()*4)];g.gain.setValueAtTime(0,ac.currentTime);g.gain.linearRampToValueAtTime(.06,ac.currentTime+3);g.gain.linearRampToValueAtTime(0,ac.currentTime+8);o.connect(f);f.connect(g);g.connect(mg);o.start();o.stop(ac.currentTime+9);sv();}},15000+Math.random()*30000);}
-function toggleAudio(){if(!ip){ip=true;at.classList.add('playing');startAmbient();}else{ip=false;at.classList.remove('playing');if(mg){mg.gain.linearRampToValueAtTime(0,ac.currentTime+1.5);setTimeout(()=>{ac.close();ac=null;mg=null;},2000);}}}
 
+function startAmbient(){
+  ac=new(window.AudioContext||window.webkitAudioContext)();
+  mg=ac.createGain();
+  mg.gain.setValueAtTime(0,ac.currentTime);
+  mg.gain.linearRampToValueAtTime(.5,ac.currentTime+4);
+  mg.connect(ac.destination);
+
+  // ── Wind: low filtered noise ──
+  const windBuf=ac.createBuffer(1,ac.sampleRate*8,ac.sampleRate);
+  const wd=windBuf.getChannelData(0);for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
+  const wind=ac.createBufferSource();wind.buffer=windBuf;wind.loop=true;
+  const wf=ac.createBiquadFilter();wf.type='lowpass';wf.frequency.value=180;wf.Q.value=0.5;
+  const wg=ac.createGain();wg.gain.value=.08;
+  wind.connect(wf);wf.connect(wg);wg.connect(mg);wind.start();
+
+  // ── Crickets: high-freq noise with tremolo ──
+  const crBuf=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate);
+  const cd=crBuf.getChannelData(0);for(let i=0;i<cd.length;i++)cd[i]=Math.random()*2-1;
+  const cricket=ac.createBufferSource();cricket.buffer=crBuf;cricket.loop=true;
+  const cf=ac.createBiquadFilter();cf.type='bandpass';cf.frequency.value=4200;cf.Q.value=8;
+  // Tremolo LFO
+  const lfo=ac.createOscillator();lfo.frequency.value=14;lfo.type='sine';
+  const lfoGain=ac.createGain();lfoGain.gain.value=0.09;
+  const cg=ac.createGain();cg.gain.value=0.12;
+  lfo.connect(lfoGain);lfoGain.connect(cg.gain);
+  cricket.connect(cf);cf.connect(cg);cg.connect(mg);
+  cricket.start();lfo.start();
+
+  // ── Occasional night sounds: owl hoot, frog, distant rustling ──
+  scheduleNightSounds();
+}
+
+function scheduleNightSounds(){
+  if(!ip||!ac) return;
+  const sounds=['owl','frog','rustle','creak'];
+  const pick=sounds[Math.floor(Math.random()*sounds.length)];
+  playNightSound(pick);
+  setTimeout(scheduleNightSounds, 8000+Math.random()*20000);
+}
+
+function playNightSound(type){
+  if(!ip||!ac) return;
+  const g=ac.createGain();g.connect(mg);
+  if(type==='owl'){
+    // Two-tone owl hoot
+    [0,0.6].forEach((t,i)=>{
+      const o=ac.createOscillator();
+      o.type='sine';
+      o.frequency.setValueAtTime(i===0?320:280,ac.currentTime+t);
+      o.frequency.exponentialRampToValueAtTime(i===0?280:240,ac.currentTime+t+0.4);
+      const og=ac.createGain();
+      og.gain.setValueAtTime(0,ac.currentTime+t);
+      og.gain.linearRampToValueAtTime(.07,ac.currentTime+t+.05);
+      og.gain.linearRampToValueAtTime(0,ac.currentTime+t+.45);
+      o.connect(og);og.connect(g);
+      o.start(ac.currentTime+t);o.stop(ac.currentTime+t+.5);
+    });
+  } else if(type==='frog'){
+    // Frog chirp: short burst of noise
+    for(let i=0;i<3;i++){
+      const t=ac.currentTime+i*.18;
+      const buf=ac.createBuffer(1,ac.sampleRate*.08,ac.sampleRate);
+      const d=buf.getChannelData(0);for(let j=0;j<d.length;j++)d[j]=Math.random()*2-1;
+      const src=ac.createBufferSource();src.buffer=buf;
+      const bf=ac.createBiquadFilter();bf.type='bandpass';bf.frequency.value=900+Math.random()*200;bf.Q.value=4;
+      const fg=ac.createGain();fg.gain.value=.05;
+      src.connect(bf);bf.connect(fg);fg.connect(g);src.start(t);
+    }
+  } else if(type==='rustle'){
+    // Leaf rustle: short filtered noise swell
+    const buf=ac.createBuffer(1,ac.sampleRate*.4,ac.sampleRate);
+    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    const src=ac.createBufferSource();src.buffer=buf;
+    const bf=ac.createBiquadFilter();bf.type='highpass';bf.frequency.value=2000;
+    const rg=ac.createGain();
+    rg.gain.setValueAtTime(0,ac.currentTime);
+    rg.gain.linearRampToValueAtTime(.06,ac.currentTime+.1);
+    rg.gain.linearRampToValueAtTime(0,ac.currentTime+.4);
+    src.connect(bf);bf.connect(rg);rg.connect(g);src.start();
+  } else if(type==='creak'){
+    // Branch creak: slow sine sweep
+    const o=ac.createOscillator();o.type='sawtooth';
+    o.frequency.setValueAtTime(60,ac.currentTime);
+    o.frequency.linearRampToValueAtTime(90,ac.currentTime+.3);
+    o.frequency.linearRampToValueAtTime(55,ac.currentTime+.6);
+    const cg=ac.createGain();
+    cg.gain.setValueAtTime(0,ac.currentTime);
+    cg.gain.linearRampToValueAtTime(.04,ac.currentTime+.1);
+    cg.gain.linearRampToValueAtTime(0,ac.currentTime+.6);
+    const bf=ac.createBiquadFilter();bf.type='lowpass';bf.frequency.value=300;
+    o.connect(bf);bf.connect(cg);cg.connect(g);
+    o.start();o.stop(ac.currentTime+.7);
+  }
+}
+
+function toggleAudio(){
+  if(!ip){ip=true;at.classList.add('playing');startAmbient();}
+  else{ip=false;at.classList.remove('playing');
+    if(mg){mg.gain.linearRampToValueAtTime(0,ac.currentTime+2);
+      setTimeout(()=>{ac.close();ac=null;mg=null;},2500);}
+  }
+}
 // ── STARFIELD ──
 (function(){
   const canvas=document.getElementById('starfield');canvas.style.cssText='position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.5s ease';
