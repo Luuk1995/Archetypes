@@ -221,7 +221,7 @@
     #info-box{max-width:480px;width:90%;text-align:center;position:relative}
     #info-close{position:fixed;top:1.4rem;right:1.8rem;font-size:1.4rem;cursor:none;color:rgba(240,237,230,.4);transition:color .2s;line-height:1}
     #info-close:hover{color:var(--fg)}
-    #info-logo-mark{font-size:3.5rem;font-weight:700;font-style:italic;font-family:'SometypeMono',monospace;line-height:1;margin-bottom:2rem;color:var(--fg)}
+    #info-logo-mark{font-size:3.5rem;font-weight:400;font-style:italic;font-family:'SometypeMono',monospace;line-height:1;margin-bottom:2rem;color:var(--fg)}
     #info-box p{font-size:.72rem;line-height:2.1;letter-spacing:.05em;color:rgba(240,237,230,.65);margin-bottom:.8rem;white-space:pre-wrap}
     .info-meta{margin-top:2rem;font-size:.58rem;letter-spacing:.2em;color:rgba(240,237,230,.28);text-transform:uppercase;line-height:2.4}
 
@@ -431,12 +431,12 @@ const DEFAULTS = {
 // ── SIMPLE MARKDOWN RENDERER ──
 function renderMd(text) {
   if (!text) return '';
-  // Strip leading >- or > - (CMS artifact)
   text = text.replace(/^>\s*-?\s*/gm, '');
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/!/g,'<em class="exclaim">!</em>')
     .replace(/\n/g,'<br>');
 }
 
@@ -754,8 +754,9 @@ function renderProjects(arche,types){
 
 // ── RENDER INFO ──
 function renderInfo(info){
-  document.getElementById('info-p1').textContent=info.p1;
-  document.getElementById('info-p2').textContent=info.p2;
+  const italicEx = t => t.replace(/!/g,'<em class="exclaim">!</em>');
+  document.getElementById('info-p1').innerHTML=italicEx(info.p1||'');
+  document.getElementById('info-p2').innerHTML=italicEx(info.p2||'');
   document.getElementById('info-meta').innerHTML=info.meta.replace(/\n/g,'<br>');
 }
 
