@@ -558,8 +558,12 @@ document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.styl
 // ── INTRO ──
 window.addEventListener('load',()=>{
   setTimeout(()=>{
-    const intro=document.getElementById('intro');intro.classList.add('fade-out');
-    setTimeout(()=>{intro.style.display='none';document.getElementById('hero-videos').classList.add('visible');},1300);
+    const introBg=document.getElementById('intro-bg');
+    introBg.classList.add('fade-out');
+    setTimeout(()=>{
+      document.getElementById('hero-videos').classList.add('visible');
+      document.getElementById('intro').classList.add('videos-visible');
+    },1400);
   },3200);
 });
 
@@ -673,8 +677,18 @@ function makeCard(p) {
   const descEl=document.createElement('div');descEl.className='project-desc';
   const metaEl=document.createElement('div');metaEl.className='project-meta';
   hoverEl.appendChild(descEl);hoverEl.appendChild(metaEl);
-  const label=document.createElement('div');label.className='project-label';
-  label.innerHTML=`<div class="project-title">${p.title}</div><div class="project-subtitle">${p.sub}</div>`;
+  const label=document.createElement('div');
+  label.className='project-label';
+  const titleEl=document.createElement('div');
+  titleEl.className='project-title';
+  titleEl.textContent=p.title;
+  label.appendChild(titleEl);
+  if(p.sub && p.sub.trim()){
+    const subEl=document.createElement('div');
+    subEl.className='project-subtitle';
+    subEl.textContent=p.sub;
+    label.appendChild(subEl);
+  }
   right.appendChild(hoverEl);right.appendChild(label);
 
   inner.appendChild(iw);inner.appendChild(right);
@@ -759,94 +773,117 @@ function startAmbient(){
   ac=new(window.AudioContext||window.webkitAudioContext)();
   mg=ac.createGain();
   mg.gain.setValueAtTime(0,ac.currentTime);
-  mg.gain.linearRampToValueAtTime(.5,ac.currentTime+4);
+  mg.gain.linearRampToValueAtTime(.45,ac.currentTime+5);
   mg.connect(ac.destination);
 
-  // ── Wind: low filtered noise ──
-  const windBuf=ac.createBuffer(1,ac.sampleRate*8,ac.sampleRate);
-  const wd=windBuf.getChannelData(0);for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
-  const wind=ac.createBufferSource();wind.buffer=windBuf;wind.loop=true;
-  const wf=ac.createBiquadFilter();wf.type='lowpass';wf.frequency.value=180;wf.Q.value=0.5;
-  const wg=ac.createGain();wg.gain.value=.08;
-  wind.connect(wf);wf.connect(wg);wg.connect(mg);wind.start();
+  // ── Wind: very low, slow filtered noise ──
+  const wBuf=ac.createBuffer(1,ac.sampleRate*10,ac.sampleRate);
+  const wd=wBuf.getChannelData(0);for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
+  const wind=ac.createBufferSource();wind.buffer=wBuf;wind.loop=true;
+  const wf1=ac.createBiquadFilter();wf1.type='lowpass';wf1.frequency.value=120;
+  const wf2=ac.createBiquadFilter();wf2.type='lowpass';wf2.frequency.value=80;
+  const wg=ac.createGain();wg.gain.value=.06;
+  wind.connect(wf1);wf1.connect(wf2);wf2.connect(wg);wg.connect(mg);wind.start();
 
-  // ── Crickets: high-freq noise with tremolo ──
-  const crBuf=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate);
-  const cd=crBuf.getChannelData(0);for(let i=0;i<cd.length;i++)cd[i]=Math.random()*2-1;
-  const cricket=ac.createBufferSource();cricket.buffer=crBuf;cricket.loop=true;
-  const cf=ac.createBiquadFilter();cf.type='bandpass';cf.frequency.value=4200;cf.Q.value=8;
-  // Tremolo LFO
-  const lfo=ac.createOscillator();lfo.frequency.value=14;lfo.type='sine';
-  const lfoGain=ac.createGain();lfoGain.gain.value=0.09;
-  const cg=ac.createGain();cg.gain.value=0.12;
-  lfo.connect(lfoGain);lfoGain.connect(cg.gain);
-  cricket.connect(cf);cf.connect(cg);cg.connect(mg);
-  cricket.start();lfo.start();
+  // ── Distant crickets: subtle, high, barely there ──
+  const cBuf=ac.createBuffer(1,ac.sampleRate*4,ac.sampleRate);
+  const cd=cBuf.getChannelData(0);for(let i=0;i<cd.length;i++)cd[i]=Math.random()*2-1;
+  const cricket=ac.createBufferSource();cricket.buffer=cBuf;cricket.loop=true;
+  const cf=ac.createBiquadFilter();cf.type='bandpass';cf.frequency.value=5500;cf.Q.value=12;
+  const cg=ac.createGain();cg.gain.value=.04;
+  cricket.connect(cf);cf.connect(cg);cg.connect(mg);cricket.start();
 
-  // ── Occasional night sounds: owl hoot, frog, distant rustling ──
-  scheduleNightSounds();
+  // ── Schedule varied night sounds ──
+  scheduleNight();
 }
 
-function scheduleNightSounds(){
-  if(!ip||!ac) return;
-  const sounds=['owl','frog','rustle','creak'];
-  const pick=sounds[Math.floor(Math.random()*sounds.length)];
-  playNightSound(pick);
-  setTimeout(scheduleNightSounds, 8000+Math.random()*20000);
+function scheduleNight(){
+  if(!ip||!ac)return;
+  // Long random pauses between sounds — feels natural
+  const delay=12000+Math.random()*25000;
+  setTimeout(()=>{
+    if(!ip||!ac)return;
+    const pick=Math.random();
+    if(pick<.3) playOwl();
+    else if(pick<.55) playFrogs();
+    else if(pick<.75) playRustle();
+    else if(pick<.88) playCreak();
+    else playDistantBird();
+    scheduleNight();
+  },delay);
 }
 
-function playNightSound(type){
-  if(!ip||!ac) return;
-  const g=ac.createGain();g.connect(mg);
-  if(type==='owl'){
-    // Two-tone owl hoot
-    [0,0.6].forEach((t,i)=>{
-      const o=ac.createOscillator();
-      o.type='sine';
-      o.frequency.setValueAtTime(i===0?320:280,ac.currentTime+t);
-      o.frequency.exponentialRampToValueAtTime(i===0?280:240,ac.currentTime+t+0.4);
-      const og=ac.createGain();
-      og.gain.setValueAtTime(0,ac.currentTime+t);
-      og.gain.linearRampToValueAtTime(.07,ac.currentTime+t+.05);
-      og.gain.linearRampToValueAtTime(0,ac.currentTime+t+.45);
-      o.connect(og);og.connect(g);
-      o.start(ac.currentTime+t);o.stop(ac.currentTime+t+.5);
-    });
-  } else if(type==='frog'){
-    // Frog chirp: short burst of noise
-    for(let i=0;i<3;i++){
-      const t=ac.currentTime+i*.18;
-      const buf=ac.createBuffer(1,ac.sampleRate*.08,ac.sampleRate);
-      const d=buf.getChannelData(0);for(let j=0;j<d.length;j++)d[j]=Math.random()*2-1;
+function node(gain){const g=ac.createGain();g.gain.value=gain;g.connect(mg);return g;}
+
+function playOwl(){
+  // Classic two-note owl: hoo-HOO
+  [[0,.3,380,300],[.7,.35,420,340]].forEach(([t,dur,f1,f2])=>{
+    const o=ac.createOscillator();o.type='sine';
+    o.frequency.setValueAtTime(f1,ac.currentTime+t);
+    o.frequency.exponentialRampToValueAtTime(f2,ac.currentTime+t+dur);
+    const g=node(0);
+    g.gain.setValueAtTime(0,ac.currentTime+t);
+    g.gain.linearRampToValueAtTime(.06,ac.currentTime+t+.05);
+    g.gain.linearRampToValueAtTime(0,ac.currentTime+t+dur+.05);
+    o.connect(g);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+dur+.1);
+  });
+}
+
+function playFrogs(){
+  // 2-4 frogs, each slightly different pitch, staggered
+  const count=2+Math.floor(Math.random()*3);
+  for(let f=0;f<count;f++){
+    const t=f*.4+Math.random()*.2;
+    const freq=600+Math.random()*300;
+    for(let p=0;p<2;p++){
+      const pt=ac.currentTime+t+p*.15;
+      const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.07),ac.sampleRate);
+      const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
       const src=ac.createBufferSource();src.buffer=buf;
-      const bf=ac.createBiquadFilter();bf.type='bandpass';bf.frequency.value=900+Math.random()*200;bf.Q.value=4;
-      const fg=ac.createGain();fg.gain.value=.05;
-      src.connect(bf);bf.connect(fg);fg.connect(g);src.start(t);
+      const bf=ac.createBiquadFilter();bf.type='bandpass';bf.frequency.value=freq;bf.Q.value=5;
+      const g=node(.04);src.connect(bf);bf.connect(g);src.start(pt);
     }
-  } else if(type==='rustle'){
-    // Leaf rustle: short filtered noise swell
-    const buf=ac.createBuffer(1,ac.sampleRate*.4,ac.sampleRate);
-    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
-    const src=ac.createBufferSource();src.buffer=buf;
-    const bf=ac.createBiquadFilter();bf.type='highpass';bf.frequency.value=2000;
-    const rg=ac.createGain();
-    rg.gain.setValueAtTime(0,ac.currentTime);
-    rg.gain.linearRampToValueAtTime(.06,ac.currentTime+.1);
-    rg.gain.linearRampToValueAtTime(0,ac.currentTime+.4);
-    src.connect(bf);bf.connect(rg);rg.connect(g);src.start();
-  } else if(type==='creak'){
-    // Branch creak: slow sine sweep
-    const o=ac.createOscillator();o.type='sawtooth';
-    o.frequency.setValueAtTime(60,ac.currentTime);
-    o.frequency.linearRampToValueAtTime(90,ac.currentTime+.3);
-    o.frequency.linearRampToValueAtTime(55,ac.currentTime+.6);
-    const cg=ac.createGain();
-    cg.gain.setValueAtTime(0,ac.currentTime);
-    cg.gain.linearRampToValueAtTime(.04,ac.currentTime+.1);
-    cg.gain.linearRampToValueAtTime(0,ac.currentTime+.6);
-    const bf=ac.createBiquadFilter();bf.type='lowpass';bf.frequency.value=300;
-    o.connect(bf);bf.connect(cg);cg.connect(g);
-    o.start();o.stop(ac.currentTime+.7);
+  }
+}
+
+function playRustle(){
+  const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.6),ac.sampleRate);
+  const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  const src=ac.createBufferSource();src.buffer=buf;
+  const bf=ac.createBiquadFilter();bf.type='highpass';bf.frequency.value=3000;
+  const g=ac.createGain();g.gain.setValueAtTime(0,ac.currentTime);
+  g.gain.linearRampToValueAtTime(.05,ac.currentTime+.12);
+  g.gain.linearRampToValueAtTime(.02,ac.currentTime+.35);
+  g.gain.linearRampToValueAtTime(0,ac.currentTime+.6);
+  g.connect(mg);src.connect(bf);bf.connect(g);src.start();
+}
+
+function playCreak(){
+  const o=ac.createOscillator();o.type='sawtooth';
+  o.frequency.setValueAtTime(55,ac.currentTime);
+  o.frequency.linearRampToValueAtTime(85,ac.currentTime+.5);
+  o.frequency.linearRampToValueAtTime(45,ac.currentTime+1);
+  const bf=ac.createBiquadFilter();bf.type='lowpass';bf.frequency.value=250;
+  const g=ac.createGain();
+  g.gain.setValueAtTime(0,ac.currentTime);
+  g.gain.linearRampToValueAtTime(.035,ac.currentTime+.1);
+  g.gain.linearRampToValueAtTime(0,ac.currentTime+1);
+  g.connect(mg);o.connect(bf);bf.connect(g);o.start();o.stop(ac.currentTime+1.1);
+}
+
+function playDistantBird(){
+  // Short high chirps
+  const chirps=2+Math.floor(Math.random()*3);
+  for(let i=0;i<chirps;i++){
+    const t=ac.currentTime+i*.25+Math.random()*.1;
+    const o=ac.createOscillator();o.type='sine';
+    const freq=2200+Math.random()*800;
+    o.frequency.setValueAtTime(freq,t);
+    o.frequency.linearRampToValueAtTime(freq*1.15,t+.08);
+    const g=ac.createGain();
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.04,t+.02);
+    g.gain.linearRampToValueAtTime(0,t+.1);
+    g.connect(mg);o.connect(g);o.start(t);o.stop(t+.12);
   }
 }
 
