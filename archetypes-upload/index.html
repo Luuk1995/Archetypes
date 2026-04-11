@@ -32,13 +32,10 @@
     @keyframes gs{0%{background-position:0 0}25%{background-position:20px -15px}50%{background-position:-10px 20px}75%{background-position:15px 10px}}
 
     /* ── INTRO ── */
-    /* Black overlay only — fades and disappears */
     #intro{position:fixed;inset:0;z-index:5000;background:#000;
       display:flex;align-items:center;justify-content:center;flex-direction:column;
       transition:opacity 1.4s ease}
     #intro.fade-out{opacity:0;pointer-events:none}
-
-    /* Typing animation for the logo text */
     #intro-logo{
       font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;letter-spacing:.18em;color:var(--fg);
       overflow:hidden;white-space:nowrap;width:0;
@@ -54,11 +51,12 @@
     }
     @keyframes fi{to{opacity:.5}}
 
-    /* Hero logo — always on hero, same style as intro, z-index above videos */
+    /* Hero logo — permanent over videos, same size/position as intro */
     #hero-logo{
       position:absolute;z-index:11;
       display:flex;flex-direction:column;align-items:center;
       pointer-events:none;
+      opacity:0; /* shown by JS after intro fades */
     }
     #hero-logo-text{
       font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;
@@ -66,8 +64,7 @@
     }
     #hero-logo-sub{
       font-size:clamp(.65rem,1.2vw,.85rem);letter-spacing:.25em;
-      color:rgba(240,237,230,.5);margin-top:1rem;
-      white-space:nowrap;
+      color:rgba(240,237,230,.5);margin-top:1rem;white-space:nowrap;
     }
 
     /* ── NAV ── */
@@ -118,27 +115,6 @@
     .hero-video-wrap video,.hero-video-wrap img{width:100%;height:100%;object-fit:cover}
     .hero-video-wrap img{filter:grayscale(1);transition:filter .5s ease}
     .video-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#181818;font-size:.7rem;letter-spacing:.2em;color:rgba(240,237,230,.15);flex-direction:column;gap:.5rem;text-align:center;padding:1rem}
-
-    /* Hero center: ! left half, tagline right half */
-    #hero-center{
-      position:relative;z-index:10;
-      width:100%;
-      display:grid;grid-template-columns:1fr 1fr;
-      pointer-events:none;
-      padding:0 4rem;
-      gap:3rem;
-    }
-    #hero-exclaim{
-      display:flex;align-items:center;justify-content:flex-end;
-      font-size:clamp(4rem,9vw,8rem);font-weight:400;
-      font-style:italic;font-family:'SometypeMono',monospace;
-      line-height:1;color:var(--fg);
-    }
-    #hero-tagline{
-      display:flex;align-items:center;
-      font-size:clamp(.7rem,1.4vw,1rem);line-height:1.8;
-      letter-spacing:.1em;color:var(--fg);opacity:.85;
-    }
 
     /* ── PROJECTS ── */
     /* Projects snaps into view after hero */
@@ -407,14 +383,9 @@
       <div class="hero-video-wrap" id="video-left"></div>
       <div class="hero-video-wrap" id="video-right"></div>
     </div>
-    <!-- Logo permanently over videos, same position as intro -->
     <div id="hero-logo">
       <div id="hero-logo-text">ARCHE<em class="exclaim">!</em>TYPES</div>
       <div id="hero-logo-sub">Venturous Interior &amp; Exterior Design</div>
-    </div>
-    <div id="hero-center">
-      <div id="hero-exclaim">!</div>
-      <div id="hero-tagline">Venturous Interior &amp;<br>Exterior Design</div>
     </div>
   </div>
 
@@ -575,17 +546,16 @@ document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.styl
 
 // ── INTRO ──
 window.addEventListener('load',()=>{
-  // Hero logo starts hidden, shows when intro fades
-  const heroLogo = document.getElementById('hero-logo');
-  heroLogo.style.opacity = '0';
   setTimeout(()=>{
-    const intro=document.getElementById('intro');
-    intro.classList.add('fade-out');
-    // Show hero logo and videos as intro fades
+    // Fade out the intro (black screen + typed logo)
+    document.getElementById('intro').classList.add('fade-out');
+    // Show videos and fade in the permanent hero logo
     document.getElementById('hero-videos').classList.add('visible');
-    heroLogo.style.transition='opacity 1s ease';
-    heroLogo.style.opacity='1';
-    setTimeout(()=>{ intro.style.display='none'; },1500);
+    const hl=document.getElementById('hero-logo');
+    hl.style.transition='opacity 1.2s ease';
+    hl.style.opacity='1';
+    // Remove intro from DOM after transition
+    setTimeout(()=>{document.getElementById('intro').style.display='none';},1600);
   },3200);
 });
 
@@ -723,14 +693,10 @@ function makeCard(p) {
     if (!isMobile()) return;
     // Fill text on first tap
     if (!card.classList.contains('tapped')) {
-      const l1=p.label1||'Opdrachtgever',l2=p.label2||'Programma',l3=p.label3||'Ontwerp';
-      const v1=p.waarde1||(p.label1?'':p.opdrachtgever)||'';
-      const v2=p.waarde2||(p.label2?'':p.programma)||'';
-      const v3=p.waarde3||(p.label3?'':p.ontwerp)||'';
       let mh='';
-      if(v1&&v1.trim())mh+=`<strong>${l1}:</strong>${v1}`;
-      if(v2&&v2.trim())mh+=`<strong>${l2}:</strong>${v2}`;
-      if(v3&&v3.trim())mh+=`<strong>${l3}:</strong>${v3}`;
+      if(p.waarde1&&p.waarde1.trim()) mh+=`<strong>${p.label1||'Opdrachtgever'}:</strong>${p.waarde1}`;
+      if(p.waarde2&&p.waarde2.trim()) mh+=`<strong>${p.label2||'Programma'}:</strong>${p.waarde2}`;
+      if(p.waarde3&&p.waarde3.trim()) mh+=`<strong>${p.label3||'Ontwerp'}:</strong>${p.waarde3}`;
       metaEl.innerHTML=mh;
       descEl.innerHTML=renderMd(p.desc||'');
     }
@@ -750,14 +716,17 @@ function makeCard(p) {
   iw.addEventListener('mouseenter',()=>{
     if(isMobile()) return;
     card.classList.add('img-hovered');
-    const l1=p.label1||'Opdrachtgever',l2=p.label2||'Programma',l3=p.label3||'Ontwerp';
-    const v1=p.waarde1||(p.label1?'':p.opdrachtgever)||'';
-    const v2=p.waarde2||(p.label2?'':p.programma)||'';
-    const v3=p.waarde3||(p.label3?'':p.ontwerp)||'';
+    // Only show meta if waarde fields are explicitly filled
     let metaHtml='';
-    if(v1&&v1.trim())metaHtml+=`<strong>${l1}:</strong>${v1}`;
-    if(v2&&v2.trim())metaHtml+=`<strong>${l2}:</strong>${v2}`;
-    if(v3&&v3.trim())metaHtml+=`<strong>${l3}:</strong>${v3}`;
+    if(p.waarde1&&p.waarde1.trim()){
+      metaHtml+=`<strong>${p.label1||'Opdrachtgever'}:</strong>${p.waarde1}`;
+    }
+    if(p.waarde2&&p.waarde2.trim()){
+      metaHtml+=`<strong>${p.label2||'Programma'}:</strong>${p.waarde2}`;
+    }
+    if(p.waarde3&&p.waarde3.trim()){
+      metaHtml+=`<strong>${p.label3||'Ontwerp'}:</strong>${p.waarde3}`;
+    }
     metaEl.innerHTML=metaHtml;
     const fullText=p.desc||'';
     descEl.innerHTML='';let i=0;clearInterval(ti);
