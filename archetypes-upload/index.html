@@ -32,13 +32,29 @@
     @keyframes gs{0%{background-position:0 0}25%{background-position:20px -15px}50%{background-position:-10px 20px}75%{background-position:15px 10px}}
 
     /* ── INTRO ── */
-    #intro{position:fixed;inset:0;z-index:5000;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 1.2s ease}
-    #intro.fade-out{opacity:0;pointer-events:none}
-    #intro-logo{font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;letter-spacing:.18em;color:var(--fg);overflow:hidden;white-space:nowrap;width:0;border-right:2px solid var(--fg);animation:tl 1.4s steps(12,end) .4s forwards,bc .7s step-end .4s 5}
+    #intro{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;flex-direction:column}
+    /* Black overlay fades, but logo stays */
+    #intro-bg{position:absolute;inset:0;background:#000;transition:opacity 1.4s ease;z-index:0}
+    #intro-bg.fade-out{opacity:0;pointer-events:none}
+    /* Logo and sub float above black — then above videos */
+    #intro-logo{
+      position:relative;z-index:1;
+      font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;letter-spacing:.18em;color:var(--fg);
+      overflow:hidden;white-space:nowrap;width:0;
+      border-right:2px solid var(--fg);
+      animation:tl 1.4s steps(12,end) .4s forwards,bc .7s step-end .4s 5;
+    }
     @keyframes tl{from{width:0}to{width:14.5ch;border-right-color:transparent}}
     @keyframes bc{50%{border-right-color:transparent}}
-    #intro-sub{font-size:clamp(.65rem,1.2vw,.85rem);letter-spacing:.25em;color:var(--fg);margin-top:1rem;opacity:0;animation:fi .8s ease 2.2s forwards}
+    #intro-sub{
+      position:relative;z-index:1;
+      font-size:clamp(.65rem,1.2vw,.85rem);letter-spacing:.25em;color:var(--fg);
+      margin-top:1rem;opacity:0;
+      animation:fi .8s ease 2.2s forwards;
+    }
     @keyframes fi{to{opacity:.5}}
+    /* After fade: intro stays fixed over hero but pointer-events off */
+    #intro.videos-visible{pointer-events:none}
 
     /* ── NAV ── */
     #nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.4rem 1.8rem;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
@@ -57,15 +73,6 @@
     #corner-bl{bottom:0;left:0}
     #corner-br{bottom:0;right:0}
 
-    /* ── HERO LOGO — stays visible over videos ── */
-    #hero-logo{
-      position:absolute;z-index:10;
-      top:50%;left:50%;transform:translate(-50%,-50%);
-      font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;
-      letter-spacing:.18em;color:var(--fg);
-      pointer-events:none;
-      white-space:nowrap;
-    }
     #audio-toggle{position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);z-index:500;font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.3);cursor:none;transition:color .3s;text-transform:uppercase}
     #audio-toggle:hover{color:rgba(240,237,230,.7)}
     #audio-toggle::before{content:'◎ '}
@@ -357,6 +364,7 @@
 <div id="cursor-glow"></div>
 
 <div id="intro">
+  <div id="intro-bg"></div>
   <div id="intro-logo">ARCHE<em class="exclaim">!</em>TYPES</div>
   <div id="intro-sub">Venturous Interior &amp; Exterior Design</div>
 </div>
@@ -386,8 +394,6 @@
       <div class="hero-video-wrap" id="video-left"></div>
       <div class="hero-video-wrap" id="video-right"></div>
     </div>
-    <!-- Logo stays on hero permanently -->
-    <div id="hero-logo">ARCHE<em class="exclaim">!</em>TYPES</div>
     <div id="hero-center">
       <div id="hero-exclaim">!</div>
       <div id="hero-tagline">Venturous Interior &amp;<br>Exterior Design</div>
