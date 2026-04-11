@@ -32,13 +32,14 @@
     @keyframes gs{0%{background-position:0 0}25%{background-position:20px -15px}50%{background-position:-10px 20px}75%{background-position:15px 10px}}
 
     /* ── INTRO ── */
-    #intro{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;flex-direction:column}
-    /* Black overlay fades, but logo stays */
-    #intro-bg{position:absolute;inset:0;background:#000;transition:opacity 1.4s ease;z-index:0}
-    #intro-bg.fade-out{opacity:0;pointer-events:none}
-    /* Logo and sub float above black — then above videos */
+    /* Black overlay only — fades and disappears */
+    #intro{position:fixed;inset:0;z-index:5000;background:#000;
+      display:flex;align-items:center;justify-content:center;flex-direction:column;
+      transition:opacity 1.4s ease}
+    #intro.fade-out{opacity:0;pointer-events:none}
+
+    /* Typing animation for the logo text */
     #intro-logo{
-      position:relative;z-index:1;
       font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;letter-spacing:.18em;color:var(--fg);
       overflow:hidden;white-space:nowrap;width:0;
       border-right:2px solid var(--fg);
@@ -47,14 +48,27 @@
     @keyframes tl{from{width:0}to{width:14.5ch;border-right-color:transparent}}
     @keyframes bc{50%{border-right-color:transparent}}
     #intro-sub{
-      position:relative;z-index:1;
       font-size:clamp(.65rem,1.2vw,.85rem);letter-spacing:.25em;color:var(--fg);
       margin-top:1rem;opacity:0;
       animation:fi .8s ease 2.2s forwards;
     }
     @keyframes fi{to{opacity:.5}}
-    /* After fade: intro stays fixed over hero but pointer-events off */
-    #intro.videos-visible{pointer-events:none}
+
+    /* Hero logo — always on hero, same style as intro, z-index above videos */
+    #hero-logo{
+      position:absolute;z-index:11;
+      display:flex;flex-direction:column;align-items:center;
+      pointer-events:none;
+    }
+    #hero-logo-text{
+      font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;
+      letter-spacing:.18em;color:var(--fg);white-space:nowrap;
+    }
+    #hero-logo-sub{
+      font-size:clamp(.65rem,1.2vw,.85rem);letter-spacing:.25em;
+      color:rgba(240,237,230,.5);margin-top:1rem;
+      white-space:nowrap;
+    }
 
     /* ── NAV ── */
     #nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.4rem 1.8rem;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
@@ -364,7 +378,6 @@
 <div id="cursor-glow"></div>
 
 <div id="intro">
-  <div id="intro-bg"></div>
   <div id="intro-logo">ARCHE<em class="exclaim">!</em>TYPES</div>
   <div id="intro-sub">Venturous Interior &amp; Exterior Design</div>
 </div>
@@ -393,6 +406,11 @@
     <div id="hero-videos">
       <div class="hero-video-wrap" id="video-left"></div>
       <div class="hero-video-wrap" id="video-right"></div>
+    </div>
+    <!-- Logo permanently over videos, same position as intro -->
+    <div id="hero-logo">
+      <div id="hero-logo-text">ARCHE<em class="exclaim">!</em>TYPES</div>
+      <div id="hero-logo-sub">Venturous Interior &amp; Exterior Design</div>
     </div>
     <div id="hero-center">
       <div id="hero-exclaim">!</div>
@@ -557,13 +575,17 @@ document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.styl
 
 // ── INTRO ──
 window.addEventListener('load',()=>{
+  // Hero logo starts hidden, shows when intro fades
+  const heroLogo = document.getElementById('hero-logo');
+  heroLogo.style.opacity = '0';
   setTimeout(()=>{
-    const introBg=document.getElementById('intro-bg');
-    introBg.classList.add('fade-out');
-    setTimeout(()=>{
-      document.getElementById('hero-videos').classList.add('visible');
-      document.getElementById('intro').classList.add('videos-visible');
-    },1400);
+    const intro=document.getElementById('intro');
+    intro.classList.add('fade-out');
+    // Show hero logo and videos as intro fades
+    document.getElementById('hero-videos').classList.add('visible');
+    heroLogo.style.transition='opacity 1s ease';
+    heroLogo.style.opacity='1';
+    setTimeout(()=>{ intro.style.display='none'; },1500);
   },3200);
 });
 
@@ -702,8 +724,13 @@ function makeCard(p) {
     // Fill text on first tap
     if (!card.classList.contains('tapped')) {
       const l1=p.label1||'Opdrachtgever',l2=p.label2||'Programma',l3=p.label3||'Ontwerp';
-      const v1=p.waarde1||p.opdrachtgever||'',v2=p.waarde2||p.programma||'',v3=p.waarde3||p.ontwerp||'';
-      let mh='';if(v1)mh+=`<strong>${l1}:</strong>${v1}`;if(v2)mh+=`<strong>${l2}:</strong>${v2}`;if(v3)mh+=`<strong>${l3}:</strong>${v3}`;
+      const v1=p.waarde1||(p.label1?'':p.opdrachtgever)||'';
+      const v2=p.waarde2||(p.label2?'':p.programma)||'';
+      const v3=p.waarde3||(p.label3?'':p.ontwerp)||'';
+      let mh='';
+      if(v1&&v1.trim())mh+=`<strong>${l1}:</strong>${v1}`;
+      if(v2&&v2.trim())mh+=`<strong>${l2}:</strong>${v2}`;
+      if(v3&&v3.trim())mh+=`<strong>${l3}:</strong>${v3}`;
       metaEl.innerHTML=mh;
       descEl.innerHTML=renderMd(p.desc||'');
     }
@@ -724,11 +751,13 @@ function makeCard(p) {
     if(isMobile()) return;
     card.classList.add('img-hovered');
     const l1=p.label1||'Opdrachtgever',l2=p.label2||'Programma',l3=p.label3||'Ontwerp';
-    const v1=p.waarde1||p.opdrachtgever||'',v2=p.waarde2||p.programma||'',v3=p.waarde3||p.ontwerp||'';
+    const v1=p.waarde1||(p.label1?'':p.opdrachtgever)||'';
+    const v2=p.waarde2||(p.label2?'':p.programma)||'';
+    const v3=p.waarde3||(p.label3?'':p.ontwerp)||'';
     let metaHtml='';
-    if(v1)metaHtml+=`<strong>${l1}:</strong>${v1}`;
-    if(v2)metaHtml+=`<strong>${l2}:</strong>${v2}`;
-    if(v3)metaHtml+=`<strong>${l3}:</strong>${v3}`;
+    if(v1&&v1.trim())metaHtml+=`<strong>${l1}:</strong>${v1}`;
+    if(v2&&v2.trim())metaHtml+=`<strong>${l2}:</strong>${v2}`;
+    if(v3&&v3.trim())metaHtml+=`<strong>${l3}:</strong>${v3}`;
     metaEl.innerHTML=metaHtml;
     const fullText=p.desc||'';
     descEl.innerHTML='';let i=0;clearInterval(ti);
@@ -799,14 +828,15 @@ function startAmbient(){
 
 function scheduleNight(){
   if(!ip||!ac)return;
-  // Long random pauses between sounds — feels natural
   const delay=12000+Math.random()*25000;
   setTimeout(()=>{
     if(!ip||!ac)return;
     const pick=Math.random();
-    if(pick<.3) playOwl();
-    else if(pick<.55) playFrogs();
-    else if(pick<.75) playRustle();
+    if(pick<.22) playOwl();
+    else if(pick<.38) playOwl2();
+    else if(pick<.52) playCrow();
+    else if(pick<.65) playFrogs();
+    else if(pick<.78) playRustle();
     else if(pick<.88) playCreak();
     else playDistantBird();
     scheduleNight();
@@ -816,17 +846,60 @@ function scheduleNight(){
 function node(gain){const g=ac.createGain();g.gain.value=gain;g.connect(mg);return g;}
 
 function playOwl(){
-  // Classic two-note owl: hoo-HOO
-  [[0,.3,380,300],[.7,.35,420,340]].forEach(([t,dur,f1,f2])=>{
+  // Classic two-note hoo-HOO
+  [[0,.35,320,285],[.75,.4,360,310]].forEach(([t,dur,f1,f2])=>{
     const o=ac.createOscillator();o.type='sine';
     o.frequency.setValueAtTime(f1,ac.currentTime+t);
     o.frequency.exponentialRampToValueAtTime(f2,ac.currentTime+t+dur);
-    const g=node(0);
+    const g=ac.createGain();g.connect(mg);
     g.gain.setValueAtTime(0,ac.currentTime+t);
-    g.gain.linearRampToValueAtTime(.06,ac.currentTime+t+.05);
+    g.gain.linearRampToValueAtTime(.07,ac.currentTime+t+.06);
+    g.gain.linearRampToValueAtTime(0,ac.currentTime+t+dur+.06);
+    o.connect(g);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+dur+.1);
+  });
+}
+
+function playOwl2(){
+  // Triple hoot: hoo-hoo-hooooo
+  [[0,.2,340,300],[.3,.2,340,300],[.6,.5,360,290]].forEach(([t,dur,f1,f2])=>{
+    const o=ac.createOscillator();o.type='sine';
+    o.frequency.setValueAtTime(f1,ac.currentTime+t);
+    o.frequency.exponentialRampToValueAtTime(f2,ac.currentTime+t+dur);
+    const g=ac.createGain();g.connect(mg);
+    g.gain.setValueAtTime(0,ac.currentTime+t);
+    g.gain.linearRampToValueAtTime(.06,ac.currentTime+t+.04);
     g.gain.linearRampToValueAtTime(0,ac.currentTime+t+dur+.05);
     o.connect(g);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+dur+.1);
   });
+}
+
+function playCrow(){
+  // Crow: harsh "caw caw" — sawtooth + noise, 2-3 calls
+  const calls=2+Math.floor(Math.random()*2);
+  for(let c=0;c<calls;c++){
+    const t=ac.currentTime+c*.55+Math.random()*.1;
+    // Harsh tone
+    const o=ac.createOscillator();o.type='sawtooth';
+    o.frequency.setValueAtTime(280,t);
+    o.frequency.linearRampToValueAtTime(320,t+.08);
+    o.frequency.linearRampToValueAtTime(240,t+.18);
+    const bf=ac.createBiquadFilter();bf.type='bandpass';bf.frequency.value=600;bf.Q.value=2;
+    const g=ac.createGain();g.connect(mg);
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(.065,t+.03);
+    g.gain.linearRampToValueAtTime(0,t+.22);
+    o.connect(bf);bf.connect(g);o.start(t);o.stop(t+.25);
+    // Rough noise layer on top
+    const nBuf=ac.createBuffer(1,Math.floor(ac.sampleRate*.2),ac.sampleRate);
+    const nd=nBuf.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+    const ns=ac.createBufferSource();ns.buffer=nBuf;
+    const nf=ac.createBiquadFilter();nf.type='bandpass';nf.frequency.value=900;nf.Q.value=3;
+    const ng=ac.createGain();ng.connect(mg);
+    ng.gain.setValueAtTime(0,t);
+    ng.gain.linearRampToValueAtTime(.03,t+.03);
+    ng.gain.linearRampToValueAtTime(0,t+.2);
+    ns.connect(nf);nf.connect(ng);ns.start(t);
+  }
 }
 
 function playFrogs(){
