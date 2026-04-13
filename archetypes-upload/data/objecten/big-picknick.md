@@ -11,7 +11,7 @@ label1: ""
 waarde1: ""
 label2: ""
 waarde2: ""
-image: /images/bicpicnic_arche-types.jpg
+image: /images/bicpicnic_render_arche-types.jpg
 order: 1
 programma: XXL 320 × 180 × 75 cm
 ---
