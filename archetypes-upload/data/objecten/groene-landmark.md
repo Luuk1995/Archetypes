@@ -10,6 +10,6 @@ desc: >-
 label1: ""
 label2: ""
 label3: ""
-image: /images/silo_arche-types.png
+image: /images/2silo_arche-types.png
 order: 99
 ---
