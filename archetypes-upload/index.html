@@ -51,20 +51,23 @@
     }
     @keyframes fi{to{opacity:.5}}
 
-    /* Hero logo — permanent over videos, same size/position as intro */
+    /* Hero logo — permanent over videos */
     #hero-logo{
       position:absolute;z-index:11;
-      display:flex;flex-direction:column;align-items:center;
+      display:flex;flex-direction:row;align-items:center;gap:2.5rem;
       pointer-events:none;
       opacity:0; /* shown by JS after intro fades */
     }
-    #hero-logo-text{
-      font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;
-      letter-spacing:.18em;color:var(--fg);white-space:nowrap;
+    #hero-logo-mark{
+      font-size:clamp(4rem,12vw,9rem);font-weight:400;font-style:italic;
+      font-family:'SometypeMono',monospace;
+      color:var(--fg);line-height:1;
+      letter-spacing:0;
     }
     #hero-logo-sub{
-      font-size:clamp(.65rem,1.2vw,.85rem);letter-spacing:.25em;
-      color:rgba(240,237,230,.5);margin-top:1rem;white-space:nowrap;
+      font-size:clamp(.65rem,1.3vw,.95rem);letter-spacing:.18em;
+      color:var(--fg);line-height:1.7;white-space:pre-line;
+      font-weight:400;
     }
 
     /* ── NAV ── */
@@ -250,21 +253,19 @@
       .corner{font-size:.65rem;padding:1rem 1.2rem}
       #audio-toggle{font-size:.55rem;bottom:1rem}
 
-      /* Hero: stack ! and tagline vertically */
-      #hero-center{
-        grid-template-columns:1fr;
-        grid-template-rows:auto auto;
-        padding:0 2rem;
-        gap:1rem;
+      /* Hero: stack ! and tagline vertically on mobile */
+      #hero-logo{
+        flex-direction:column;
+        align-items:center;
+        gap:.8rem;
         text-align:center;
       }
-      #hero-exclaim{
-        justify-content:center;
-        font-size:clamp(5rem,20vw,8rem);
+      #hero-logo-mark{
+        font-size:clamp(4rem,20vw,7rem);
       }
-      #hero-tagline{
-        justify-content:center;
+      #hero-logo-sub{
         font-size:clamp(.75rem,3.5vw,1rem);
+        text-align:center;
       }
 
       /* Projects: single column, full width */
@@ -344,7 +345,7 @@
     @media (max-width:400px){
       #nav-left{gap:.8rem}
       .nav-link{font-size:.55rem;letter-spacing:.08em}
-      #hero-exclaim{font-size:clamp(4rem,18vw,6rem)}
+      #hero-logo-mark{font-size:clamp(3.5rem,18vw,6rem)}
     }
   </style>
 </head>
@@ -384,8 +385,8 @@
       <div class="hero-video-wrap" id="video-right"></div>
     </div>
     <div id="hero-logo">
-      <div id="hero-logo-text">ARCHE<em class="exclaim">!</em>TYPES</div>
-      <div id="hero-logo-sub">Venturous Interior &amp; Exterior Design</div>
+      <div id="hero-logo-mark">!</div>
+      <div id="hero-logo-sub">Venturous Interior &amp;<br>Exterior Design</div>
     </div>
   </div>
 
