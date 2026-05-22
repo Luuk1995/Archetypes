@@ -111,7 +111,7 @@
       overflow:hidden;
       background:var(--bg);
     }
-    #hero-videos{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;opacity:0;transition:opacity 1.5s ease}
+    #hero-videos{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;opacity:0;transition:opacity 2s ease}
     #hero-videos.visible{opacity:1}
     .hero-video-wrap{position:relative;overflow:hidden;filter:grayscale(1);transition:filter .5s ease}
     .hero-video-wrap:hover{filter:grayscale(0)}
@@ -253,20 +253,12 @@
       .corner{font-size:.65rem;padding:1rem 1.2rem}
       #audio-toggle{font-size:.55rem;bottom:1rem}
 
-      /* Hero: stack ! and tagline vertically on mobile */
-      #hero-logo{
-        flex-direction:column;
-        align-items:center;
-        gap:.8rem;
-        text-align:center;
-      }
-      #hero-logo-mark{
-        font-size:clamp(4rem,20vw,7rem);
-      }
-      #hero-logo-sub{
-        font-size:clamp(.75rem,3.5vw,1rem);
-        text-align:center;
-      }
+      /* Hero + intro: mobile — stapel verticaal */
+      #intro{grid-template-columns:1fr;grid-template-rows:1fr 1fr;}
+      #intro-left{border-right:none;border-bottom:1px solid rgba(240,237,230,.1);}
+      #hero-logo{grid-template-columns:1fr;grid-template-rows:1fr 1fr;}
+      #hero-logo-mark{font-size:clamp(4rem,20vw,7rem);}
+      #hero-logo-sub{font-size:clamp(.75rem,3.5vw,1rem);}
 
       /* Projects: single column, full width */
       #projects-snap{
@@ -355,8 +347,12 @@
 <div id="cursor-glow"></div>
 
 <div id="intro">
-  <div id="intro-logo">ARCHE<em class="exclaim">!</em>TYPES</div>
-  <div id="intro-sub">Venturous Interior &amp; Exterior Design</div>
+  <div id="intro-left">
+    <div id="intro-logo">!</div>
+  </div>
+  <div id="intro-right">
+    <div id="intro-sub">Venturous Architecture<br>and Object Design</div>
+  </div>
 </div>
 
 <nav id="nav">
@@ -386,7 +382,7 @@
     </div>
     <div id="hero-logo">
       <div id="hero-logo-mark">!</div>
-      <div id="hero-logo-sub">Venturous Interior &amp;<br>Exterior Design</div>
+      <div id="hero-logo-sub">Venturous Architecture<br>and Object Design</div>
     </div>
   </div>
 
@@ -547,17 +543,18 @@ document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.styl
 
 // ── INTRO ──
 window.addEventListener('load',()=>{
+  // Hero logo meteen zichtbaar (staat al op zwart scherm)
+  const hl=document.getElementById('hero-logo');
+  hl.style.transition='opacity .6s ease';
+  hl.style.opacity='1';
+
+  // Videos starten direct — fade in duurt 2s
+  // Na max 2s verdwijnt de zwarte intro overlay
   setTimeout(()=>{
-    // Fade out the intro (black screen + typed logo)
-    document.getElementById('intro').classList.add('fade-out');
-    // Show videos and fade in the permanent hero logo
     document.getElementById('hero-videos').classList.add('visible');
-    const hl=document.getElementById('hero-logo');
-    hl.style.transition='opacity 1.2s ease';
-    hl.style.opacity='1';
-    // Remove intro from DOM after transition
-    setTimeout(()=>{document.getElementById('intro').style.display='none';},1600);
-  },3200);
+    document.getElementById('intro').classList.add('fade-out');
+    setTimeout(()=>{document.getElementById('intro').style.display='none';},1500);
+  },200);
 });
 
 // ── LOGO SWAP ──
