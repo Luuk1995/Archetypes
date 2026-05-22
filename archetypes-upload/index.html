@@ -185,16 +185,6 @@
       transition:filter .7s ease,transform .8s ease;
     }
     .project-img-wrap:hover img{filter:grayscale(0);transform:scale(1.03)}
-    .project-img-wrap.has-slides{cursor:none;}
-    .project-img-wrap.has-slides::after{
-      content:'+';
-      position:absolute;bottom:.6rem;right:.7rem;
-      font-size:.6rem;letter-spacing:.2em;
-      color:rgba(240,237,230,.4);
-      font-family:'SometypeMono',monospace;
-      opacity:0;transition:opacity .3s;
-    }
-    .project-img-wrap.has-slides:hover::after{opacity:1;}
     .img-placeholder{position:absolute;inset:0;background:#181818;display:flex;align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.1)}
 
     /* Text panel — desc on top, meta+label fixed at bottom */
@@ -249,6 +239,73 @@
     #info-box p{font-size:.72rem;line-height:2.1;letter-spacing:.05em;color:rgba(240,237,230,.65);margin-bottom:.8rem;white-space:pre-wrap}
     .info-meta{margin-top:2rem;font-size:.58rem;letter-spacing:.2em;color:rgba(240,237,230,.28);text-transform:uppercase;line-height:2.4}
 
+
+    /* ── SLIDESHOW OVERLAY ── */
+    #slideshow-overlay{
+      position:fixed;z-index:3000;
+      top:0;bottom:0;width:50%;
+      background:#0a0a0e;
+      opacity:0;pointer-events:none;
+      transition:opacity .5s ease;
+      overflow:hidden;
+    }
+    #slideshow-overlay.active{opacity:1;pointer-events:all;}
+    #slideshow-overlay.side-left{left:0;right:auto;}
+    #slideshow-overlay.side-right{right:0;left:auto;}
+
+    #slide-img{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;
+      filter:grayscale(1);
+    }
+    #slide-text-panel{
+      position:absolute;inset:0;
+      display:flex;align-items:center;justify-content:center;
+      padding:4rem 3rem;
+      opacity:0;pointer-events:none;
+      transition:opacity .4s ease;
+    }
+    #slide-text-panel.visible{opacity:1;}
+    #slide-text-panel::before{
+      content:'';position:absolute;inset:0;
+      background:rgba(8,8,14,.75);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+    }
+    #slide-text-inner{
+      position:relative;z-index:1;
+      max-width:380px;text-align:center;
+    }
+    #slide-text-inner .slide-desc{
+      font-size:.72rem;line-height:2.1;letter-spacing:.05em;
+      color:rgba(240,237,230,.75);margin-bottom:1.2rem;
+    }
+    #slide-text-inner .slide-meta{
+      font-size:.58rem;letter-spacing:.18em;
+      color:rgba(240,237,230,.35);line-height:2.4;
+    }
+    #slide-text-inner .slide-meta strong{
+      color:rgba(240,237,230,.2);display:block;font-weight:400;text-transform:uppercase;
+    }
+    .slide-arrow{
+      position:absolute;top:50%;transform:translateY(-50%);
+      z-index:10;
+      font-size:clamp(.6rem,1.2vw,.85rem);letter-spacing:.2em;
+      color:rgba(240,237,230,.4);
+      cursor:none;padding:1.2rem;
+      transition:color .2s;
+      user-select:none;
+    }
+    .slide-arrow:hover{color:var(--fg);}
+    #slide-prev{left:.4rem;}
+    #slide-next{right:.4rem;}
+    #slide-close{
+      position:absolute;top:1.4rem;left:1.8rem;
+      z-index:10;font-size:1.4rem;line-height:1;
+      color:rgba(240,237,230,.4);
+      cursor:none;transition:color .2s;
+    }
+    #slide-close:hover{color:var(--fg);}
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:rgba(240,237,230,.12)}
@@ -435,8 +492,6 @@
   <div class="slide-arrow" id="slide-next">&gt;</div>
   <div id="slide-close">×</div>
 </div>
-<!-- Click opposite column to close -->
-<div id="slideshow-bg-close"></div>
 
 <!-- INFO OVERLAY -->
 <div id="info-overlay">
@@ -516,11 +571,9 @@ function parseFrontmatter(text) {
 
 // ── NORMALIZE PROJECT (flatten extra_images from CMS) ──
 function normalizeProject(p) {
-  // CMS stores extra images nested under extra_images.image2 etc.
-  // Flatten them to top-level image2, image3, ...
   if (p.extra_images) {
     for (let i = 2; i <= 8; i++) {
-      if (p.extra_images['image' + i]) p['image' + i] = p.extra_images['image' + i];
+      if (p.extra_images['image'+i]) p['image'+i] = p.extra_images['image'+i];
     }
   }
   return p;
@@ -729,20 +782,12 @@ function makeCard(p) {
   inner.appendChild(iw);inner.appendChild(right);
   card.appendChild(inner);
 
-  // Determine which column this card belongs to
-  const fromSide = card.closest('#col-arche') ? 'arche' : 'types';
-
-  // Tag image wrap if project has slides
-  const hasExtraContent = p.image2 || p.image3 || p.desc || p.waarde1;
-  if (hasExtraContent) iw.classList.add('has-slides');
-
   const isMobile = () => window.innerWidth <= 768;
 
-  // Image click → open slideshow (desktop)
-  iw.addEventListener('click', (e) => {
+  // Desktop: click on image opens slideshow on the OTHER side — source col stays untouched
+  iw.addEventListener('click', e => {
     if (isMobile()) return;
     e.stopPropagation();
-    // Determine side from parent col
     const side = iw.closest('#col-arche') ? 'arche' : 'types';
     openSlideshow(p, side);
   });
@@ -997,120 +1042,95 @@ function toggleAudio(){
   }
 }
 // ── SLIDESHOW ──
-const ssOverlay = document.getElementById('slideshow-overlay');
-const ssImg = document.getElementById('slide-img');
-const ssTextPanel = document.getElementById('slide-text-panel');
-const ssBgClose = document.getElementById('slideshow-bg-close');
-let ssSlides = []; // ['img1','img2',... then 'text']
-let ssIdx = 0;
-let ssData = null; // project data
+(function(){
+  const overlay  = document.getElementById('slideshow-overlay');
+  const slideImg = document.getElementById('slide-img');
+  const textPanel= document.getElementById('slide-text-panel');
+  const descEl   = textPanel.querySelector('.slide-desc');
+  const metaEl   = textPanel.querySelector('.slide-meta');
 
-function buildSlides(p) {
-  // All images: main + extra images from frontmatter
-  const imgs = [];
-  if (p.image) imgs.push({ type: 'img', src: p.image });
-  // Extra images: image2, image3, image4, image5
-  for (let i = 2; i <= 8; i++) {
-    if (p['image' + i]) imgs.push({ type: 'img', src: p['image' + i] });
-  }
-  // Text slide always after first image (index 1), or if only 1 image, after it
-  const slides = [];
-  imgs.forEach((img, i) => {
-    slides.push(img);
-    if (i === 0 && (p.desc || p.waarde1 || p.waarde2 || p.waarde3)) {
-      slides.push({ type: 'text', p });
+  let slides = [];
+  let idx    = 0;
+
+  function buildSlides(p) {
+    const result = [];
+    // Collect all images
+    const imgKeys = ['image','image2','image3','image4','image5','image6','image7','image8'];
+    const imgs = imgKeys.filter(k => p[k]).map(k => p[k]);
+
+    imgs.forEach((src, i) => {
+      result.push({ type:'img', src });
+      // Insert text slide after first image
+      if (i === 0 && (p.desc || p.waarde1 || p.waarde2 || p.waarde3)) {
+        result.push({ type:'text', p });
+      }
+    });
+    // No images but has text
+    if (result.length === 0 && (p.desc || p.waarde1)) {
+      result.push({ type:'text', p });
     }
+    return result;
+  }
+
+  function showSlide(i) {
+    idx = (i + slides.length) % slides.length;
+    const s = slides[idx];
+    textPanel.classList.remove('visible');
+    if (s.type === 'img') {
+      slideImg.src = s.src;
+    } else {
+      // Text slide — keep last image, show blur panel
+      let mh = '';
+      const p = s.p;
+      if (p.waarde1&&p.waarde1.trim()) mh+=`<strong>${p.label1||'Opdrachtgever'}</strong>${p.waarde1}<br>`;
+      if (p.waarde2&&p.waarde2.trim()) mh+=`<strong>${p.label2||'Programma'}</strong>${p.waarde2}<br>`;
+      if (p.waarde3&&p.waarde3.trim()) mh+=`<strong>${p.label3||'Ontwerp'}</strong>${p.waarde3}<br>`;
+      if (p.waarde4&&p.waarde4.trim()) mh+=`<strong>${p.label4||'Aannemer'}</strong>${p.waarde4}<br>`;
+      if (p.waarde5&&p.waarde5.trim()) mh+=`<strong>${p.label5||'Video/Foto'}</strong>${p.waarde5}<br>`;
+      descEl.innerHTML = renderMd(p.desc||'');
+      metaEl.innerHTML = mh;
+      textPanel.classList.add('visible');
+    }
+    document.getElementById('slide-prev').style.opacity = slides.length > 1 ? '1' : '0';
+    document.getElementById('slide-next').style.opacity = slides.length > 1 ? '1' : '0';
+  }
+
+  window.openSlideshow = function(p, fromSide) {
+    slides = buildSlides(p);
+    if (!slides.length) return;
+
+    // fromSide 'arche' = left col clicked → overlay goes RIGHT
+    // fromSide 'types' = right col clicked → overlay goes LEFT
+    const goRight = (fromSide === 'arche');
+    overlay.classList.remove('side-left','side-right');
+    overlay.classList.add(goRight ? 'side-right' : 'side-left');
+
+    idx = 0;
+    showSlide(0);
+    overlay.classList.add('active');
+    // ── IMPORTANT: do NOT dim or touch the source column ──
+  };
+
+  window.closeSlideshow = function() {
+    overlay.classList.remove('active');
+    textPanel.classList.remove('visible');
+  };
+
+  document.getElementById('slide-prev').addEventListener('click', e => {
+    e.stopPropagation(); showSlide(idx - 1);
   });
-  // If no images at all but has text
-  if (slides.length === 0 && (p.desc || p.waarde1)) {
-    slides.push({ type: 'text', p });
-  }
-  return slides;
-}
+  document.getElementById('slide-next').addEventListener('click', e => {
+    e.stopPropagation(); showSlide(idx + 1);
+  });
+  document.getElementById('slide-close').addEventListener('click', closeSlideshow);
 
-function showSlide(idx) {
-  const slide = ssSlides[idx];
-  if (!slide) return;
-  ssIdx = idx;
-
-  if (slide.type === 'img') {
-    ssImg.src = slide.src;
-    ssImg.style.opacity = '1';
-    ssTextPanel.classList.remove('visible');
-  } else {
-    // Text slide: keep last image behind, show blur panel
-    ssTextPanel.classList.add('visible');
-    const p = slide.p;
-    let desc = ssTextPanel.querySelector('.slide-desc');
-    let meta = ssTextPanel.querySelector('.slide-meta');
-    desc.innerHTML = renderMd(p.desc || '');
-    let mh = '';
-    if (p.waarde1 && p.waarde1.trim()) mh += `<strong>${p.label1||'Opdrachtgever'}</strong>${p.waarde1}<br>`;
-    if (p.waarde2 && p.waarde2.trim()) mh += `<strong>${p.label2||'Programma'}</strong>${p.waarde2}<br>`;
-    if (p.waarde3 && p.waarde3.trim()) mh += `<strong>${p.label3||'Ontwerp'}</strong>${p.waarde3}<br>`;
-    if (p.waarde4 && p.waarde4.trim()) mh += `<strong>${p.label4||'Aannemer'}</strong>${p.waarde4}<br>`;
-    if (p.waarde5 && p.waarde5.trim()) mh += `<strong>${p.label5||'Video/Foto'}</strong>${p.waarde5}<br>`;
-    meta.innerHTML = mh;
-  }
-
-  // Show/hide arrows
-  document.getElementById('slide-prev').style.opacity = ssSlides.length > 1 ? '1' : '0';
-  document.getElementById('slide-next').style.opacity = ssSlides.length > 1 ? '1' : '0';
-}
-
-function openSlideshow(p, fromSide) {
-  // fromSide: 'arche' (left col) → overlay goes right; 'types' (right) → overlay goes left
-  ssData = p;
-  ssSlides = buildSlides(p);
-  if (ssSlides.length === 0) return;
-
-  const goRight = fromSide === 'arche';
-  ssOverlay.classList.remove('side-left', 'side-right');
-  ssOverlay.classList.add(goRight ? 'side-right' : 'side-left');
-  ssBgClose.classList.remove('side-left', 'side-right', 'active');
-  ssBgClose.classList.add(goRight ? 'side-left' : 'side-right', 'active');
-
-  ssIdx = 0;
-  showSlide(0);
-  ssOverlay.classList.add('active');
-
-  // Dim the source column
-  const srcCol = document.getElementById(goRight ? 'col-arche' : 'col-types');
-  if (srcCol) srcCol.classList.add('dimmed');
-}
-
-function closeSlideshow() {
-  ssOverlay.classList.remove('active');
-  ssBgClose.classList.remove('active');
-  ssTextPanel.classList.remove('visible');
-  // Un-dim all
-  document.getElementById('col-arche').classList.remove('dimmed');
-  document.getElementById('col-types').classList.remove('dimmed');
-}
-
-document.getElementById('slide-prev').addEventListener('click', (e) => {
-  e.stopPropagation();
-  showSlide((ssIdx - 1 + ssSlides.length) % ssSlides.length);
-});
-document.getElementById('slide-next').addEventListener('click', (e) => {
-  e.stopPropagation();
-  showSlide((ssIdx + 1) % ssSlides.length);
-});
-document.getElementById('slide-close').addEventListener('click', closeSlideshow);
-ssBgClose.addEventListener('click', closeSlideshow);
-
-// Click left/right halves of the slide image to navigate
-ssOverlay.addEventListener('click', (e) => {
-  // Ignore clicks on arrows, close button, text panel
-  if (e.target.closest('.slide-arrow') || e.target.closest('#slide-close') || e.target.closest('#slide-text-panel')) return;
-  const rect = ssOverlay.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  if (x < rect.width / 2) {
-    showSlide((ssIdx - 1 + ssSlides.length) % ssSlides.length);
-  } else {
-    showSlide((ssIdx + 1) % ssSlides.length);
-  }
-});
+  // Click left/right halves of the overlay to navigate
+  overlay.addEventListener('click', e => {
+    if (e.target.closest('.slide-arrow,#slide-close,#slide-text-panel')) return;
+    const rect = overlay.getBoundingClientRect();
+    showSlide(e.clientX - rect.left < rect.width / 2 ? idx - 1 : idx + 1);
+  });
+})();
 
 // ── STARFIELD ──
 (function(){
