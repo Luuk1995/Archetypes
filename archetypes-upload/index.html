@@ -31,22 +31,22 @@
     #grain{position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px;animation:gs .5s steps(2) infinite}
     @keyframes gs{0%{background-position:0 0}25%{background-position:20px -15px}50%{background-position:-10px 20px}75%{background-position:15px 10px}}
 
-    /* ── INTRO + HERO LOGO — vaste split-overlay ── */
-    /* Intro en hero-logo gebruiken exact hetzelfde grid als de twee hero-videos */
+    /* ── INTRO + HERO LOGO ── */
+    /* Beide gebruiken hetzelfde 1fr/1fr grid als de hero videos.
+       ! en tekst hugggen de middellijn — split zit exact op de videogrens. */
     #intro{
       position:fixed;inset:0;z-index:5000;background:#000;
       display:grid;grid-template-columns:1fr 1fr;
       transition:opacity 1.4s ease;
     }
     #intro.fade-out{opacity:0;pointer-events:none}
-
-    /* linker helft: ! gecentreerd */
     #intro-left{
-      display:flex;align-items:center;justify-content:center;
+      display:flex;align-items:center;justify-content:flex-end;
+      padding-right:2.5rem;
     }
-    /* rechter helft: tagline gecentreerd */
     #intro-right{
-      display:flex;align-items:center;justify-content:center;
+      display:flex;align-items:center;justify-content:flex-start;
+      padding-left:2.5rem;
     }
     #intro-logo{
       font-size:clamp(4rem,12vw,9rem);font-weight:400;font-style:italic;
@@ -61,23 +61,22 @@
     @keyframes fi-logo{to{opacity:1}}
     @keyframes fi-sub{to{opacity:.85}}
 
-    /* Hero logo — zelfde 1fr/1fr grid, ligt permanent over de videos */
     #hero-logo{
       position:absolute;inset:0;z-index:11;
       display:grid;grid-template-columns:1fr 1fr;
       pointer-events:none;
       opacity:1;
     }
-    /* ! gecentreerd in linker helft (over linker video) */
     #hero-logo-mark{
-      display:flex;align-items:center;justify-content:center;
+      display:flex;align-items:center;justify-content:flex-end;
+      padding-right:2.5rem;
       font-size:clamp(4rem,12vw,9rem);font-weight:400;font-style:italic;
       font-family:'SometypeMono',monospace;
       color:var(--fg);line-height:1;
     }
-    /* tagline gecentreerd in rechter helft (over rechter video) */
     #hero-logo-sub{
-      display:flex;align-items:center;justify-content:center;
+      display:flex;align-items:center;justify-content:flex-start;
+      padding-left:2.5rem;
       font-size:clamp(.65rem,1.3vw,.95rem);letter-spacing:.18em;
       color:var(--fg);line-height:1.9;font-weight:400;
     }
@@ -265,11 +264,13 @@
       .corner{font-size:.65rem;padding:1rem 1.2rem}
       #audio-toggle{font-size:.55rem;bottom:1rem}
 
-      /* Hero + intro: mobile — stapel verticaal */
+      /* Hero + intro: mobile */
       #intro{grid-template-columns:1fr;grid-template-rows:1fr 1fr;}
+      #intro-left{justify-content:center;padding:0;}
+      #intro-right{justify-content:center;padding:0;}
       #hero-logo{grid-template-columns:1fr;grid-template-rows:1fr 1fr;}
-      #hero-logo-mark{font-size:clamp(4rem,20vw,7rem);}
-      #hero-logo-sub{font-size:clamp(.75rem,3.5vw,1rem);}
+      #hero-logo-mark{justify-content:center;padding:0;font-size:clamp(4rem,20vw,7rem);}
+      #hero-logo-sub{justify-content:center;padding:0;font-size:clamp(.75rem,3.5vw,1rem);}
 
       /* Projects: single column, full width */
       #projects-snap{
@@ -331,7 +332,7 @@
       #info-close{top:1rem;right:1.2rem}
 
       /* Intro */
-      #intro-logo{font-size:clamp(3.5rem,12vw,7rem)}
+      #intro-logo{font-size:clamp(3rem,12vw,7rem)}
       #intro-sub{font-size:.7rem;letter-spacing:.15em}
 
       /* Scroll root on mobile */
@@ -553,9 +554,8 @@ const cur=document.getElementById('cursor'),gl=document.getElementById('cursor-g
 document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';gl.style.left=e.clientX+'px';gl.style.top=e.clientY+'px';});
 
 // ── INTRO ──
-// Hero-logo is altijd zichtbaar (opacity:1 in CSS).
-// Intro (zwart) faded weg terwijl videos fade-in — max 2s zwart scherm.
 window.addEventListener('load',()=>{
+  // Videos starten direct, intro fades weg na 200ms
   setTimeout(()=>{
     document.getElementById('hero-videos').classList.add('visible');
     document.getElementById('intro').classList.add('fade-out');
