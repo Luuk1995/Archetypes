@@ -185,6 +185,16 @@
       transition:filter .7s ease,transform .8s ease;
     }
     .project-img-wrap:hover img{filter:grayscale(0);transform:scale(1.03)}
+    .project-img-wrap.has-slides{cursor:none;}
+    .project-img-wrap.has-slides::after{
+      content:'+';
+      position:absolute;bottom:.6rem;right:.7rem;
+      font-size:.6rem;letter-spacing:.2em;
+      color:rgba(240,237,230,.4);
+      font-family:'SometypeMono',monospace;
+      opacity:0;transition:opacity .3s;
+    }
+    .project-img-wrap.has-slides:hover::after{opacity:1;}
     .img-placeholder{position:absolute;inset:0;background:#181818;display:flex;align-items:center;justify-content:center;font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.1)}
 
     /* Text panel — desc on top, meta+label fixed at bottom */
@@ -411,6 +421,23 @@
   </div>
 </div>
 
+
+<!-- SLIDESHOW OVERLAY -->
+<div id="slideshow-overlay">
+  <img id="slide-img" src="" alt="" />
+  <div id="slide-text-panel">
+    <div id="slide-text-inner">
+      <div class="slide-desc"></div>
+      <div class="slide-meta"></div>
+    </div>
+  </div>
+  <div class="slide-arrow" id="slide-prev">&lt;</div>
+  <div class="slide-arrow" id="slide-next">&gt;</div>
+  <div id="slide-close">×</div>
+</div>
+<!-- Click opposite column to close -->
+<div id="slideshow-bg-close"></div>
+
 <!-- INFO OVERLAY -->
 <div id="info-overlay">
   <div id="info-box">
@@ -487,6 +514,18 @@ function parseFrontmatter(text) {
   return result;
 }
 
+// ── NORMALIZE PROJECT (flatten extra_images from CMS) ──
+function normalizeProject(p) {
+  // CMS stores extra images nested under extra_images.image2 etc.
+  // Flatten them to top-level image2, image3, ...
+  if (p.extra_images) {
+    for (let i = 2; i <= 8; i++) {
+      if (p.extra_images['image' + i]) p['image' + i] = p.extra_images['image' + i];
+    }
+  }
+  return p;
+}
+
 // ── DYNAMIC FOLDER DISCOVERY ──
 async function loadMdFolder(folder) {
   const items = [];
@@ -530,7 +569,7 @@ async function loadMdFolder(folder) {
   const texts = await Promise.all(
     names.map(n=>fetch(`data/${folder}/${n}.md`).then(r=>r.ok?r.text():null).catch(()=>null))
   );
-  texts.forEach(t=>{if(t){const p=parseFrontmatter(t);if(p.title)items.push(p);}});
+  texts.forEach(t=>{if(t){const p=normalizeProject(parseFrontmatter(t));if(p.title)items.push(p);}});
   return items.sort((a,b)=>(a.order||99)-(b.order||99));
 }
 
@@ -690,7 +729,23 @@ function makeCard(p) {
   inner.appendChild(iw);inner.appendChild(right);
   card.appendChild(inner);
 
+  // Determine which column this card belongs to
+  const fromSide = card.closest('#col-arche') ? 'arche' : 'types';
+
+  // Tag image wrap if project has slides
+  const hasExtraContent = p.image2 || p.image3 || p.desc || p.waarde1;
+  if (hasExtraContent) iw.classList.add('has-slides');
+
   const isMobile = () => window.innerWidth <= 768;
+
+  // Image click → open slideshow (desktop)
+  iw.addEventListener('click', (e) => {
+    if (isMobile()) return;
+    e.stopPropagation();
+    // Determine side from parent col
+    const side = iw.closest('#col-arche') ? 'arche' : 'types';
+    openSlideshow(p, side);
+  });
 
   // Mobile tap: toggle text visibility
   card.addEventListener('click', () => {
@@ -941,6 +996,122 @@ function toggleAudio(){
       setTimeout(()=>{ac.close();ac=null;mg=null;},2500);}
   }
 }
+// ── SLIDESHOW ──
+const ssOverlay = document.getElementById('slideshow-overlay');
+const ssImg = document.getElementById('slide-img');
+const ssTextPanel = document.getElementById('slide-text-panel');
+const ssBgClose = document.getElementById('slideshow-bg-close');
+let ssSlides = []; // ['img1','img2',... then 'text']
+let ssIdx = 0;
+let ssData = null; // project data
+
+function buildSlides(p) {
+  // All images: main + extra images from frontmatter
+  const imgs = [];
+  if (p.image) imgs.push({ type: 'img', src: p.image });
+  // Extra images: image2, image3, image4, image5
+  for (let i = 2; i <= 8; i++) {
+    if (p['image' + i]) imgs.push({ type: 'img', src: p['image' + i] });
+  }
+  // Text slide always after first image (index 1), or if only 1 image, after it
+  const slides = [];
+  imgs.forEach((img, i) => {
+    slides.push(img);
+    if (i === 0 && (p.desc || p.waarde1 || p.waarde2 || p.waarde3)) {
+      slides.push({ type: 'text', p });
+    }
+  });
+  // If no images at all but has text
+  if (slides.length === 0 && (p.desc || p.waarde1)) {
+    slides.push({ type: 'text', p });
+  }
+  return slides;
+}
+
+function showSlide(idx) {
+  const slide = ssSlides[idx];
+  if (!slide) return;
+  ssIdx = idx;
+
+  if (slide.type === 'img') {
+    ssImg.src = slide.src;
+    ssImg.style.opacity = '1';
+    ssTextPanel.classList.remove('visible');
+  } else {
+    // Text slide: keep last image behind, show blur panel
+    ssTextPanel.classList.add('visible');
+    const p = slide.p;
+    let desc = ssTextPanel.querySelector('.slide-desc');
+    let meta = ssTextPanel.querySelector('.slide-meta');
+    desc.innerHTML = renderMd(p.desc || '');
+    let mh = '';
+    if (p.waarde1 && p.waarde1.trim()) mh += `<strong>${p.label1||'Opdrachtgever'}</strong>${p.waarde1}<br>`;
+    if (p.waarde2 && p.waarde2.trim()) mh += `<strong>${p.label2||'Programma'}</strong>${p.waarde2}<br>`;
+    if (p.waarde3 && p.waarde3.trim()) mh += `<strong>${p.label3||'Ontwerp'}</strong>${p.waarde3}<br>`;
+    if (p.waarde4 && p.waarde4.trim()) mh += `<strong>${p.label4||'Aannemer'}</strong>${p.waarde4}<br>`;
+    if (p.waarde5 && p.waarde5.trim()) mh += `<strong>${p.label5||'Video/Foto'}</strong>${p.waarde5}<br>`;
+    meta.innerHTML = mh;
+  }
+
+  // Show/hide arrows
+  document.getElementById('slide-prev').style.opacity = ssSlides.length > 1 ? '1' : '0';
+  document.getElementById('slide-next').style.opacity = ssSlides.length > 1 ? '1' : '0';
+}
+
+function openSlideshow(p, fromSide) {
+  // fromSide: 'arche' (left col) → overlay goes right; 'types' (right) → overlay goes left
+  ssData = p;
+  ssSlides = buildSlides(p);
+  if (ssSlides.length === 0) return;
+
+  const goRight = fromSide === 'arche';
+  ssOverlay.classList.remove('side-left', 'side-right');
+  ssOverlay.classList.add(goRight ? 'side-right' : 'side-left');
+  ssBgClose.classList.remove('side-left', 'side-right', 'active');
+  ssBgClose.classList.add(goRight ? 'side-left' : 'side-right', 'active');
+
+  ssIdx = 0;
+  showSlide(0);
+  ssOverlay.classList.add('active');
+
+  // Dim the source column
+  const srcCol = document.getElementById(goRight ? 'col-arche' : 'col-types');
+  if (srcCol) srcCol.classList.add('dimmed');
+}
+
+function closeSlideshow() {
+  ssOverlay.classList.remove('active');
+  ssBgClose.classList.remove('active');
+  ssTextPanel.classList.remove('visible');
+  // Un-dim all
+  document.getElementById('col-arche').classList.remove('dimmed');
+  document.getElementById('col-types').classList.remove('dimmed');
+}
+
+document.getElementById('slide-prev').addEventListener('click', (e) => {
+  e.stopPropagation();
+  showSlide((ssIdx - 1 + ssSlides.length) % ssSlides.length);
+});
+document.getElementById('slide-next').addEventListener('click', (e) => {
+  e.stopPropagation();
+  showSlide((ssIdx + 1) % ssSlides.length);
+});
+document.getElementById('slide-close').addEventListener('click', closeSlideshow);
+ssBgClose.addEventListener('click', closeSlideshow);
+
+// Click left/right halves of the slide image to navigate
+ssOverlay.addEventListener('click', (e) => {
+  // Ignore clicks on arrows, close button, text panel
+  if (e.target.closest('.slide-arrow') || e.target.closest('#slide-close') || e.target.closest('#slide-text-panel')) return;
+  const rect = ssOverlay.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width / 2) {
+    showSlide((ssIdx - 1 + ssSlides.length) % ssSlides.length);
+  } else {
+    showSlide((ssIdx + 1) % ssSlides.length);
+  }
+});
+
 // ── STARFIELD ──
 (function(){
   const canvas=document.getElementById('starfield');canvas.style.cssText='position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.5s ease';
