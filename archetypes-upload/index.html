@@ -31,43 +31,55 @@
     #grain{position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:180px;animation:gs .5s steps(2) infinite}
     @keyframes gs{0%{background-position:0 0}25%{background-position:20px -15px}50%{background-position:-10px 20px}75%{background-position:15px 10px}}
 
-    /* ── INTRO ── */
-    #intro{position:fixed;inset:0;z-index:5000;background:#000;
-      display:flex;align-items:center;justify-content:center;flex-direction:column;
-      transition:opacity 1.4s ease}
+    /* ── INTRO + HERO LOGO — vaste split-overlay ── */
+    /* Intro en hero-logo gebruiken exact hetzelfde grid als de twee hero-videos */
+    #intro{
+      position:fixed;inset:0;z-index:5000;background:#000;
+      display:grid;grid-template-columns:1fr 1fr;
+      transition:opacity 1.4s ease;
+    }
     #intro.fade-out{opacity:0;pointer-events:none}
-    #intro-logo{
-      font-size:clamp(1.4rem,3vw,2.2rem);font-weight:600;letter-spacing:.18em;color:var(--fg);
-      overflow:hidden;white-space:nowrap;width:0;
-      border-right:2px solid var(--fg);
-      animation:tl 1.4s steps(12,end) .4s forwards,bc .7s step-end .4s 5;
-    }
-    @keyframes tl{from{width:0}to{width:14.5ch;border-right-color:transparent}}
-    @keyframes bc{50%{border-right-color:transparent}}
-    #intro-sub{
-      font-size:clamp(.65rem,1.2vw,.85rem);letter-spacing:.25em;color:var(--fg);
-      margin-top:1rem;opacity:0;
-      animation:fi .8s ease 2.2s forwards;
-    }
-    @keyframes fi{to{opacity:.5}}
 
-    /* Hero logo — permanent over videos */
-    #hero-logo{
-      position:absolute;z-index:11;
-      display:flex;flex-direction:row;align-items:center;gap:2.5rem;
-      pointer-events:none;
-      opacity:0; /* shown by JS after intro fades */
+    /* linker helft: ! gecentreerd */
+    #intro-left{
+      display:flex;align-items:center;justify-content:center;
     }
+    /* rechter helft: tagline gecentreerd */
+    #intro-right{
+      display:flex;align-items:center;justify-content:center;
+    }
+    #intro-logo{
+      font-size:clamp(4rem,12vw,9rem);font-weight:400;font-style:italic;
+      font-family:'SometypeMono',monospace;color:var(--fg);line-height:1;
+      opacity:0;animation:fi-logo .4s ease .1s forwards;
+    }
+    #intro-sub{
+      font-size:clamp(.65rem,1.3vw,.95rem);letter-spacing:.18em;color:var(--fg);
+      line-height:1.9;opacity:0;
+      animation:fi-sub .6s ease .5s forwards;
+    }
+    @keyframes fi-logo{to{opacity:1}}
+    @keyframes fi-sub{to{opacity:.85}}
+
+    /* Hero logo — zelfde 1fr/1fr grid, ligt permanent over de videos */
+    #hero-logo{
+      position:absolute;inset:0;z-index:11;
+      display:grid;grid-template-columns:1fr 1fr;
+      pointer-events:none;
+      opacity:1;
+    }
+    /* ! gecentreerd in linker helft (over linker video) */
     #hero-logo-mark{
+      display:flex;align-items:center;justify-content:center;
       font-size:clamp(4rem,12vw,9rem);font-weight:400;font-style:italic;
       font-family:'SometypeMono',monospace;
       color:var(--fg);line-height:1;
-      letter-spacing:0;
     }
+    /* tagline gecentreerd in rechter helft (over rechter video) */
     #hero-logo-sub{
+      display:flex;align-items:center;justify-content:center;
       font-size:clamp(.65rem,1.3vw,.95rem);letter-spacing:.18em;
-      color:var(--fg);line-height:1.7;white-space:pre-line;
-      font-weight:400;
+      color:var(--fg);line-height:1.9;font-weight:400;
     }
 
     /* ── NAV ── */
@@ -255,7 +267,6 @@
 
       /* Hero + intro: mobile — stapel verticaal */
       #intro{grid-template-columns:1fr;grid-template-rows:1fr 1fr;}
-      #intro-left{border-right:none;border-bottom:1px solid rgba(240,237,230,.1);}
       #hero-logo{grid-template-columns:1fr;grid-template-rows:1fr 1fr;}
       #hero-logo-mark{font-size:clamp(4rem,20vw,7rem);}
       #hero-logo-sub{font-size:clamp(.75rem,3.5vw,1rem);}
@@ -320,7 +331,7 @@
       #info-close{top:1rem;right:1.2rem}
 
       /* Intro */
-      #intro-logo{font-size:clamp(1.2rem,6vw,1.8rem)}
+      #intro-logo{font-size:clamp(3.5rem,12vw,7rem)}
       #intro-sub{font-size:.7rem;letter-spacing:.15em}
 
       /* Scroll root on mobile */
@@ -542,14 +553,9 @@ const cur=document.getElementById('cursor'),gl=document.getElementById('cursor-g
 document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';gl.style.left=e.clientX+'px';gl.style.top=e.clientY+'px';});
 
 // ── INTRO ──
+// Hero-logo is altijd zichtbaar (opacity:1 in CSS).
+// Intro (zwart) faded weg terwijl videos fade-in — max 2s zwart scherm.
 window.addEventListener('load',()=>{
-  // Hero logo meteen zichtbaar (staat al op zwart scherm)
-  const hl=document.getElementById('hero-logo');
-  hl.style.transition='opacity .6s ease';
-  hl.style.opacity='1';
-
-  // Videos starten direct — fade in duurt 2s
-  // Na max 2s verdwijnt de zwarte intro overlay
   setTimeout(()=>{
     document.getElementById('hero-videos').classList.add('visible');
     document.getElementById('intro').classList.add('fade-out');
