@@ -8,5 +8,152 @@
 </head>
 <body>
   <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+  <script>
+  CMS.init({
+    config: {
+      backend: { name: "git-gateway", branch: "main" },
+      media_folder: "archetypes-upload/images",
+      public_folder: "images",
+      collections: [
+        {
+          name: "projecten",
+          label: "Projecten (ARCHE)",
+          folder: "archetypes-upload/data/projecten",
+          create: true,
+          slug: "{{slug}}",
+          fields: [
+            { label: "Volgorde", name: "order", widget: "number", default: 99 },
+            { label: "Titel", name: "title", widget: "string" },
+            { label: "Ondertitel", name: "sub", widget: "string", required: false },
+            { label: "Beschrijving", name: "desc", widget: "text", required: false },
+            {
+              label: "Hoofdafbeelding (overzichtspagina)",
+              name: "image",
+              widget: "image",
+              required: false,
+              hint: "Deze afbeelding verschijnt op de scrollpagina."
+            },
+            {
+              label: "Extra afbeeldingen (slideshow)",
+              name: "extra_images",
+              widget: "object",
+              required: false,
+              hint: "Deze afbeeldingen verschijnen in de slideshow als je op de hoofdafbeelding klikt.",
+              fields: [
+                { label: "Afbeelding 2", name: "image2", widget: "image", required: false },
+                { label: "Afbeelding 3", name: "image3", widget: "image", required: false },
+                { label: "Afbeelding 4", name: "image4", widget: "image", required: false },
+                { label: "Afbeelding 5", name: "image5", widget: "image", required: false },
+                { label: "Afbeelding 6", name: "image6", widget: "image", required: false },
+                { label: "Afbeelding 7", name: "image7", widget: "image", required: false },
+                { label: "Afbeelding 8", name: "image8", widget: "image", required: false },
+              ]
+            },
+            { label: "Label 1", name: "label1", widget: "string", default: "Opdrachtgever", required: false },
+            { label: "Waarde 1", name: "waarde1", widget: "string", required: false },
+            { label: "Label 2", name: "label2", widget: "string", default: "Programma", required: false },
+            { label: "Waarde 2", name: "waarde2", widget: "string", required: false },
+            { label: "Label 3", name: "label3", widget: "string", default: "Ontwerp", required: false },
+            { label: "Waarde 3", name: "waarde3", widget: "string", required: false },
+            { label: "Label 4", name: "label4", widget: "string", default: "Aannemer", required: false },
+            { label: "Waarde 4", name: "waarde4", widget: "string", required: false },
+            { label: "Label 5", name: "label5", widget: "string", default: "Video / Fotografie", required: false },
+            { label: "Waarde 5", name: "waarde5", widget: "string", required: false },
+          ]
+        },
+        {
+          name: "objecten",
+          label: "Objecten (TYPES)",
+          folder: "archetypes-upload/data/objecten",
+          create: true,
+          slug: "{{slug}}",
+          fields: [
+            { label: "Volgorde", name: "order", widget: "number", default: 99 },
+            { label: "Titel", name: "title", widget: "string" },
+            { label: "Ondertitel", name: "sub", widget: "string", required: false },
+            { label: "Beschrijving", name: "desc", widget: "text", required: false },
+            {
+              label: "Hoofdafbeelding (overzichtspagina)",
+              name: "image",
+              widget: "image",
+              required: false,
+              hint: "Deze afbeelding verschijnt op de scrollpagina."
+            },
+            {
+              label: "Extra afbeeldingen (slideshow)",
+              name: "extra_images",
+              widget: "object",
+              required: false,
+              hint: "Deze afbeeldingen verschijnen in de slideshow als je op de hoofdafbeelding klikt.",
+              fields: [
+                { label: "Afbeelding 2", name: "image2", widget: "image", required: false },
+                { label: "Afbeelding 3", name: "image3", widget: "image", required: false },
+                { label: "Afbeelding 4", name: "image4", widget: "image", required: false },
+                { label: "Afbeelding 5", name: "image5", widget: "image", required: false },
+                { label: "Afbeelding 6", name: "image6", widget: "image", required: false },
+                { label: "Afbeelding 7", name: "image7", widget: "image", required: false },
+                { label: "Afbeelding 8", name: "image8", widget: "image", required: false },
+              ]
+            },
+            { label: "Label 1", name: "label1", widget: "string", default: "Opdrachtgever", required: false },
+            { label: "Waarde 1", name: "waarde1", widget: "string", required: false },
+            { label: "Label 2", name: "label2", widget: "string", default: "Programma", required: false },
+            { label: "Waarde 2", name: "waarde2", widget: "string", required: false },
+            { label: "Label 3", name: "label3", widget: "string", default: "Ontwerp", required: false },
+            { label: "Waarde 3", name: "waarde3", widget: "string", required: false },
+            { label: "Label 4", name: "label4", widget: "string", default: "Aannemer", required: false },
+            { label: "Waarde 4", name: "waarde4", widget: "string", required: false },
+            { label: "Label 5", name: "label5", widget: "string", default: "Video / Fotografie", required: false },
+            { label: "Waarde 5", name: "waarde5", widget: "string", required: false },
+          ]
+        },
+        {
+          name: "settings",
+          label: "Instellingen",
+          files: [
+            {
+              label: "Info pagina",
+              name: "info",
+              file: "archetypes-upload/data/info.json",
+              fields: [
+                { label: "Titel", name: "title", widget: "string" },
+                { label: "Alinea 1", name: "p1", widget: "text" },
+                { label: "Alinea 2", name: "p2", widget: "text" },
+                { label: "Meta (adres, contact, etc.)", name: "meta", widget: "text" },
+              ]
+            },
+            {
+              label: "Hero Videos",
+              name: "videos",
+              file: "archetypes-upload/data/videos.json",
+              fields: [
+                {
+                  label: "Linker video (ARCHE)",
+                  name: "left",
+                  widget: "object",
+                  fields: [
+                    { label: "Type", name: "type", widget: "select", options: ["video","youtube","image"] },
+                    { label: "URL / pad", name: "src", widget: "string" },
+                    { label: "Label", name: "label", widget: "string", required: false },
+                  ]
+                },
+                {
+                  label: "Rechter video (TYPES)",
+                  name: "right",
+                  widget: "object",
+                  fields: [
+                    { label: "Type", name: "type", widget: "select", options: ["video","youtube","image"] },
+                    { label: "URL / pad", name: "src", widget: "string" },
+                    { label: "Label", name: "label", widget: "string", required: false },
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  });
+  </script>
 </body>
 </html>
