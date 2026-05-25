@@ -256,6 +256,7 @@
     #slide-img{
       position:absolute;inset:0;width:100%;height:100%;
       object-fit:cover;
+      filter:grayscale(1);
     }
     #slide-text-panel{
       position:absolute;inset:0;
@@ -716,25 +717,23 @@ document.getElementById('corner-bl').addEventListener('click',()=>{scrollToProje
 document.getElementById('corner-br').addEventListener('click',()=>{scrollToProjects('types');applyFilter('types');});
 
 // Click dimmed col to reset filter
-// Klik op de ANDERE kolom (niet de bronkolom) sluit de slideshow.
-// side-right = slideshow staat rechts = geopend via linker kolom = rechter kolom sluit hem.
-// side-left  = slideshow staat links  = geopend via rechter kolom = linker kolom sluit hem.
-document.getElementById('col-arche').addEventListener('click', e => {
+// Capture phase zodat klik op ALLES in de kolom werkt (ook op kaarten met stopPropagation)
+document.getElementById('col-arche').addEventListener('click', () => {
   const ss = document.getElementById('slideshow-overlay');
-  if(ss.classList.contains('active') && ss.classList.contains('side-left')){
-    // Slideshow staat links = rechter kolom opende hem = linker kolom is de ANDERE → sluit
+  // Slideshow staat links = geopend vanuit rechter kolom = linker kolom sluit hem
+  if (ss.classList.contains('active') && ss.classList.contains('side-left')) {
     closeSlideshow(); return;
   }
-  if(!ss.classList.contains('active') && af==='types') applyFilter('types');
+  if (af === 'types') applyFilter('types');
 }, true);
 
-document.getElementById('col-types').addEventListener('click', e => {
+document.getElementById('col-types').addEventListener('click', () => {
   const ss = document.getElementById('slideshow-overlay');
-  if(ss.classList.contains('active') && ss.classList.contains('side-right')){
-    // Slideshow staat rechts = linker kolom opende hem = rechter kolom is de ANDERE → sluit
+  // Slideshow staat rechts = geopend vanuit linker kolom = rechter kolom sluit hem
+  if (ss.classList.contains('active') && ss.classList.contains('side-right')) {
     closeSlideshow(); return;
   }
-  if(!ss.classList.contains('active') && af==='arche') applyFilter('arche');
+  if (af === 'arche') applyFilter('arche');
 }, true);
 
 function applyFilter(f){
@@ -1158,4 +1157,14 @@ function toggleAudio(){
   for(let i=0;i<300;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.1+.2,o:Math.random()*.5+.15,tw:Math.random()*Math.PI*2,tws:(Math.random()*.005+.002)*(Math.random()<.5?1:-1)});
   function spawnShooter(){const a=Math.PI/6+Math.random()*Math.PI/8;shooters.push({x:Math.random()*W*.7,y:Math.random()*H*.3,vx:Math.cos(a)*(4+Math.random()*5),vy:Math.sin(a)*(4+Math.random()*5),life:1,decay:.025+Math.random()*.02,trail:[]});}
   function sched(){setTimeout(()=>{spawnShooter();sched();},3000+Math.random()*5000);}sched();
-  function draw(){ctx.clearRect(0,0,W,H);stars.forEach(s=>{s.tw+=s.tws;const a=s.o+Math.sin(s.tw)*.15;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(240,237,230,${Math.max(0,Math.min(1,a))})`;ctx.fill();});shooters=shooters.filter(s=>s.life>0);shooters.forEach(s=>{s.trail.push({x:s.x,y:s.y});if(s.trail.length>18)s.trail.shift();s.x+=s.vx;s.y+=s.vy;s.life-=s.decay;if(s.trail.length>1){const g=ctx.createLinearGradient(s.trail[0].x,s.trail[0].y,s.x,s.y);g.addColorStop(0,'rgba(240,237,230,0)');g.addColorStop(.5,`rgba(212,185,106,${s.life*.4})`);g.addColorStop(1,`rgba(255,255,255,${s.life*.9})`);ctx.beginPath();ctx.moveTo(s.trail[0].x,s.trail[0].y);s.trail.forEach(p=>ctx.lineTo(p.x,p.y));ctx.lineTo(s.x,s.y);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.stroke();}ctx.beginPath();ctx.arc(s.x,s.y,1.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,2
+  function draw(){ctx.clearRect(0,0,W,H);stars.forEach(s=>{s.tw+=s.tws;const a=s.o+Math.sin(s.tw)*.15;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(240,237,230,${Math.max(0,Math.min(1,a))})`;ctx.fill();});shooters=shooters.filter(s=>s.life>0);shooters.forEach(s=>{s.trail.push({x:s.x,y:s.y});if(s.trail.length>18)s.trail.shift();s.x+=s.vx;s.y+=s.vy;s.life-=s.decay;if(s.trail.length>1){const g=ctx.createLinearGradient(s.trail[0].x,s.trail[0].y,s.x,s.y);g.addColorStop(0,'rgba(240,237,230,0)');g.addColorStop(.5,`rgba(212,185,106,${s.life*.4})`);g.addColorStop(1,`rgba(255,255,255,${s.life*.9})`);ctx.beginPath();ctx.moveTo(s.trail[0].x,s.trail[0].y);s.trail.forEach(p=>ctx.lineTo(p.x,p.y));ctx.lineTo(s.x,s.y);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.stroke();}ctx.beginPath();ctx.arc(s.x,s.y,1.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${s.life})`;ctx.fill();});requestAnimationFrame(draw);}
+  draw();
+  // Show starfield when projects are visible
+  scrollRoot.addEventListener('scroll',()=>{canvas.style.opacity=scrollRoot.scrollTop>window.innerHeight*.3?'1':'0';});
+})();
+
+renderVideos(DEFAULTS.videos);renderProjects(DEFAULTS.arche,DEFAULTS.types);renderInfo(DEFAULTS.info);
+loadAll();
+</script>
+</body>
+</html>
