@@ -716,16 +716,27 @@ document.getElementById('corner-bl').addEventListener('click',()=>{scrollToProje
 document.getElementById('corner-br').addEventListener('click',()=>{scrollToProjects('types');applyFilter('types');});
 
 // Click dimmed col to reset filter
-document.getElementById('col-arche').addEventListener('click',()=>{
-  // Close slideshow if it's open on the left (i.e. user opened from types col)
+// Capture phase (true) = fires before any child stopPropagation can block it
+// This ensures clicking ANYWHERE in the opposite column closes the slideshow
+document.getElementById('col-arche').addEventListener('click', e => {
   const ss = document.getElementById('slideshow-overlay');
-  if(ss.classList.contains('active') && ss.classList.contains('side-left')){closeSlideshow();return;}
+  if(ss.classList.contains('active') && ss.classList.contains('side-left')){
+    closeSlideshow();return;
+  }
+}, true);
+document.getElementById('col-arche').addEventListener('click', e => {
+  if(document.getElementById('slideshow-overlay').classList.contains('active'))return;
   if(af==='types')applyFilter('types');
 });
-document.getElementById('col-types').addEventListener('click',()=>{
-  // Close slideshow if it's open on the right (i.e. user opened from arche col)
+
+document.getElementById('col-types').addEventListener('click', e => {
   const ss = document.getElementById('slideshow-overlay');
-  if(ss.classList.contains('active') && ss.classList.contains('side-right')){closeSlideshow();return;}
+  if(ss.classList.contains('active') && ss.classList.contains('side-right')){
+    closeSlideshow();return;
+  }
+}, true);
+document.getElementById('col-types').addEventListener('click', e => {
+  if(document.getElementById('slideshow-overlay').classList.contains('active'))return;
   if(af==='arche')applyFilter('arche');
 });
 
