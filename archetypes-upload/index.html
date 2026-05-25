@@ -715,31 +715,21 @@ document.querySelectorAll('[data-filter]').forEach(l=>{
 document.getElementById('corner-bl').addEventListener('click',()=>{scrollToProjects('arche');applyFilter('arche');});
 document.getElementById('corner-br').addEventListener('click',()=>{scrollToProjects('types');applyFilter('types');});
 
-// Klik in kolom: capture phase vangt alles op, ook achter stopPropagation
+// Slider open: klik op de scrollpagina (de andere helft) sluit hem altijd
 document.getElementById('col-arche').addEventListener('click', () => {
   const ss = document.getElementById('slideshow-overlay');
-  if (ss.classList.contains('active')) {
-    // Overlay staat rechts (side-right) = geopend vanuit LINKER kolom
-    // Linker kolom is de BRON — mag niet sluiten
-    // Overlay staat links (side-left) = geopend vanuit RECHTER kolom  
-    // Linker kolom is de ANDERE — mag wel sluiten
-    if (ss.classList.contains('side-left')) { closeSlideshow(); return; }
-    return; // side-right: linker kolom doet niets
+  if (ss.classList.contains('active') && ss.classList.contains('side-right')) {
+    closeSlideshow(); return;
   }
-  if (af === 'types') applyFilter('types');
+  if (!ss.classList.contains('active') && af === 'types') applyFilter('types');
 }, true);
 
 document.getElementById('col-types').addEventListener('click', () => {
   const ss = document.getElementById('slideshow-overlay');
-  if (ss.classList.contains('active')) {
-    // Overlay staat links (side-left) = geopend vanuit RECHTER kolom
-    // Rechter kolom is de BRON — mag niet sluiten
-    // Overlay staat rechts (side-right) = geopend vanuit LINKER kolom
-    // Rechter kolom is de ANDERE — mag wel sluiten
-    if (ss.classList.contains('side-right')) { closeSlideshow(); return; }
-    return; // side-left: rechter kolom doet niets
+  if (ss.classList.contains('active') && ss.classList.contains('side-left')) {
+    closeSlideshow(); return;
   }
-  if (af === 'arche') applyFilter('arche');
+  if (!ss.classList.contains('active') && af === 'arche') applyFilter('arche');
 }, true);
 
 function applyFilter(f){
