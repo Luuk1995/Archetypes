@@ -55,7 +55,44 @@ collections:
       - { label: "Label 2 waarde", name: "waarde2", widget: "string", required: false }
       - { label: "Label 3 naam", name: "label3", widget: "string", default: "Ontwerp", required: false }
       - { label: "Label 3 waarde", name: "waarde3", widget: "string", required: false }
-      - { label: "Afbeelding", name: "image", widget: "image", required: false }
+      - { label: "Label 4 naam", name: "label4", widget: "string", default: "Aannemer", required: false }
+      - { label: "Label 4 waarde", name: "waarde4", widget: "string", required: false }
+      - { label: "Label 5 naam", name: "label5", widget: "string", default: "Video / Fotografie", required: false }
+      - { label: "Label 5 waarde", name: "waarde5", widget: "string", required: false }
+      - label: "Hoofdafbeelding (overzichtspagina)"
+        name: "image"
+        widget: "image"
+        required: false
+        hint: "Verschijnt op de scrollpagina als kaartafbeelding."
+      - label: "Slideshow afbeelding 2"
+        name: "image2"
+        widget: "image"
+        required: false
+        hint: "Extra afbeelding in de slideshow (opent als je op de hoofdafbeelding klikt)."
+      - label: "Slideshow afbeelding 3"
+        name: "image3"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 4"
+        name: "image4"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 5"
+        name: "image5"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 6"
+        name: "image6"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 7"
+        name: "image7"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 8"
+        name: "image8"
+        widget: "image"
+        required: false
       - { label: "Volgorde", name: "order", widget: "number", default: 99 }
 
   - name: "objecten"
@@ -76,5 +113,42 @@ collections:
       - { label: "Label 2 waarde", name: "waarde2", widget: "string", required: false }
       - { label: "Label 3 naam", name: "label3", widget: "string", default: "Ontwerp", required: false }
       - { label: "Label 3 waarde", name: "waarde3", widget: "string", required: false }
-      - { label: "Afbeelding", name: "image", widget: "image", required: false }
+      - { label: "Label 4 naam", name: "label4", widget: "string", default: "Materiaal", required: false }
+      - { label: "Label 4 waarde", name: "waarde4", widget: "string", required: false }
+      - { label: "Label 5 naam", name: "label5", widget: "string", default: "Prijs", required: false }
+      - { label: "Label 5 waarde", name: "waarde5", widget: "string", required: false }
+      - label: "Hoofdafbeelding (overzichtspagina)"
+        name: "image"
+        widget: "image"
+        required: false
+        hint: "Verschijnt op de scrollpagina als kaartafbeelding."
+      - label: "Slideshow afbeelding 2"
+        name: "image2"
+        widget: "image"
+        required: false
+        hint: "Extra afbeelding in de slideshow (opent als je op de hoofdafbeelding klikt)."
+      - label: "Slideshow afbeelding 3"
+        name: "image3"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 4"
+        name: "image4"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 5"
+        name: "image5"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 6"
+        name: "image6"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 7"
+        name: "image7"
+        widget: "image"
+        required: false
+      - label: "Slideshow afbeelding 8"
+        name: "image8"
+        widget: "image"
+        required: false
       - { label: "Volgorde", name: "order", widget: "number", default: 99 }
