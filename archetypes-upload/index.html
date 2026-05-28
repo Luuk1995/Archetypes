@@ -160,9 +160,12 @@
       width:1px;
       background:rgba(240,237,230,.13);
       z-index:200;pointer-events:none;
+      opacity:0;
+      transition:opacity .4s ease;
     }
-    #scrollbar-arche{left:1.4rem;}
-    #scrollbar-types{right:1.4rem;}
+    .col-scrollbar.visible{opacity:1;}
+    #scrollbar-arche{left:1.25rem;}
+    #scrollbar-types{right:1.25rem;}
     /* Thumb: white indicator showing scroll position */
     .col-scrollbar-thumb{
       position:absolute;
@@ -695,6 +698,11 @@ scrollRoot.addEventListener('scroll',()=>{
   const atHero=scrollRoot.scrollTop<window.innerHeight*.5;
   lf.style.display=atHero?'inline':'none';
   ls.style.display=atHero?'none':'inline';
+  // Scrollbars alleen zichtbaar op projects pagina
+  const sbA=document.getElementById('scrollbar-arche');
+  const sbT=document.getElementById('scrollbar-types');
+  if(sbA) sbA.classList.toggle('visible',!atHero);
+  if(sbT) sbT.classList.toggle('visible',!atHero);
 });
 
 // ── NAV: scroll to hero or projects ──
@@ -727,7 +735,7 @@ function initScrollbar(colId, thumbId){
   function update(){
     const vh        = window.innerHeight;          // track height = full viewport
     const ratio     = col.clientHeight / col.scrollHeight;
-    const thumbH    = Math.max(vh * ratio, 40);    // min 40px thumb
+    const thumbH    = Math.max(vh * ratio * .7, 28);  // shorter thumb
     const maxTop    = vh - thumbH;
     const scrolled  = col.scrollTop / Math.max(1, col.scrollHeight - col.clientHeight);
     thumb.style.height = thumbH + 'px';
