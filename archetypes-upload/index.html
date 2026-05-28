@@ -152,11 +152,21 @@
     .projects-col::-webkit-scrollbar{display:none}
     .projects-col.dimmed{opacity:.08;filter:blur(4px)}
 
-    /* Scrollbar indicators */
-    .col-scrollbar{position:absolute;top:0;bottom:0;width:2px;background:rgba(240,237,230,.07);z-index:20;pointer-events:none}
-    #col-arche .col-scrollbar{left:0}
-    #col-types .col-scrollbar{right:0}
-    .col-scrollbar-thumb{position:absolute;width:2px;background:rgba(240,237,230,.4);border-radius:1px}
+    /* ── SCROLLBAR INDICATORS ── */
+    .col-scrollbar{
+      position:absolute;top:2rem;bottom:2rem;
+      width:1px;
+      background:rgba(240,237,230,.12);
+      z-index:20;pointer-events:none;
+    }
+    #col-arche .col-scrollbar{left:1.2rem;}
+    #col-types .col-scrollbar{right:1.2rem;}
+    .col-scrollbar-thumb{
+      position:absolute;
+      left:0;width:1px;
+      background:rgba(240,237,230,.75);
+      transition:top .08s linear, height .08s linear;
+    }
 
     /* ── PROJECT CARD ── */
     .project-card{
@@ -708,21 +718,28 @@ function scrollToProjects(filter){
 }
 
 // ── SCROLLBAR ──
-function initScrollbar(colId,thumbId){
-  const col=document.getElementById(colId);
-  const thumb=document.getElementById(thumbId);
-  const update=()=>{
-    if(!col||!thumb)return;
-    const ratio=col.clientHeight/col.scrollHeight;
-    const thumbH=Math.max(ratio*col.clientHeight,40);
-    const maxTop=col.clientHeight-thumbH;
-    const scrolled=col.scrollTop/Math.max(1,col.scrollHeight-col.clientHeight);
-    thumb.style.height=thumbH+'px';
-    thumb.style.top=(scrolled*maxTop)+'px';
-  };
-  col.addEventListener('scroll',update);
-  window.addEventListener('resize',update);
-  setTimeout(update,200);
+function initScrollbar(colId, thumbId){
+  const col   = document.getElementById(colId);
+  const thumb = document.getElementById(thumbId);
+  if(!col || !thumb) return;
+
+  function update(){
+    const trackH   = col.clientHeight - 64; // top+bottom padding (2rem each side)
+    const ratio     = col.clientHeight / col.scrollHeight;
+    const thumbH    = Math.max(trackH * ratio, 32);
+    const maxTop    = trackH - thumbH;
+    const scrolled  = col.scrollTop / Math.max(1, col.scrollHeight - col.clientHeight);
+    thumb.style.height = thumbH + 'px';
+    thumb.style.top    = (scrolled * maxTop) + 'px';
+  }
+
+  col.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update, {passive:true});
+
+  // Re-run after content renders (images load, etc.)
+  update();
+  setTimeout(update, 300);
+  setTimeout(update, 800);
 }
 
 // ── NAV FILTER ──
