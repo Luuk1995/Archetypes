@@ -48,17 +48,12 @@ collections:
     fields:
       - { label: "Titel", name: "title", widget: "string" }
       - { label: "Ondertitel / locatie", name: "sub", widget: "string", required: false }
-      - { label: "Beschrijving", name: "desc", widget: "text", required: false }
-      - { label: "Label 1 naam", name: "label1", widget: "string", default: "Opdrachtgever", required: false }
-      - { label: "Label 1 waarde", name: "waarde1", widget: "string", required: false }
-      - { label: "Label 2 naam", name: "label2", widget: "string", default: "Programma", required: false }
-      - { label: "Label 2 waarde", name: "waarde2", widget: "string", required: false }
-      - { label: "Label 3 naam", name: "label3", widget: "string", default: "Ontwerp", required: false }
-      - { label: "Label 3 waarde", name: "waarde3", widget: "string", required: false }
-      - { label: "Label 4 naam", name: "label4", widget: "string", default: "Aannemer", required: false }
-      - { label: "Label 4 waarde", name: "waarde4", widget: "string", required: false }
-      - { label: "Label 5 naam", name: "label5", widget: "string", default: "Video / Fotografie", required: false }
-      - { label: "Label 5 waarde", name: "waarde5", widget: "string", required: false }
+      - { label: "Tekst (eerste deel)", name: "desc1", widget: "text", required: false,
+          hint: "Eerste tekstblok — verschijnt in de standaard font." }
+      - { label: "Quote", name: "quote", widget: "text", required: false,
+          hint: "Verschijnt tussen de twee tekstblokken in het handgeschreven font (Wasted Year)." }
+      - { label: "Tekst (tweede deel)", name: "desc2", widget: "text", required: false,
+          hint: "Tweede tekstblok — verschijnt weer in de standaard font." }
       - label: "Hoofdafbeelding (overzichtspagina)"
         name: "image"
         widget: "image"
@@ -68,7 +63,7 @@ collections:
         name: "image2"
         widget: "image"
         required: false
-        hint: "Extra afbeelding in de slideshow (opent als je op de hoofdafbeelding klikt)."
+        hint: "Extra afbeelding in de slideshow."
       - label: "Slideshow afbeelding 3"
         name: "image3"
         widget: "image"
@@ -106,17 +101,12 @@ collections:
     fields:
       - { label: "Titel", name: "title", widget: "string" }
       - { label: "Ondertitel / prijs", name: "sub", widget: "string", required: false }
-      - { label: "Beschrijving", name: "desc", widget: "text", required: false }
-      - { label: "Label 1 naam", name: "label1", widget: "string", default: "Opdrachtgever", required: false }
-      - { label: "Label 1 waarde", name: "waarde1", widget: "string", required: false }
-      - { label: "Label 2 naam", name: "label2", widget: "string", default: "Afmeting", required: false }
-      - { label: "Label 2 waarde", name: "waarde2", widget: "string", required: false }
-      - { label: "Label 3 naam", name: "label3", widget: "string", default: "Ontwerp", required: false }
-      - { label: "Label 3 waarde", name: "waarde3", widget: "string", required: false }
-      - { label: "Label 4 naam", name: "label4", widget: "string", default: "Materiaal", required: false }
-      - { label: "Label 4 waarde", name: "waarde4", widget: "string", required: false }
-      - { label: "Label 5 naam", name: "label5", widget: "string", default: "Prijs", required: false }
-      - { label: "Label 5 waarde", name: "waarde5", widget: "string", required: false }
+      - { label: "Tekst (eerste deel)", name: "desc1", widget: "text", required: false,
+          hint: "Eerste tekstblok — verschijnt in de standaard font." }
+      - { label: "Quote", name: "quote", widget: "text", required: false,
+          hint: "Verschijnt tussen de twee tekstblokken in het handgeschreven font (Wasted Year)." }
+      - { label: "Tekst (tweede deel)", name: "desc2", widget: "text", required: false,
+          hint: "Tweede tekstblok — verschijnt weer in de standaard font." }
       - label: "Hoofdafbeelding (overzichtspagina)"
         name: "image"
         widget: "image"
@@ -126,7 +116,7 @@ collections:
         name: "image2"
         widget: "image"
         required: false
-        hint: "Extra afbeelding in de slideshow (opent als je op de hoofdafbeelding klikt)."
+        hint: "Extra afbeelding in de slideshow."
       - label: "Slideshow afbeelding 3"
         name: "image3"
         widget: "image"
