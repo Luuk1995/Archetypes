@@ -211,6 +211,14 @@
     }
     .project-desc strong{font-weight:700;color:var(--fg)}
     .project-desc em{font-style:italic}
+    .project-quote{
+      font-family:'WastedYear','SometypeMono',monospace;
+      font-size:1.1rem;line-height:1.6;letter-spacing:.03em;
+      color:rgba(240,237,230,.9);
+      margin:.9rem 0;
+      padding:.1rem 0;
+      display:block;
+    }
 
     /* Meta — attached directly above the label at bottom */
     .project-meta{
@@ -816,7 +824,9 @@ function makeCard(p) {
       if(p.waarde2&&p.waarde2.trim()) mh+=`<strong>${p.label2||'Programma'}:</strong>${p.waarde2}`;
       if(p.waarde3&&p.waarde3.trim()) mh+=`<strong>${p.label3||'Ontwerp'}:</strong>${p.waarde3}`;
       metaEl.innerHTML=mh;
-      descEl.innerHTML=renderMd(p.desc||'');
+      descEl.innerHTML=renderMd(p.desc1||p.desc||'')
+        +(p.quote&&p.quote.trim()?`<span class="project-quote">${p.quote}</span>`:'')
+        +(p.desc2&&p.desc2.trim()?`<span style="display:block;margin-top:.4rem">${renderMd(p.desc2)}</span>`:'');
     }
     card.classList.toggle('tapped');
     // Collapse image on tap (color effect)
@@ -834,22 +844,18 @@ function makeCard(p) {
   iw.addEventListener('mouseenter',()=>{
     if(isMobile()) return;
     card.classList.add('img-hovered');
-    // Only show meta if waarde fields are explicitly filled
-    let metaHtml='';
-    if(p.waarde1&&p.waarde1.trim()){
-      metaHtml+=`<strong>${p.label1||'Opdrachtgever'}:</strong>${p.waarde1}`;
-    }
-    if(p.waarde2&&p.waarde2.trim()){
-      metaHtml+=`<strong>${p.label2||'Programma'}:</strong>${p.waarde2}`;
-    }
-    if(p.waarde3&&p.waarde3.trim()){
-      metaHtml+=`<strong>${p.label3||'Ontwerp'}:</strong>${p.waarde3}`;
-    }
-    metaEl.innerHTML=metaHtml;
-    const fullText=p.desc||'';
+    metaEl.innerHTML='';
+    // Build full text: desc1 + quote + desc2
+    const fullText=(p.desc1||p.desc||'');
     descEl.innerHTML='';let i=0;clearInterval(ti);
     ti=setInterval(()=>{
-      if(i<fullText.length){i++;descEl.innerHTML=renderMd(fullText.substring(0,i));}
+      if(i<fullText.length){
+          i++;
+          let html=renderMd(fullText.substring(0,i));
+          if(p.quote&&p.quote.trim()) html+=`<span class="project-quote">${p.quote}</span>`;
+          if(p.desc2&&p.desc2.trim()) html+=`<span style="display:block;margin-top:.4rem">${renderMd(p.desc2)}</span>`;
+          descEl.innerHTML=html;
+        }
       else clearInterval(ti);
     },20);
   });
@@ -1091,14 +1097,10 @@ function toggleAudio(){
   }
 
   function setOverlayText(p) {
-    let mh = '';
-    if (p.waarde1&&p.waarde1.trim()) mh+=`<strong>${p.label1||'Opdrachtgever'}</strong>${p.waarde1}<br>`;
-    if (p.waarde2&&p.waarde2.trim()) mh+=`<strong>${p.label2||'Programma'}</strong>${p.waarde2}<br>`;
-    if (p.waarde3&&p.waarde3.trim()) mh+=`<strong>${p.label3||'Ontwerp'}</strong>${p.waarde3}<br>`;
-    if (p.waarde4&&p.waarde4.trim()) mh+=`<strong>${p.label4||'Aannemer'}</strong>${p.waarde4}<br>`;
-    if (p.waarde5&&p.waarde5.trim()) mh+=`<strong>${p.label5||'Video/Foto'}</strong>${p.waarde5}<br>`;
-    descEl.innerHTML = renderMd(p.desc||'');
-    metaEl.innerHTML = mh;
+    descEl.innerHTML = renderMd(p.desc1||p.desc||'')
+      +(p.quote&&p.quote.trim()?`<span class="project-quote">${p.quote}</span>`:'')
+      +(p.desc2&&p.desc2.trim()?`<span style="display:block;margin-top:.6rem">${renderMd(p.desc2)}</span>`:'');
+    metaEl.innerHTML = '';
   }
 
   function crossfadeTo(src) {
