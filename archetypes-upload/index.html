@@ -55,7 +55,7 @@
       opacity:0;animation:fi-logo .4s ease .1s forwards;
     }
     #intro-sub{
-      font-size:clamp(.65rem,1.3vw,.95rem);letter-spacing:.18em;color:var(--fg);
+      font-size:clamp(.65rem,1.3vw,.95rem);letter-spacing:.12em;color:var(--fg);
       line-height:1.9;opacity:0;
       font-family:'WastedYear','SometypeMono',monospace;
       animation:fi-sub .6s ease .5s forwards;
@@ -72,14 +72,14 @@
     #hero-logo-mark{
       display:flex;align-items:center;justify-content:flex-end;
       padding-right:2.5rem;
-      font-size:clamp(3rem,9vw,6.75rem);font-weight:400;font-style:normal;
+      font-size:clamp(4rem,12vw,9rem);font-weight:400;font-style:normal;
       font-family:'WastedYear','SometypeMono',monospace;
       color:var(--fg);line-height:1;
     }
     #hero-logo-sub{
       display:flex;align-items:center;justify-content:flex-start;
       padding-left:2.5rem;
-      font-size:clamp(.81rem,1.625vw,1.19rem);letter-spacing:.18em;
+      font-size:clamp(.65rem,1.3vw,.95rem);letter-spacing:.12em;
       color:var(--fg);line-height:1.9;font-weight:400;
       font-family:'WastedYear','SometypeMono',monospace;
     }
@@ -88,14 +88,14 @@
     #nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.4rem 1.8rem;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
     #nav-left{display:flex;gap:2rem;pointer-events:all}
     #nav-right{pointer-events:all}
-    .nav-link{font-size:clamp(.65rem,1vw,.8rem);letter-spacing:.10em;text-transform:none;color:var(--fg);text-decoration:none;cursor:none}
+    .nav-link{font-size:clamp(.65rem,1vw,.8rem);letter-spacing:.15em;text-transform:uppercase;color:var(--fg);text-decoration:none;cursor:none}
     .nav-link .nav-exclaim{font-style:italic;font-family:'SometypeMono',monospace;opacity:0;transition:opacity .2s}
     .nav-link:hover .nav-exclaim{opacity:1}
     #logo-full,#logo-short{font-size:clamp(.75rem,1.3vw,1rem);font-weight:600;letter-spacing:.12em;color:var(--fg);cursor:none;text-decoration:none}
     #logo-short{display:none}
 
     /* ── CORNERS ── */
-    .corner{position:fixed;z-index:100;font-size:clamp(.94rem,1.75vw,1.25rem);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--fg);padding:1.4rem 1.8rem;cursor:none;font-family:'SometypeMono',monospace;}
+    .corner{position:fixed;z-index:100;font-size:clamp(.75rem,1.4vw,1rem);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--fg);padding:1.4rem 1.8rem;cursor:none}
     .corner .corner-exclaim{font-style:italic;font-family:'SometypeMono',monospace;opacity:0;transition:opacity .2s}
     .corner:hover .corner-exclaim{opacity:1}
     #corner-bl{bottom:0;left:0}
@@ -229,8 +229,8 @@
     /* Label: title + subtitle always at BOTTOM, right next to meta */
     .project-label{padding:.5rem 0 0;flex-shrink:0}
     .project-card:nth-child(even) .project-label{text-align:right}
-    .project-title{font-size:clamp(.9rem,1.25vw,1.125rem);font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.4;font-family:'SometypeMono',monospace;}
-    .project-subtitle{font-size:.85rem;letter-spacing:.04em;color:rgba(240,237,230,.72);text-transform:none;margin-top:.2rem;font-family:'WastedYear','SometypeMono',monospace;font-weight:400;}
+    .project-title{font-size:clamp(.72rem,1vw,.9rem);font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.4}
+    .project-subtitle{font-size:.85rem;letter-spacing:.04em;color:var(--fg);text-transform:none;margin-top:.2rem;font-family:'WastedYear','SometypeMono',monospace;font-weight:400;}
 
     /* ── INFO OVERLAY ── */
     #info-overlay{position:fixed;inset:0;z-index:2000;background:rgba(8,8,14,.95);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding-top:10vh;opacity:0;pointer-events:none;transition:opacity .5s ease}
@@ -292,8 +292,8 @@
     .slide-arrow{
       position:absolute;top:50%;transform:translateY(-50%);
       z-index:10;
-      font-size:clamp(1.8rem,3.6vw,2.55rem);letter-spacing:.1em;
-      color:rgba(240,237,230,1);
+      font-size:clamp(.6rem,1.2vw,.85rem);letter-spacing:.2em;
+      color:rgba(240,237,230,.4);
       cursor:none;padding:1.2rem;
       transition:color .2s;
       user-select:none;
@@ -303,8 +303,8 @@
     #slide-next{right:.4rem;}
     #slide-close{
       position:absolute;top:1.4rem;left:1.8rem;
-      z-index:10;font-size:4.2rem;line-height:1;
-      color:rgba(240,237,230,1);
+      z-index:10;font-size:1.4rem;line-height:1;
+      color:rgba(240,237,230,.4);
       cursor:none;transition:color .2s;
     }
     #slide-close:hover{color:var(--fg);}
@@ -796,7 +796,6 @@ function makeCard(p) {
 
   inner.appendChild(iw);inner.appendChild(right);
   card.appendChild(inner);
-  setTimeout(() => { if(typeof applyWastedAlternates === 'function') { applyWastedAlternates(card.querySelector('.project-subtitle')); } }, 10);
 
   const isMobile = () => window.innerWidth <= 768;
 
@@ -1147,31 +1146,6 @@ function toggleAudio(){
     showSlide(e.clientX - rect.left < rect.width / 2 ? idx - 1 : idx + 1);
   });
 })();
-
-// ── WASTED YEAR ALTERNATES ──
-function applyWastedAlternates(el) {
-  if (!el) return;
-  const text = el.textContent;
-  el.innerHTML = '';
-  for (const ch of text) {
-    const span = document.createElement('span');
-    span.textContent = ch;
-    if (ch.trim() && Math.random() > 0.45) {
-      span.style.fontFeatureSettings = '"aalt" 1';
-    }
-    el.appendChild(span);
-  }
-}
-
-function applyWastedToAll() {
-  applyWastedAlternates(document.getElementById('hero-logo-mark'));
-  applyWastedAlternates(document.getElementById('hero-logo-sub'));
-  applyWastedAlternates(document.getElementById('intro-logo'));
-  applyWastedAlternates(document.getElementById('intro-sub'));
-  applyWastedAlternates(document.getElementById('info-logo-mark'));
-  document.querySelectorAll('.project-subtitle').forEach(applyWastedAlternates);
-}
-window.addEventListener('load', applyWastedToAll);
 
 // ── STARFIELD ──
 (function(){
