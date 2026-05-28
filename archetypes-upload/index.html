@@ -153,19 +153,22 @@
     .projects-col.dimmed{opacity:.08;filter:blur(4px)}
 
     /* ── SCROLLBAR INDICATORS ── */
+    /* Track: fixed to viewport, outside scroll container */
     .col-scrollbar{
-      position:absolute;top:2rem;bottom:2rem;
+      position:fixed;
+      top:0;bottom:0;
       width:1px;
-      background:rgba(240,237,230,.12);
-      z-index:20;pointer-events:none;
+      background:rgba(240,237,230,.13);
+      z-index:200;pointer-events:none;
     }
-    #col-arche .col-scrollbar{left:1.2rem;}
-    #col-types .col-scrollbar{right:1.2rem;}
+    #scrollbar-arche{left:1.4rem;}
+    #scrollbar-types{right:1.4rem;}
+    /* Thumb: white indicator showing scroll position */
     .col-scrollbar-thumb{
       position:absolute;
       left:0;width:1px;
-      background:rgba(240,237,230,.75);
-      transition:top .08s linear, height .08s linear;
+      background:rgba(240,237,230,.8);
+      will-change:top,height;
     }
 
     /* ── PROJECT CARD ── */
@@ -497,11 +500,9 @@
   <!-- PROJECTS -->
   <div id="projects-snap">
     <div class="projects-col" id="col-arche">
-      <div class="col-scrollbar"><div class="col-scrollbar-thumb" id="thumb-arche"></div></div>
       <div id="list-arche"></div>
     </div>
     <div class="projects-col" id="col-types">
-      <div class="col-scrollbar"><div class="col-scrollbar-thumb" id="thumb-types"></div></div>
       <div id="list-types"></div>
     </div>
   </div>
@@ -724,10 +725,10 @@ function initScrollbar(colId, thumbId){
   if(!col || !thumb) return;
 
   function update(){
-    const trackH   = col.clientHeight - 64; // top+bottom padding (2rem each side)
+    const vh        = window.innerHeight;          // track height = full viewport
     const ratio     = col.clientHeight / col.scrollHeight;
-    const thumbH    = Math.max(trackH * ratio, 32);
-    const maxTop    = trackH - thumbH;
+    const thumbH    = Math.max(vh * ratio, 40);    // min 40px thumb
+    const maxTop    = vh - thumbH;
     const scrolled  = col.scrollTop / Math.max(1, col.scrollHeight - col.clientHeight);
     thumb.style.height = thumbH + 'px';
     thumb.style.top    = (scrolled * maxTop) + 'px';
@@ -735,11 +736,9 @@ function initScrollbar(colId, thumbId){
 
   col.addEventListener('scroll', update, {passive:true});
   window.addEventListener('resize', update, {passive:true});
-
-  // Re-run after content renders (images load, etc.)
   update();
   setTimeout(update, 300);
-  setTimeout(update, 800);
+  setTimeout(update, 1000);
 }
 
 // ── NAV FILTER ──
@@ -1243,5 +1242,8 @@ function toggleAudio(){
 renderVideos(DEFAULTS.videos);renderProjects(DEFAULTS.arche,DEFAULTS.types);renderInfo(DEFAULTS.info);
 loadAll();
 </script>
+<!-- Fixed scrollbar tracks -->
+<div class="col-scrollbar" id="scrollbar-arche"><div class="col-scrollbar-thumb" id="thumb-arche"></div></div>
+<div class="col-scrollbar" id="scrollbar-types"><div class="col-scrollbar-thumb" id="thumb-types"></div></div>
 </body>
 </html>
