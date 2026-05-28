@@ -72,7 +72,7 @@
     #hero-logo-mark{
       display:flex;align-items:center;justify-content:flex-end;
       padding-right:2.5rem;
-      font-size:clamp(2.5rem,7.5vw,5.5rem);font-weight:400;font-style:normal;
+      font-size:clamp(4rem,12vw,9rem);font-weight:400;font-style:normal;
       font-family:'WastedYear','SometypeMono',monospace;
       color:var(--fg);line-height:1;
     }
@@ -292,22 +292,22 @@
     .slide-arrow{
       position:absolute;top:50%;transform:translateY(-50%);
       z-index:10;
-      font-size:clamp(1.5rem,3vw,2.125rem);letter-spacing:.1em;
-      color:rgba(240,237,230,.85);
+      font-size:clamp(.6rem,1.2vw,.85rem);letter-spacing:.2em;
+      color:rgba(240,237,230,.4);
       cursor:none;padding:1.2rem;
       transition:color .2s;
       user-select:none;
     }
-    .slide-arrow:hover{color:rgba(240,237,230,1);}
+    .slide-arrow:hover{color:var(--fg);}
     #slide-prev{left:.4rem;}
     #slide-next{right:.4rem;}
     #slide-close{
       position:absolute;top:1.4rem;left:1.8rem;
-      z-index:10;font-size:3.5rem;line-height:1;
-      color:rgba(240,237,230,.85);
+      z-index:10;font-size:1.4rem;line-height:1;
+      color:rgba(240,237,230,.4);
       cursor:none;transition:color .2s;
     }
-    #slide-close:hover{color:rgba(240,237,230,1);}
+    #slide-close:hover{color:var(--fg);}
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:rgba(240,237,230,.12)}
@@ -796,7 +796,6 @@ function makeCard(p) {
 
   inner.appendChild(iw);inner.appendChild(right);
   card.appendChild(inner);
-  setTimeout(() => { if(typeof applyWastedAlternates === 'function') applyWastedAlternates(card.querySelector('.project-subtitle')); }, 10);
 
   const isMobile = () => window.innerWidth <= 768;
 
@@ -1147,39 +1146,6 @@ function toggleAudio(){
     showSlide(e.clientX - rect.left < rect.width / 2 ? idx - 1 : idx + 1);
   });
 })();
-
-// ── WASTED YEAR ALTERNATES ──
-function applyWastedAlternates(el) {
-  if (!el) return;
-  // Walk child nodes: wrap text chars in spans, leave <br> and elements untouched
-  const nodes = Array.from(el.childNodes);
-  el.innerHTML = '';
-  for (const node of nodes) {
-    if (node.nodeType === Node.TEXT_NODE) {
-      for (const ch of node.textContent) {
-        const span = document.createElement('span');
-        span.textContent = ch;
-        if (ch.trim() && Math.random() > 0.45) {
-          span.style.fontFeatureSettings = '"aalt" 1';
-        }
-        el.appendChild(span);
-      }
-    } else {
-      // Preserve <br> and other elements as-is
-      el.appendChild(node.cloneNode(true));
-    }
-  }
-}
-
-function applyWastedToAll() {
-  applyWastedAlternates(document.getElementById('hero-logo-mark'));
-  applyWastedAlternates(document.getElementById('hero-logo-sub'));
-  applyWastedAlternates(document.getElementById('intro-logo'));
-  applyWastedAlternates(document.getElementById('intro-sub'));
-  applyWastedAlternates(document.getElementById('info-logo-mark'));
-  document.querySelectorAll('.project-subtitle').forEach(applyWastedAlternates);
-}
-window.addEventListener('load', applyWastedToAll);
 
 // ── STARFIELD ──
 (function(){
