@@ -265,14 +265,18 @@
       display:flex;align-items:center;justify-content:center;
       padding:4rem 3rem;
       opacity:0;pointer-events:none;
-      transition:opacity .4s ease;
+      transition:opacity .5s ease;
     }
     #slide-text-panel.visible{opacity:1;}
+    /* Donker laag en blur via filter op een ::before — beide faden mee met parent opacity */
     #slide-text-panel::before{
       content:'';position:absolute;inset:0;
-      background:rgba(8,8,14,.75);
-      backdrop-filter:blur(10px);
-      -webkit-backdrop-filter:blur(10px);
+      background:rgba(8,8,14,.78);
+      /* blur via filter zodat het mee-faded met opacity transitie van parent */
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      /* eigen transitie zodat blur niet achterloopt */
+      transition:backdrop-filter .5s ease, -webkit-backdrop-filter .5s ease;
     }
     #slide-text-inner{
       position:relative;z-index:1;
@@ -1092,9 +1096,15 @@ function toggleAudio(){
   function showSlide(i) {
     idx = (i + slides.length) % slides.length;
     const s = slides[idx];
-    textPanel.classList.remove('visible');
     if (s.type === 'img') {
-      slideImg.src = s.src;
+      // Fade out text panel first if visible, then swap image
+      if (textPanel.classList.contains('visible')) {
+        textPanel.classList.remove('visible');
+        // Wait for fade-out before swapping image
+        setTimeout(() => { slideImg.src = s.src; }, 520);
+      } else {
+        slideImg.src = s.src;
+      }
     } else {
       // Text slide — keep last image, show blur panel
       let mh = '';
