@@ -98,8 +98,8 @@
     .corner{position:fixed;z-index:100;font-size:clamp(.75rem,1.4vw,1rem);font-weight:600;letter-spacing:.12em;text-transform:none;color:var(--fg);padding:1.4rem 1.8rem;cursor:none}
     .corner .corner-exclaim{font-style:italic;font-family:'SometypeMono',monospace;opacity:0;transition:opacity .2s}
     .corner:hover .corner-exclaim{opacity:1}
-    #corner-bl{bottom:0;left:0}
-    #corner-br{bottom:0;right:0}
+    #corner-bl{bottom:0;left:0;padding-left:2.5rem}
+    #corner-br{bottom:0;right:0;padding-right:2.5rem}
 
     #audio-toggle{position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);z-index:500;font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.3);cursor:none;transition:color .3s;text-transform:uppercase}
     #audio-toggle:hover{color:rgba(240,237,230,.7)}
@@ -1192,19 +1192,4 @@ function toggleAudio(){
   const canvas=document.getElementById('starfield');canvas.style.cssText='position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.5s ease';
   const ctx=canvas.getContext('2d');let W,H,stars=[],shooters=[];
   function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
-  resize();window.addEventListener('resize',resize);
-  for(let i=0;i<300;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.1+.2,o:Math.random()*.5+.15,tw:Math.random()*Math.PI*2,tws:(Math.random()*.005+.002)*(Math.random()<.5?1:-1)});
-  function spawnShooter(){const a=Math.PI/6+Math.random()*Math.PI/8;shooters.push({x:Math.random()*W*.7,y:Math.random()*H*.3,vx:Math.cos(a)*(4+Math.random()*5),vy:Math.sin(a)*(4+Math.random()*5),life:1,decay:.025+Math.random()*.02,trail:[]});}
-  function sched(){setTimeout(()=>{spawnShooter();sched();},3000+Math.random()*5000);}sched();
-  function draw(){ctx.clearRect(0,0,W,H);stars.forEach(s=>{s.tw+=s.tws;const a=s.o+Math.sin(s.tw)*.15;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(240,237,230,${Math.max(0,Math.min(1,a))})`;ctx.fill();});shooters=shooters.filter(s=>s.life>0);shooters.forEach(s=>{s.trail.push({x:s.x,y:s.y});if(s.trail.length>18)s.trail.shift();s.x+=s.vx;s.y+=s.vy;s.life-=s.decay;if(s.trail.length>1){const g=ctx.createLinearGradient(s.trail[0].x,s.trail[0].y,s.x,s.y);g.addColorStop(0,'rgba(240,237,230,0)');g.addColorStop(.5,`rgba(212,185,106,${s.life*.4})`);g.addColorStop(1,`rgba(255,255,255,${s.life*.9})`);ctx.beginPath();ctx.moveTo(s.trail[0].x,s.trail[0].y);s.trail.forEach(p=>ctx.lineTo(p.x,p.y));ctx.lineTo(s.x,s.y);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.stroke();}ctx.beginPath();ctx.arc(s.x,s.y,1.5,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${s.life})`;ctx.fill();});requestAnimationFrame(draw);}
-  draw();
-  // Show starfield when projects are visible
-  scrollRoot.addEventListener('scroll',()=>{canvas.style.opacity=scrollRoot.scrollTop>window.innerHeight*.3?'1':'0';});
-})();
-
-renderVideos(DEFAULTS.videos);renderProjects(DEFAULTS.arche,DEFAULTS.types);renderInfo(DEFAULTS.info);
-loadAll();
-</script>
-
-</body>
-</html>
+  resize();window.addEventListener
