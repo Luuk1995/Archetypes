@@ -256,9 +256,30 @@
     #slideshow-overlay.side-left{left:0;right:auto;}
     #slideshow-overlay.side-right{right:0;left:auto;}
 
-    #slide-img{
+    /* Two images for smooth crossfade between slides */
+    #slide-img-a, #slide-img-b{
       position:absolute;inset:0;width:100%;height:100%;
       object-fit:cover;
+      transition:opacity .45s ease;
+    }
+    #slide-img-b{opacity:0;}
+
+    /* Dark overlay — separate div so it fades independently */
+    #slide-dark{
+      position:absolute;inset:0;
+      background:rgba(8,8,14,.78);
+      opacity:0;
+      transition:opacity .5s ease;
+      pointer-events:none;
+    }
+    /* Blur overlay — separate div, fades in sync with dark */
+    #slide-blur{
+      position:absolute;inset:0;
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      opacity:0;
+      transition:opacity .5s ease;
+      pointer-events:none;
     }
     #slide-text-panel{
       position:absolute;inset:0;
@@ -268,16 +289,6 @@
       transition:opacity .5s ease;
     }
     #slide-text-panel.visible{opacity:1;}
-    /* Donker laag en blur via filter op een ::before — beide faden mee met parent opacity */
-    #slide-text-panel::before{
-      content:'';position:absolute;inset:0;
-      background:rgba(8,8,14,.78);
-      /* blur via filter zodat het mee-faded met opacity transitie van parent */
-      backdrop-filter:blur(12px);
-      -webkit-backdrop-filter:blur(12px);
-      /* eigen transitie zodat blur niet achterloopt */
-      transition:backdrop-filter .5s ease, -webkit-backdrop-filter .5s ease;
-    }
     #slide-text-inner{
       position:relative;z-index:1;
       max-width:380px;text-align:center;
@@ -489,7 +500,10 @@
 
 <!-- SLIDESHOW OVERLAY -->
 <div id="slideshow-overlay">
-  <img id="slide-img" src="" alt="" />
+  <img id="slide-img-a" src="" alt="" />
+  <img id="slide-img-b" src="" alt="" />
+  <div id="slide-dark"></div>
+  <div id="slide-blur"></div>
   <div id="slide-text-panel">
     <div id="slide-text-inner">
       <div class="slide-desc"></div>
@@ -1064,14 +1078,18 @@ function toggleAudio(){
 }
 // ── SLIDESHOW ──
 (function(){
-  const overlay  = document.getElementById('slideshow-overlay');
-  const slideImg = document.getElementById('slide-img');
-  const textPanel= document.getElementById('slide-text-panel');
-  const descEl   = textPanel.querySelector('.slide-desc');
-  const metaEl   = textPanel.querySelector('.slide-meta');
+  const overlay   = document.getElementById('slideshow-overlay');
+  const imgA      = document.getElementById('slide-img-a');
+  const imgB      = document.getElementById('slide-img-b');
+  const darkEl    = document.getElementById('slide-dark');
+  const blurEl    = document.getElementById('slide-blur');
+  const textPanel = document.getElementById('slide-text-panel');
+  const descEl    = textPanel.querySelector('.slide-desc');
+  const metaEl    = textPanel.querySelector('.slide-meta');
 
-  let slides = [];
-  let idx    = 0;
+  let slides  = [];
+  let idx     = 0;
+  let activeImg = 'a'; // which img element is currently showing
 
   function buildSlides(p) {
     const result = [];
@@ -1093,29 +1111,50 @@ function toggleAudio(){
     return result;
   }
 
+  function setOverlayText(p) {
+    let mh = '';
+    if (p.waarde1&&p.waarde1.trim()) mh+=`<strong>${p.label1||'Opdrachtgever'}</strong>${p.waarde1}<br>`;
+    if (p.waarde2&&p.waarde2.trim()) mh+=`<strong>${p.label2||'Programma'}</strong>${p.waarde2}<br>`;
+    if (p.waarde3&&p.waarde3.trim()) mh+=`<strong>${p.label3||'Ontwerp'}</strong>${p.waarde3}<br>`;
+    if (p.waarde4&&p.waarde4.trim()) mh+=`<strong>${p.label4||'Aannemer'}</strong>${p.waarde4}<br>`;
+    if (p.waarde5&&p.waarde5.trim()) mh+=`<strong>${p.label5||'Video/Foto'}</strong>${p.waarde5}<br>`;
+    descEl.innerHTML = renderMd(p.desc||'');
+    metaEl.innerHTML = mh;
+  }
+
+  function crossfadeTo(src) {
+    // Load new src into inactive img, then crossfade
+    const incoming = activeImg === 'a' ? imgB : imgA;
+    const outgoing = activeImg === 'a' ? imgA : imgB;
+    incoming.src = src;
+    incoming.onload = () => {
+      incoming.style.opacity = '1';
+      outgoing.style.opacity = '0';
+      activeImg = activeImg === 'a' ? 'b' : 'a';
+    };
+    // If already cached, onload may not fire — force it
+    if (incoming.complete && incoming.naturalWidth) {
+      incoming.style.opacity = '1';
+      outgoing.style.opacity = '0';
+      activeImg = activeImg === 'a' ? 'b' : 'a';
+    }
+  }
+
   function showSlide(i) {
     idx = (i + slides.length) % slides.length;
     const s = slides[idx];
+
     if (s.type === 'img') {
-      // Fade out text panel first if visible, then swap image
-      if (textPanel.classList.contains('visible')) {
-        textPanel.classList.remove('visible');
-        // Wait for fade-out before swapping image
-        setTimeout(() => { slideImg.src = s.src; }, 520);
-      } else {
-        slideImg.src = s.src;
-      }
+      // Hide text/blur/dark smoothly, then crossfade image
+      textPanel.classList.remove('visible');
+      darkEl.style.opacity  = '0';
+      blurEl.style.opacity  = '0';
+      crossfadeTo(s.src);
     } else {
-      // Text slide — keep last image, show blur panel
-      let mh = '';
-      const p = s.p;
-      if (p.waarde1&&p.waarde1.trim()) mh+=`<strong>${p.label1||'Opdrachtgever'}</strong>${p.waarde1}<br>`;
-      if (p.waarde2&&p.waarde2.trim()) mh+=`<strong>${p.label2||'Programma'}</strong>${p.waarde2}<br>`;
-      if (p.waarde3&&p.waarde3.trim()) mh+=`<strong>${p.label3||'Ontwerp'}</strong>${p.waarde3}<br>`;
-      if (p.waarde4&&p.waarde4.trim()) mh+=`<strong>${p.label4||'Aannemer'}</strong>${p.waarde4}<br>`;
-      if (p.waarde5&&p.waarde5.trim()) mh+=`<strong>${p.label5||'Video/Foto'}</strong>${p.waarde5}<br>`;
-      descEl.innerHTML = renderMd(p.desc||'');
-      metaEl.innerHTML = mh;
+      // Text slide: keep current image, fade in dark + blur + text simultaneously
+      setOverlayText(s.p);
+      darkEl.style.opacity = '1';
+      blurEl.style.opacity = '1';
       textPanel.classList.add('visible');
     }
     document.getElementById('slide-prev').style.opacity = slides.length > 1 ? '1' : '0';
@@ -1133,6 +1172,14 @@ function toggleAudio(){
     overlay.classList.add(goRight ? 'side-right' : 'side-left');
 
     idx = 0;
+    activeImg = 'a';
+    imgA.style.opacity = '1';
+    imgB.style.opacity = '0';
+    darkEl.style.opacity = '0';
+    blurEl.style.opacity = '0';
+    textPanel.classList.remove('visible');
+    // Preload first image directly into imgA
+    if (slides[0] && slides[0].type === 'img') imgA.src = slides[0].src;
     showSlide(0);
     overlay.classList.add('active');
     // ── IMPORTANT: do NOT dim or touch the source column ──
@@ -1141,6 +1188,8 @@ function toggleAudio(){
   window.closeSlideshow = function() {
     overlay.classList.remove('active');
     textPanel.classList.remove('visible');
+    darkEl.style.opacity = '0';
+    blurEl.style.opacity = '0';
   };
 
   document.getElementById('slide-prev').addEventListener('click', e => {
