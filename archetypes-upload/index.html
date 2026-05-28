@@ -152,27 +152,7 @@
     .projects-col::-webkit-scrollbar{display:none}
     .projects-col.dimmed{opacity:.08;filter:blur(4px)}
 
-    /* ── SCROLLBAR INDICATORS ── */
-    /* Track: fixed to viewport, outside scroll container */
-    .col-scrollbar{
-      position:fixed;
-      top:0;bottom:0;
-      width:1px;
-      background:rgba(240,237,230,.13);
-      z-index:200;pointer-events:none;
-      opacity:0;
-      transition:opacity .4s ease;
-    }
-    .col-scrollbar.visible{opacity:1;}
-    #scrollbar-arche{left:1.25rem;}
-    #scrollbar-types{right:1.25rem;}
-    /* Thumb: white indicator showing scroll position */
-    .col-scrollbar-thumb{
-      position:absolute;
-      left:0;width:1px;
-      background:rgba(240,237,230,.8);
-      will-change:top,height;
-    }
+
 
     /* ── PROJECT CARD ── */
     .project-card{
@@ -698,11 +678,7 @@ scrollRoot.addEventListener('scroll',()=>{
   const atHero=scrollRoot.scrollTop<window.innerHeight*.5;
   lf.style.display=atHero?'inline':'none';
   ls.style.display=atHero?'none':'inline';
-  // Scrollbars alleen zichtbaar op projects pagina
-  const sbA=document.getElementById('scrollbar-arche');
-  const sbT=document.getElementById('scrollbar-types');
-  if(sbA) sbA.classList.toggle('visible',!atHero);
-  if(sbT) sbT.classList.toggle('visible',!atHero);
+
 });
 
 // ── NAV: scroll to hero or projects ──
@@ -726,28 +702,7 @@ function scrollToProjects(filter){
   }
 }
 
-// ── SCROLLBAR ──
-function initScrollbar(colId, thumbId){
-  const col   = document.getElementById(colId);
-  const thumb = document.getElementById(thumbId);
-  if(!col || !thumb) return;
 
-  function update(){
-    const vh        = window.innerHeight;          // track height = full viewport
-    const ratio     = col.clientHeight / col.scrollHeight;
-    const thumbH    = Math.max(vh * ratio * .7, 28);  // shorter thumb
-    const maxTop    = vh - thumbH;
-    const scrolled  = col.scrollTop / Math.max(1, col.scrollHeight - col.clientHeight);
-    thumb.style.height = thumbH + 'px';
-    thumb.style.top    = (scrolled * maxTop) + 'px';
-  }
-
-  col.addEventListener('scroll', update, {passive:true});
-  window.addEventListener('resize', update, {passive:true});
-  update();
-  setTimeout(update, 300);
-  setTimeout(update, 1000);
-}
 
 // ── NAV FILTER ──
 let af=null;
@@ -912,7 +867,7 @@ function renderProjects(arche,types){
   const lt=document.getElementById('list-types');lt.innerHTML='';
   arche.forEach(p=>la.appendChild(makeCard(p)));
   types.forEach(p=>lt.appendChild(makeCard(p)));
-  setTimeout(()=>{initScrollbar('col-arche','thumb-arche');initScrollbar('col-types','thumb-types');},100);
+  setTimeout(()=>{},100);
 }
 
 // ── RENDER INFO ──
@@ -1250,8 +1205,6 @@ function toggleAudio(){
 renderVideos(DEFAULTS.videos);renderProjects(DEFAULTS.arche,DEFAULTS.types);renderInfo(DEFAULTS.info);
 loadAll();
 </script>
-<!-- Fixed scrollbar tracks -->
-<div class="col-scrollbar" id="scrollbar-arche"><div class="col-scrollbar-thumb" id="thumb-arche"></div></div>
-<div class="col-scrollbar" id="scrollbar-types"><div class="col-scrollbar-thumb" id="thumb-types"></div></div>
+
 </body>
 </html>
