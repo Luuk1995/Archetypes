@@ -88,14 +88,14 @@
     #nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1.4rem 1.8rem;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
     #nav-left{display:flex;gap:2rem;pointer-events:all}
     #nav-right{pointer-events:all}
-    .nav-link{font-size:clamp(.65rem,1vw,.8rem);letter-spacing:.15em;text-transform:uppercase;color:var(--fg);text-decoration:none;cursor:none}
+    .nav-link{font-size:clamp(.65rem,1vw,.8rem);letter-spacing:.15em;text-transform:none;color:var(--fg);text-decoration:none;cursor:none}
     .nav-link .nav-exclaim{font-style:italic;font-family:'SometypeMono',monospace;opacity:0;transition:opacity .2s}
     .nav-link:hover .nav-exclaim{opacity:1}
     #logo-full,#logo-short{font-size:clamp(.75rem,1.3vw,1rem);font-weight:600;letter-spacing:.12em;color:var(--fg);cursor:none;text-decoration:none}
     #logo-short{display:none}
 
     /* ── CORNERS ── */
-    .corner{position:fixed;z-index:100;font-size:clamp(.75rem,1.4vw,1rem);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--fg);padding:1.4rem 1.8rem;cursor:none}
+    .corner{position:fixed;z-index:100;font-size:clamp(.75rem,1.4vw,1rem);font-weight:600;letter-spacing:.12em;text-transform:none;color:var(--fg);padding:1.4rem 1.8rem;cursor:none}
     .corner .corner-exclaim{font-style:italic;font-family:'SometypeMono',monospace;opacity:0;transition:opacity .2s}
     .corner:hover .corner-exclaim{opacity:1}
     #corner-bl{bottom:0;left:0}
@@ -229,7 +229,7 @@
     /* Label: title + subtitle always at BOTTOM, right next to meta */
     .project-label{padding:.5rem 0 0;flex-shrink:0}
     .project-card:nth-child(even) .project-label{text-align:right}
-    .project-title{font-size:clamp(.72rem,1vw,.9rem);font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.4}
+    .project-title{font-size:clamp(.84rem,1.17vw,1.05rem);font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.4}
     .project-subtitle{font-size:.85rem;letter-spacing:.04em;color:var(--fg);text-transform:none;margin-top:.2rem;font-family:'WastedYear','SometypeMono',monospace;font-weight:400;}
 
     /* ── INFO OVERLAY ── */
@@ -466,8 +466,8 @@
   </div>
 </nav>
 
-<div class="corner" id="corner-bl">ARCHE<span class="corner-exclaim">!</span></div>
-<div class="corner" id="corner-br">TYPES<span class="corner-exclaim">!</span></div>
+<div class="corner" id="corner-bl">Arche<span class="corner-exclaim">!</span></div>
+<div class="corner" id="corner-br">Types<span class="corner-exclaim">!</span></div>
 <div id="audio-toggle" onclick="toggleAudio()">Geluid</div>
 <canvas id="starfield"></canvas>
 
