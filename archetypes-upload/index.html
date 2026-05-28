@@ -72,7 +72,7 @@
     #hero-logo-mark{
       display:flex;align-items:center;justify-content:flex-end;
       padding-right:2.5rem;
-      font-size:clamp(3rem,9vw,6.75rem);font-weight:400;font-style:normal;
+      font-size:clamp(2.5rem,7.5vw,5.5rem);font-weight:400;font-style:normal;
       font-family:'WastedYear','SometypeMono',monospace;
       color:var(--fg);line-height:1;
     }
@@ -1151,15 +1151,23 @@ function toggleAudio(){
 // ── WASTED YEAR ALTERNATES ──
 function applyWastedAlternates(el) {
   if (!el) return;
-  const text = el.textContent;
+  // Walk child nodes: wrap text chars in spans, leave <br> and elements untouched
+  const nodes = Array.from(el.childNodes);
   el.innerHTML = '';
-  for (const ch of text) {
-    const span = document.createElement('span');
-    span.textContent = ch;
-    if (ch.trim() && Math.random() > 0.45) {
-      span.style.fontFeatureSettings = '"aalt" 1';
+  for (const node of nodes) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      for (const ch of node.textContent) {
+        const span = document.createElement('span');
+        span.textContent = ch;
+        if (ch.trim() && Math.random() > 0.45) {
+          span.style.fontFeatureSettings = '"aalt" 1';
+        }
+        el.appendChild(span);
+      }
+    } else {
+      // Preserve <br> and other elements as-is
+      el.appendChild(node.cloneNode(true));
     }
-    el.appendChild(span);
   }
 }
 
