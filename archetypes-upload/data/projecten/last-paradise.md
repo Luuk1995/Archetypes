@@ -27,6 +27,7 @@ desc_slider: >
 
   het maaiveld, waardoor lucht onder het gebouw kan circuleren en bescherming ontstaat tegen invloeden van buitenaf. Royale dakoverstekken bieden schaduw en beschutting tegen zon en tropische regen, terwijl grote openingen aan weerszijden zorgen voor continue natuurlijke ventilatie. Lokale ambachtslieden bouwden met lokale materialen, volgens een vernaculaire bouw logica.
 image: /images/surfstay_last-paradise_arche-types.jpg
+image5: /images/surfstay_last-paradise_arche-types_proces4.jpg
 order: 1
 waarde1: ""
 waarde2: ""
