@@ -8,7 +8,7 @@ desc: Industrieel upcycled kast op wielen. ==Zwart op zwart.== Stalen frame met
   on display worden vertoond.
 image: /images/monocabinet_arche-types.jpg
 image2: /images/monocabinet_arche-types2.jpg
-order: 3
+order: 5
 waarde1: ""
 waarde2: ""
 waarde3: ""
