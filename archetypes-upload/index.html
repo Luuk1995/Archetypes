@@ -211,6 +211,10 @@
     }
     .project-desc strong{font-weight:700;color:var(--fg)}
     .project-desc em{font-style:italic}
+    .wasted-inline{
+      font-family:'WastedYear','SometypeMono',monospace;
+      font-size:1.05em;letter-spacing:.02em;
+    }
 
     /* Meta — attached directly above the label at bottom */
     .project-meta{
@@ -541,6 +545,7 @@ function renderMd(text) {
   text = text.replace(/^>\s*-?\s*/gm, '');
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/==(.+?)==/g,'<span class="wasted-inline">$1</span>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/!/g,'<em class="exclaim">!</em>')
@@ -834,18 +839,7 @@ function makeCard(p) {
   iw.addEventListener('mouseenter',()=>{
     if(isMobile()) return;
     card.classList.add('img-hovered');
-    // Only show meta if waarde fields are explicitly filled
-    let metaHtml='';
-    if(p.waarde1&&p.waarde1.trim()){
-      metaHtml+=`<strong>${p.label1||'Opdrachtgever'}:</strong>${p.waarde1}`;
-    }
-    if(p.waarde2&&p.waarde2.trim()){
-      metaHtml+=`<strong>${p.label2||'Programma'}:</strong>${p.waarde2}`;
-    }
-    if(p.waarde3&&p.waarde3.trim()){
-      metaHtml+=`<strong>${p.label3||'Ontwerp'}:</strong>${p.waarde3}`;
-    }
-    metaEl.innerHTML=metaHtml;
+    metaEl.innerHTML='';
     const fullText=p.desc||'';
     descEl.innerHTML='';let i=0;clearInterval(ti);
     ti=setInterval(()=>{
@@ -1072,33 +1066,26 @@ function toggleAudio(){
 
   function buildSlides(p) {
     const result = [];
-    // Collect all images
     const imgKeys = ['image','image2','image3','image4','image5','image6','image7','image8'];
     const imgs = imgKeys.filter(k => p[k]).map(k => p[k]);
 
     imgs.forEach((src, i) => {
       result.push({ type:'img', src });
-      // Insert text slide after first image
-      if (i === 0 && (p.desc || p.waarde1 || p.waarde2 || p.waarde3)) {
+      // Text slide after first image — only if desc_slider is filled
+      if (i === 0 && p.desc_slider && p.desc_slider.trim()) {
         result.push({ type:'text', p });
       }
     });
-    // No images but has text
-    if (result.length === 0 && (p.desc || p.waarde1)) {
+    // No images but has slider text
+    if (result.length === 0 && p.desc_slider && p.desc_slider.trim()) {
       result.push({ type:'text', p });
     }
     return result;
   }
 
   function setOverlayText(p) {
-    let mh = '';
-    if (p.waarde1&&p.waarde1.trim()) mh+=`<strong>${p.label1||'Opdrachtgever'}</strong>${p.waarde1}<br>`;
-    if (p.waarde2&&p.waarde2.trim()) mh+=`<strong>${p.label2||'Programma'}</strong>${p.waarde2}<br>`;
-    if (p.waarde3&&p.waarde3.trim()) mh+=`<strong>${p.label3||'Ontwerp'}</strong>${p.waarde3}<br>`;
-    if (p.waarde4&&p.waarde4.trim()) mh+=`<strong>${p.label4||'Aannemer'}</strong>${p.waarde4}<br>`;
-    if (p.waarde5&&p.waarde5.trim()) mh+=`<strong>${p.label5||'Video/Foto'}</strong>${p.waarde5}<br>`;
-    descEl.innerHTML = renderMd(p.desc||'');
-    metaEl.innerHTML = mh;
+    descEl.innerHTML = renderMd(p.desc_slider||'');
+    metaEl.innerHTML = '';
   }
 
   function crossfadeTo(src) {
