@@ -211,6 +211,10 @@
     }
     .project-desc strong{font-weight:700;color:var(--fg)}
     .project-desc em{font-style:italic}
+    .wasted-inline{
+      font-family:'WastedYear','SometypeMono',monospace;
+      font-size:1.05em;letter-spacing:.02em;
+    }
 
     /* Meta — attached directly above the label at bottom */
     .project-meta{
@@ -257,6 +261,9 @@
       position:absolute;inset:0;width:100%;height:100%;
       object-fit:cover;
       transition:opacity .45s ease;
+      /* Pan support on mobile: image can be dragged */
+      touch-action:none;
+      transform-origin:center center;
     }
     #slide-img-b{opacity:0;}
 
@@ -292,6 +299,10 @@
     #slide-text-inner .slide-desc{
       font-size:.72rem;line-height:2.1;letter-spacing:.05em;
       color:rgba(240,237,230,.75);margin-bottom:1.2rem;
+    }
+    #slide-text-inner .wasted-inline{
+      font-family:'WastedYear','SometypeMono',monospace;
+      font-size:1.1em;letter-spacing:.02em;
     }
     #slide-text-inner .slide-meta{
       font-size:.58rem;letter-spacing:.18em;
@@ -330,24 +341,42 @@
       /* ── BASICS ── */
       body{cursor:auto}
       #cursor,#cursor-glow{display:none}
+      #audio-toggle{display:none}
 
-      /* ── NAV: aligned top bar, same padding as a!t ── */
+      /* ── NAV: thin bar same as bottom bar ── */
       #nav{
-        padding:.9rem 1.2rem;
+        padding:.6rem 1.2rem;
         background:rgba(0,0,0,.9);
         backdrop-filter:blur(12px);
-        border-bottom:1px solid rgba(240,237,230,.07);
+        border-bottom:1px solid rgba(240,237,230,.12);
         align-items:center;
       }
       #nav-left{gap:1.4rem;align-items:center}
       .nav-link{font-size:.6rem;letter-spacing:.12em}
       #logo-full,#logo-short{font-size:.6rem;letter-spacing:.12em}
 
-      /* ── CORNERS ── */
-      .corner{font-size:.6rem;padding:.9rem 1.2rem}
-      #audio-toggle{font-size:.5rem;bottom:.9rem}
+      /* ── CORNERS: bottom bar same style as nav ── */
+      .corner{
+        font-size:.87rem;
+        letter-spacing:.12em;
+        padding:.6rem 1.2rem;
+        background:rgba(0,0,0,.9);
+        backdrop-filter:blur(12px);
+        border-top:1px solid rgba(240,237,230,.12);
+        width:50%;
+        bottom:0;
+      }
+      #corner-bl{
+        left:0;
+        border-right:1px solid rgba(240,237,230,.12);
+        text-align:left;
+      }
+      #corner-br{
+        right:0;
+        text-align:right;
+      }
 
-      /* ── HERO + INTRO: two-column split maintained ── */
+      /* ── HERO + INTRO: keep split ── */
       #intro{grid-template-columns:1fr 1fr;}
       #intro-left{justify-content:flex-end;padding-right:1.2rem;}
       #intro-right{justify-content:flex-start;padding-left:1.2rem;}
@@ -366,51 +395,53 @@
       #hero{scroll-snap-align:start;}
       #projects-snap{scroll-snap-align:start;}
 
-      /* ── PROJECTS: two independent scrolling columns side by side ── */
+      /* ── TWO INDEPENDENT SCROLLING COLUMNS ── */
       #projects-snap{
         grid-template-columns:1fr 1fr;
-        height:100vh;
+        height:calc(100vh - 2.4rem);
         overflow:hidden;
-        position:relative;
       }
       .projects-col{
-        height:100vh;
+        height:100%;
         overflow-y:scroll;
         overflow-x:hidden;
         -webkit-overflow-scrolling:touch;
         scrollbar-width:none;
+        padding-bottom:3rem;
       }
       .projects-col::-webkit-scrollbar{display:none}
 
-      /* ── MOBILE CARDS: compact, image top full width ── */
+      /* ── CARDS ── */
       .card-inner{
         grid-template-columns:1fr !important;
         direction:ltr !important;
       }
-      .project-card{padding:1rem .7rem;cursor:pointer}
-      .project-card:first-child{padding-top:3.5rem}
+      .project-card{padding:.8rem .6rem;cursor:pointer}
+      .project-card:first-child{padding-top:3rem}
       .project-card:last-child{padding-bottom:5rem}
       .project-card:nth-child(even) .card-inner .project-img-wrap{order:0}
       .project-card:nth-child(even) .card-inner .project-right{order:1}
 
-      /* Image: square crop for compact two-column feel */
+      /* Square images for compact two-column grid */
       .project-img-wrap{width:100%;aspect-ratio:1/1}
-      .project-img-wrap:hover img{filter:grayscale(1);transform:none}
 
-      /* Label below image, compact */
-      .project-right{padding:.5rem 0 0;text-align:left !important;}
-      .project-label{border-top:none;padding-top:.3rem}
+      /* Colour on horizontal swipe */
+      .project-img-wrap img{
+        transition:filter .3s ease, transform .3s ease;
+      }
+      .project-img-wrap.swiping img{
+        filter:grayscale(0) !important;
+      }
+
+      /* Label below image */
+      .project-right{padding:.4rem 0 0;text-align:left !important;}
+      .project-label{border-top:none;padding-top:.2rem}
       .project-card:nth-child(even) .project-label{text-align:left}
       .project-title{font-size:.65rem;letter-spacing:.1em}
-      .project-subtitle{font-size:.52rem;letter-spacing:.06em}
+      .project-subtitle{font-size:.52rem}
 
-      /* ── PROJECT DETAIL OVERLAY (tap to open) ── */
-      /* Hover text hidden — tap opens full-screen detail instead */
+      /* Hide hover panel — tap opens slideshow instead */
       .project-hover{display:none}
-
-      /* ── INFO OVERLAY ── */
-      #info-box{padding:0 1rem}
-      #info-close{top:1rem;right:1.2rem}
 
       /* ── SLIDESHOW: full screen on mobile ── */
       #slideshow-overlay{
@@ -419,6 +450,14 @@
         right:0 !important;
       }
       #slideshow-bg-close{display:none !important}
+
+      /* ── INFO ── */
+      #info-box{padding:0 1rem}
+      #info-close{top:1rem;right:1.2rem}
+
+      /* ── INTRO SIZES ── */
+      #intro-logo{font-size:clamp(2.5rem,14vw,5rem)}
+      #intro-sub{font-size:clamp(.55rem,2.8vw,.75rem);letter-spacing:.1em}
     }
 
     /* Very small screens */
@@ -800,10 +839,31 @@ function makeCard(p) {
     openSlideshow(p, side);
   });
 
-  // Mobile tap: open slideshow as full-screen detail view
-  card.addEventListener('click', () => {
+  // Mobile: swipe on image = colour, tap = open slideshow
+  let swipeStartX = 0;
+  let swipeStartY = 0;
+  let isSwiping = false;
+
+  iw.addEventListener('touchstart', e => {
+    swipeStartX = e.touches[0].clientX;
+    swipeStartY = e.touches[0].clientY;
+    isSwiping = false;
+  }, {passive:true});
+
+  iw.addEventListener('touchmove', e => {
+    const dx = Math.abs(e.touches[0].clientX - swipeStartX);
+    const dy = Math.abs(e.touches[0].clientY - swipeStartY);
+    if (dx > 8 && dx > dy) {
+      isSwiping = true;
+      iw.classList.add('swiping');
+    }
+  }, {passive:true});
+
+  iw.addEventListener('touchend', () => {
+    setTimeout(() => iw.classList.remove('swiping'), 600);
+    if (isSwiping) return; // was a swipe — don't open slideshow
     if (!isMobile()) return;
-    const side = card.closest('#col-arche') ? 'arche' : 'types';
+    const side = iw.closest('#col-arche') ? 'arche' : 'types';
     openSlideshow(p, side);
   });
 
@@ -1163,6 +1223,63 @@ function toggleAudio(){
     const rect = overlay.getBoundingClientRect();
     showSlide(e.clientX - rect.left < rect.width / 2 ? idx - 1 : idx + 1);
   });
+})();
+
+// ── MOBILE SLIDESHOW PAN ──
+// Hold and drag to pan inside the image
+(function(){
+  let panActive = false;
+  let panStartX = 0, panStartY = 0;
+  let panOffX = 0, panOffY = 0;
+  let curImg = null;
+  const MAX_PAN = 30; // percent
+
+  function getActiveImg(){
+    const a = document.getElementById('slide-img-a');
+    const b = document.getElementById('slide-img-b');
+    return (a && parseFloat(a.style.opacity||1) > 0.5) ? a : b;
+  }
+
+  function resetPan(){
+    if(curImg) curImg.style.transform = '';
+    panOffX = 0; panOffY = 0;
+  }
+
+  const overlay = document.getElementById('slideshow-overlay');
+  if(!overlay) return;
+
+  overlay.addEventListener('touchstart', e => {
+    if(e.touches.length !== 1) return;
+    // Only pan on long press (300ms)
+    panActive = false;
+    const t = e.touches[0];
+    panStartX = t.clientX; panStartY = t.clientY;
+    curImg = getActiveImg();
+  }, {passive:true});
+
+  overlay.addEventListener('touchmove', e => {
+    if(!curImg) return;
+    const t = e.touches[0];
+    const dx = t.clientX - panStartX;
+    const dy = t.clientY - panStartY;
+    // Activate pan if moved enough
+    if(!panActive && (Math.abs(dx) > 6 || Math.abs(dy) > 6)){
+      panActive = true;
+    }
+    if(!panActive) return;
+    e.stopPropagation();
+    // Translate image — clamped to MAX_PAN%
+    const vw = overlay.clientWidth;
+    const vh = overlay.clientHeight;
+    panOffX = Math.max(-MAX_PAN, Math.min(MAX_PAN, (dx / vw) * 100));
+    panOffY = Math.max(-MAX_PAN, Math.min(MAX_PAN, (dy / vh) * 100));
+    curImg.style.transform = `translate(${panOffX}%, ${panOffY}%) scale(1.35)`;
+  }, {passive:false});
+
+  overlay.addEventListener('touchend', () => {
+    if(!panActive){ resetPan(); }
+    panActive = false;
+  }, {passive:true});
 })();
 
 // ── STARFIELD ──
