@@ -429,23 +429,29 @@
       }
       #intro-left{justify-content:flex-end;padding-right:1.2rem;}
       #intro-right{justify-content:flex-start;padding-left:1.2rem;}
-      #intro-logo{font-size:clamp(2.8rem,13vw,5rem);}
-      #intro-sub{font-size:clamp(.6rem,2.8vw,.8rem);letter-spacing:.1em;}
+      #intro-logo{font-size:4.5rem;}
+      #intro-sub{font-size:.75rem;letter-spacing:.12em;line-height:1.8;}
 
-      /* hero-logo: vast in het midden, niet afhankelijk van video load */
+      /* hero-logo: altijd vast, onafhankelijk van video load */
       #hero{position:relative;height:100dvh;overflow:hidden;}
       #hero-logo{
         position:absolute;inset:0;
         display:grid;grid-template-columns:1fr 1fr;
         z-index:11;pointer-events:none;
+        opacity:1 !important;
       }
       #hero-logo-mark{
+        display:flex;align-items:center;
         justify-content:flex-end;padding-right:1.2rem;
-        font-size:clamp(2.8rem,13vw,5rem);
+        font-size:4.5rem;
+        font-style:normal;
+        font-family:'WastedYear','SometypeMono',monospace;
       }
       #hero-logo-sub{
+        display:flex;align-items:center;
         justify-content:flex-start;padding-left:1.2rem;
-        font-size:clamp(.6rem,2.8vw,.8rem);letter-spacing:.1em;
+        font-size:.75rem;letter-spacing:.12em;line-height:1.8;
+        font-family:'WastedYear','SometypeMono',monospace;
       }
 
       /* ── TWEE ONAFHANKELIJKE SCROLLERS ── */
@@ -902,35 +908,37 @@ function makeCard(p) {
     openSlideshow(p, side);
   });
 
-  // ── MOBILE: swipe horizontaal = kleur toggle, tap = open detail ──
+  // ── MOBILE: swipe op afbeelding = kleur, tap op kaart = detail ──
   (function(){
-    let startX=0, startY=0, moved=false, swiped=false;
-
+    // Swipe op afbeelding = kleur toggle
+    let swX=0, swY=0, swDone=false;
     iw.addEventListener('touchstart', e=>{
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      moved = false;
-      swiped = false;
+      swX=e.touches[0].clientX; swY=e.touches[0].clientY; swDone=false;
     },{passive:true});
-
     iw.addEventListener('touchmove', e=>{
-      const dx = Math.abs(e.touches[0].clientX - startX);
-      const dy = Math.abs(e.touches[0].clientY - startY);
-      // Markeer als beweging zodra minimale drempel overschreden
-      if(dx > 5 || dy > 5) moved = true;
-      // Horizontale swipe = kleur toggle
-      if(dx > 15 && dx > dy * 1.5 && !swiped){
-        swiped = true;
-        iw.classList.toggle('coloured');
-      }
+      if(swDone) return;
+      const dx=Math.abs(e.touches[0].clientX-swX);
+      const dy=Math.abs(e.touches[0].clientY-swY);
+      if(dx>20 && dx>dy*2){ swDone=true; iw.classList.toggle('coloured'); }
     },{passive:true});
 
-    iw.addEventListener('touchend', e=>{
-      // Alleen openen als het echt een stilstaande tap was
+    // Tap op de kaart = open detail (apart van swipe logica)
+    let tapX=0, tapY=0, tapTime=0;
+    card.addEventListener('touchstart', e=>{
+      tapX=e.touches[0].clientX;
+      tapY=e.touches[0].clientY;
+      tapTime=Date.now();
+    },{passive:true});
+    card.addEventListener('touchend', e=>{
       if(!isMobile()) return;
-      if(moved) return;
-      e.preventDefault();
-      openMobDetail(p);
+      const dx=Math.abs(e.changedTouches[0].clientX-tapX);
+      const dy=Math.abs(e.changedTouches[0].clientY-tapY);
+      const dt=Date.now()-tapTime;
+      // Tap = weinig beweging (<15px) en kort (<300ms)
+      if(dx<15 && dy<15 && dt<300){
+        e.preventDefault();
+        openMobDetail(p);
+      }
     },{passive:false});
   })();
 
