@@ -361,7 +361,7 @@
     }
     .mob-detail-sub{
       font-size:.7rem;letter-spacing:.14em;
-      color:rgba(240,237,230,.5);margin-bottom:1.2rem;
+      color:var(--fg);margin-bottom:1.2rem;
       font-family:'WastedYear','SometypeMono',monospace;
     }
     .mob-detail-desc{
@@ -916,14 +916,17 @@ function makeCard(p) {
   // ── MOBILE: tap = open detail, horizontale swipe = kleur ──
   (function(){
     // Horizontale swipe op afbeelding = kleur toggle
-    let swX=0, swY=0;
+    let swX=0, swY=0, swiped=false;
     iw.addEventListener('touchstart',e=>{
-      swX=e.touches[0].clientX; swY=e.touches[0].clientY;
+      swX=e.touches[0].clientX; swY=e.touches[0].clientY; swiped=false;
     },{passive:true});
     iw.addEventListener('touchmove',e=>{
       const dx=Math.abs(e.touches[0].clientX-swX);
       const dy=Math.abs(e.touches[0].clientY-swY);
-      if(dx>25 && dx>dy*2) iw.classList.toggle('coloured');
+      if(dx>25 && dx>dy*2) swiped=true;
+    },{passive:true});
+    iw.addEventListener('touchend',()=>{
+      if(swiped) iw.classList.toggle('coloured');
     },{passive:true});
 
     // Tap op kaart = open detail
