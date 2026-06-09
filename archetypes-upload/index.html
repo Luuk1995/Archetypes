@@ -321,172 +321,175 @@
       cursor:none;transition:color .2s;
     }
     #slide-close:hover{color:rgba(240,237,230,1);}
+
+    /* ── MOBILE DETAIL VIEWER ── */
+    #mob-detail{
+      position:fixed;inset:0;z-index:4000;
+      background:#0a0a0e;
+      overflow-y:auto;-webkit-overflow-scrolling:touch;
+      opacity:0;pointer-events:none;
+      transition:opacity .35s ease;
+    }
+    #mob-detail.active{opacity:1;pointer-events:all;}
+    #mob-detail-close{
+      position:sticky;top:0;z-index:10;
+      display:flex;justify-content:flex-end;align-items:center;
+      padding:.8rem 1.2rem;
+      background:rgba(8,8,14,.9);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(240,237,230,.08);
+      font-size:2rem;line-height:1;
+      color:rgba(240,237,230,.7);cursor:pointer;
+    }
+    .mob-detail-img{
+      width:calc(100% - 2.4rem);margin:1rem auto 0;display:block;
+    }
+    .mob-detail-img img{width:100%;height:auto;display:block;filter:none;}
+    .mob-detail-text{padding:1.6rem 1.4rem .8rem;}
+    .mob-detail-title{
+      font-size:1rem;font-weight:600;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--fg);margin-bottom:.3rem;
+      font-family:'SometypeMono',monospace;
+    }
+    .mob-detail-sub{
+      font-size:.68rem;letter-spacing:.15em;
+      color:rgba(240,237,230,.5);margin-bottom:1.2rem;
+      font-family:'WastedYear','SometypeMono',monospace;
+    }
+    .mob-detail-desc{
+      font-size:.7rem;line-height:2;letter-spacing:.05em;
+      color:rgba(240,237,230,.8);margin-bottom:1.4rem;
+    }
+    .mob-detail-desc .wasted-inline{
+      font-family:'WastedYear','SometypeMono',monospace;font-size:1.05em;
+    }
+    .mob-detail-divider{
+      width:calc(100% - 2.4rem);margin:1.2rem auto;
+      height:1px;background:rgba(240,237,230,.08);display:block;
+    }
+    .mob-detail-more-imgs{padding:0 1.2rem;}
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:rgba(240,237,230,.12)}
 
     /* ── MOBILE ── */
     @media (max-width:768px){
+      /* Cursor off on touch */
       body{cursor:auto}
       #cursor,#cursor-glow{display:none}
-      #audio-toggle{display:none !important}
 
-      /* ── NAV BALK ── */
+      /* Nav: verborgen op hero, zichtbaar op projects */
       #nav{
-        padding:.7rem 1.2rem;
-        background:rgba(8,8,14,.92);
+        padding:.9rem 1.2rem;
+        background:rgba(0,0,0,.9);
         backdrop-filter:blur(12px);
-        border-bottom:1px solid rgba(240,237,230,.12);
-        align-items:center;
-      }
-      #nav-left{gap:1.4rem;align-items:center}
-      .nav-link{font-size:.62rem;letter-spacing:.12em}
-      #logo-full,#logo-short{font-size:.62rem;letter-spacing:.12em}
-
-      /* ── CORNERS: verborgen op hero, zichtbaar op projects ── */
-      .corner{
-        font-size:.62rem;
-        letter-spacing:.12em;
-        padding:.7rem 1.2rem;
-        background:rgba(8,8,14,.92);
-        backdrop-filter:blur(12px);
-        border-top:1px solid rgba(240,237,230,.12);
-        width:50%;
-        bottom:0;
+        border-bottom:1px solid rgba(240,237,230,.1);
         opacity:0;
         transition:opacity .4s ease;
         pointer-events:none;
       }
+      #nav.mob-visible{opacity:1;pointer-events:all;}
+      #nav-left{gap:1.2rem}
+      .nav-link{font-size:.65rem}
+      #logo-full,#logo-short{font-size:.75rem}
+
+      /* Audio weg op mobiel */
+      #audio-toggle{display:none !important}
+
+      /* Corners: verborgen op hero, zichtbaar op projects */
+      .corner{
+        font-size:.62rem;letter-spacing:.12em;
+        padding:.7rem 1.2rem;
+        background:rgba(8,8,14,.92);
+        backdrop-filter:blur(12px);
+        border-top:1px solid rgba(240,237,230,.1);
+        width:50%;bottom:0;
+        opacity:0;transition:opacity .4s ease;
+        pointer-events:none;
+      }
       .corner.mob-visible{opacity:1;pointer-events:all;}
-      #corner-bl{left:0;border-right:1px solid rgba(240,237,230,.12);text-align:left;}
+      #corner-bl{left:0;border-right:1px solid rgba(240,237,230,.1);text-align:left;}
       #corner-br{right:0;text-align:right;}
 
-      /* ── HERO SPLIT behouden ── */
-      #intro{grid-template-columns:1fr 1fr;}
-      #intro-left{justify-content:flex-end;padding-right:1.2rem;}
-      #intro-right{justify-content:flex-start;padding-left:1.2rem;}
-      #intro-logo{font-size:clamp(2.5rem,14vw,5rem);}
-      #intro-sub{font-size:clamp(.55rem,2.8vw,.75rem);letter-spacing:.1em;}
-      #hero-logo{grid-template-columns:1fr 1fr;}
-      #hero-logo-mark{justify-content:flex-end;padding-right:1.2rem;font-size:clamp(2.5rem,14vw,5rem);}
-      #hero-logo-sub{justify-content:flex-start;padding-left:1.2rem;font-size:clamp(.55rem,2.8vw,.75rem);letter-spacing:.1em;}
+      /* Hero + intro: mobile */
+      #intro{grid-template-columns:1fr;grid-template-rows:1fr 1fr;}
+      #intro-left{justify-content:center;padding:0;}
+      #intro-right{justify-content:center;padding:0;}
+      #hero-logo{grid-template-columns:1fr;grid-template-rows:1fr 1fr;}
+      #hero-logo-mark{justify-content:center;padding:0;font-size:clamp(4rem,20vw,7rem);}
+      #hero-logo-sub{justify-content:center;padding:0;font-size:clamp(.75rem,3.5vw,1rem);}
 
-      /* ── SCROLL ROOT ── */
-      #scroll-root{scroll-snap-type:y mandatory;overflow-y:scroll;height:100vh;}
-      #hero{scroll-snap-align:start;}
-      #projects-snap{scroll-snap-align:start;}
-
-      /* ── TWEE ONAFHANKELIJKE SCROLLERS ── */
+      /* Projects: single column, full width */
       #projects-snap{
-        grid-template-columns:1fr 1fr;
-        height:100vh;
-        overflow:hidden;
+        grid-template-columns:1fr;
+        height:auto;
+        min-height:100vh;
+        overflow-y:auto;
       }
       .projects-col{
-        height:100%;
-        overflow-y:scroll;
-        overflow-x:hidden;
-        -webkit-overflow-scrolling:touch;
-        scrollbar-width:none;
-        padding-bottom:4rem;
+        height:auto;
+        overflow-y:visible;
       }
-      .projects-col::-webkit-scrollbar{display:none}
+      .col-scrollbar{display:none}
 
-      /* ── KAARTEN ── */
-      .card-inner{grid-template-columns:1fr !important;direction:ltr !important;}
-      .project-card{padding:.8rem .6rem;cursor:pointer}
-      .project-card:first-child{padding-top:3.5rem}
-      .project-card:last-child{padding-bottom:5rem}
+      /* Cards: stack image above text */
+      .card-inner{
+        grid-template-columns:1fr !important;
+        grid-template-rows:auto auto;
+        direction:ltr !important;
+      }
       .project-card:nth-child(even) .card-inner .project-img-wrap{order:0}
       .project-card:nth-child(even) .card-inner .project-right{order:1}
-      .project-img-wrap{width:100%;aspect-ratio:1/1}
-      .project-img-wrap img{transition:filter .3s ease;}
-      .project-img-wrap.coloured img{filter:grayscale(0) !important;}
-      .project-right{padding:.4rem 0 0;text-align:left !important;}
-      .project-label{border-top:none;padding-top:.2rem}
+      .project-card{padding:2rem 1.2rem;cursor:pointer}
+      .project-card:first-child{padding-top:3rem}
+      .project-card:last-child{padding-bottom:4rem}
+
+      /* Image full width */
+      .project-img-wrap{width:100%;aspect-ratio:3/2}
+
+      /* Text panel below image, left aligned always */
+      .project-right{
+        padding:1rem 0 0;
+        text-align:left !important;
+      }
       .project-card:nth-child(even) .project-label{text-align:left}
-      .project-title{font-size:.65rem;letter-spacing:.1em}
-      .project-subtitle{font-size:.52rem}
-      .project-hover{display:none}
+
+      /* On mobile: text hidden by default, shown on tap */
+      .project-hover{
+        opacity:0;
+        max-height:0;
+        overflow:hidden;
+        transition:opacity .4s ease, max-height .4s ease;
+      }
+      .project-card.tapped .project-hover{
+        opacity:1;
+        max-height:600px;
+      }
       .project-img-wrap:hover img{filter:grayscale(1);transform:none}
+      .project-label{border-top:none;padding-top:.4rem}
 
-      /* ── MOBILE PROJECT DETAIL VIEWER ── */
-      #mob-detail{
-        position:fixed;inset:0;z-index:4000;
-        background:#0a0a0e;
-        overflow-y:auto;
-        -webkit-overflow-scrolling:touch;
-        opacity:0;pointer-events:none;
-        transition:opacity .35s ease;
-        padding-bottom:4rem;
-      }
-      #mob-detail.active{opacity:1;pointer-events:all;}
-      #mob-detail-close{
-        position:sticky;top:0;z-index:10;
-        display:flex;justify-content:flex-end;
-        padding:.9rem 1.2rem;
-        background:rgba(8,8,14,.85);
-        backdrop-filter:blur(10px);
-        border-bottom:1px solid rgba(240,237,230,.08);
-        font-size:1.6rem;line-height:1;
-        color:rgba(240,237,230,.7);
-        cursor:pointer;
-      }
-      .mob-detail-img{
-        width:calc(100% - 2.4rem);
-        margin:1.2rem auto 0;
-        display:block;
-        border-radius:2px;
-        /* height auto = volledig zichtbaar, geen crop */
-      }
-      .mob-detail-img img{
-        width:100%;height:auto;
-        display:block;
-        filter:none;
-      }
-      .mob-detail-text{
-        padding:1.8rem 1.4rem 1rem;
-      }
-      .mob-detail-title{
-        font-size:1.1rem;font-weight:600;
-        letter-spacing:.14em;text-transform:uppercase;
-        color:var(--fg);margin-bottom:.3rem;
-        font-family:'SometypeMono',monospace;
-      }
-      .mob-detail-sub{
-        font-size:.72rem;letter-spacing:.18em;
-        color:rgba(240,237,230,.5);
-        font-family:'WastedYear','SometypeMono',monospace;
-        margin-bottom:1.4rem;
-      }
-      .mob-detail-desc{
-        font-size:.72rem;line-height:2;letter-spacing:.05em;
-        color:rgba(240,237,230,.8);
-        font-family:'SometypeMono',monospace;
-        margin-bottom:1.6rem;
-      }
-      .mob-detail-desc .wasted-inline{
-        font-family:'WastedYear','SometypeMono',monospace;
-        font-size:1.05em;
-      }
-      .mob-detail-divider{
-        width:100%;height:1px;
-        background:rgba(240,237,230,.08);
-        margin:1.8rem 0;
-      }
-      .mob-detail-more-imgs{
-        padding:0 1.2rem;
-      }
+      /* Bigger touch-friendly text */
+      .project-desc{font-size:.75rem;line-height:1.8}
+      .project-meta{font-size:.65rem}
+      .project-title{font-size:.85rem}
+      .project-subtitle{font-size:.6rem}
 
-      /* ── SLIDESHOW volledig scherm op mobiel (fallback desktop) ── */
-      #slideshow-overlay{width:100% !important;left:0 !important;right:0 !important;}
-      #slideshow-bg-close{display:none !important}
-
-      /* ── INFO ── */
+      /* Info overlay */
       #info-box{padding:0 1rem}
       #info-close{top:1rem;right:1.2rem}
-      #intro-logo{font-size:clamp(2.5rem,14vw,5rem)}
-      #intro-sub{font-size:clamp(.55rem,2.8vw,.75rem);letter-spacing:.1em}
+
+      /* Intro */
+      #intro-logo{font-size:clamp(3rem,12vw,7rem)}
+      #intro-sub{font-size:.7rem;letter-spacing:.15em}
+
+      /* Scroll root on mobile */
+      #scroll-root{
+        scroll-snap-type:none;
+        overflow-y:auto;
+        height:100vh;
+      }
+      #hero{scroll-snap-align:none}
+      #projects-snap{scroll-snap-align:none}
     }
 
     /* Very small screens */
@@ -571,11 +574,8 @@
   <div id="slide-close">×</div>
 </div>
 
-<!-- MOBILE PROJECT DETAIL VIEWER -->
-<div id="mob-detail">
-  <div id="mob-detail-close">×</div>
-  <div id="mob-detail-inner"></div>
-</div>
+<!-- MOBILE DETAIL -->
+<div id="mob-detail"><div id="mob-detail-close">×</div><div id="mob-detail-inner"></div></div>
 
 <!-- INFO OVERLAY -->
 <div id="info-overlay">
@@ -746,7 +746,15 @@ scrollRoot.addEventListener('scroll',()=>{
   const atHero=scrollRoot.scrollTop<window.innerHeight*.5;
   lf.style.display=atHero?'inline':'none';
   ls.style.display=atHero?'none':'inline';
-
+  // Mobile: nav + corners verschijnen pas op projects pagina
+  if(window.innerWidth<=768){
+    const nav=document.getElementById('nav');
+    const bl=document.getElementById('corner-bl');
+    const br=document.getElementById('corner-br');
+    if(nav) nav.classList.toggle('mob-visible',!atHero);
+    if(bl) bl.classList.toggle('mob-visible',!atHero);
+    if(br) br.classList.toggle('mob-visible',!atHero);
+  }
 });
 
 // ── NAV: scroll to hero or projects ──
@@ -874,34 +882,24 @@ function makeCard(p) {
     openSlideshow(p, side);
   });
 
-  // ── MOBILE: swipe = kleur toggle, tap = open detail viewer ──
-  let mTouchStartX = 0, mTouchStartY = 0, mDidSwipe = false, mTouchMoved = false;
-
-  iw.addEventListener('touchstart', e => {
-    mTouchStartX = e.touches[0].clientX;
-    mTouchStartY = e.touches[0].clientY;
-    mDidSwipe = false;
-    mTouchMoved = false;
-  }, {passive:true});
-
-  iw.addEventListener('touchmove', e => {
-    const dx = Math.abs(e.touches[0].clientX - mTouchStartX);
-    const dy = Math.abs(e.touches[0].clientY - mTouchStartY);
-    mTouchMoved = true;
-    if (dx > 10 && dx > dy) {
-      mDidSwipe = true;
-      // Toggle colour
-      if (!iw.classList.contains('coloured')) {
-        iw.classList.add('coloured');
-      }
+  // ── MOBILE: swipe horizontaal = kleur toggle, tap = open detail ──
+  let _tsx=0,_tsy=0,_tMoved=false,_tSwipe=false;
+  iw.addEventListener('touchstart',e=>{
+    _tsx=e.touches[0].clientX;_tsy=e.touches[0].clientY;
+    _tMoved=false;_tSwipe=false;
+  },{passive:true});
+  iw.addEventListener('touchmove',e=>{
+    const dx=Math.abs(e.touches[0].clientX-_tsx);
+    const dy=Math.abs(e.touches[0].clientY-_tsy);
+    if(dx>8||dy>8) _tMoved=true;
+    if(dx>12&&dx>dy){
+      _tSwipe=true;
+      iw.classList.toggle('coloured');
     }
-  }, {passive:true});
-
-  iw.addEventListener('touchend', e => {
-    if (mDidSwipe) return; // was swipe — no tap action
-    if (mTouchMoved) return; // was scroll — no tap action
-    if (!isMobile()) return;
-    // Tap: open mobile detail
+  },{passive:true});
+  iw.addEventListener('touchend',e=>{
+    if(_tSwipe||_tMoved) return;
+    if(!isMobile()) return;
     openMobDetail(p);
   });
 
