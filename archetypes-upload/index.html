@@ -1170,6 +1170,43 @@ function toggleAudio(){
       setTimeout(()=>{ac.close();ac=null;mg=null;},2500);}
   }
 }
+// ── MOBILE DETAIL VIEWER ──
+(function(){
+  const detail   = document.getElementById('mob-detail');
+  const inner    = document.getElementById('mob-detail-inner');
+  const closeBtn = document.getElementById('mob-detail-close');
+
+  window.openMobDetail = function(p){
+    const imgs = ['image','image2','image3','image4','image5','image6','image7','image8']
+      .filter(k => p[k]).map(k => p[k]);
+
+    let html = '';
+    if(imgs[0]) html += `<div class="mob-detail-img"><img src="${imgs[0]}" alt="${p.title||''}"></div>`;
+
+    html += `<div class="mob-detail-text">`;
+    html += `<div class="mob-detail-title">${p.title||''}</div>`;
+    if(p.sub && p.sub.trim())   html += `<div class="mob-detail-sub">${p.sub}</div>`;
+    if(p.desc && p.desc.trim()) html += `<div class="mob-detail-desc">${renderMd(p.desc)}</div>`;
+    html += `</div>`;
+
+    if(imgs.length > 1){
+      html += `<div class="mob-detail-divider"></div><div class="mob-detail-more-imgs">`;
+      imgs.slice(1).forEach(src => { html += `<div class="mob-detail-img"><img src="${src}" alt=""></div>`; });
+      html += `</div>`;
+    }
+
+    inner.innerHTML = html;
+    detail.scrollTop = 0;
+    detail.classList.add('active');
+  };
+
+  window.closeMobDetail = function(){
+    detail.classList.remove('active');
+  };
+
+  closeBtn.addEventListener('click', closeMobDetail);
+})();
+
 // ── SLIDESHOW ──
 (function(){
   const overlay   = document.getElementById('slideshow-overlay');
