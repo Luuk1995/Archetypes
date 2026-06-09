@@ -487,7 +487,13 @@
       .project-card:nth-child(even) .card-inner .project-right{order:1;}
 
       /* Vierkante afbeelding, kleur via swipe */
-      .project-img-wrap{width:100%;aspect-ratio:1/1;overflow:hidden;}
+      /* Pinterest stijl: afbeelding volledig zichtbaar, natuurlijke hoogte */
+      .project-img-wrap{width:100%;aspect-ratio:unset;overflow:hidden;}
+      .project-img-wrap img{
+        width:100%;height:auto !important;
+        object-fit:unset !important;
+        display:block;
+      }
       .project-img-wrap img{
         width:100%;height:100%;object-fit:cover;
         transition:filter .3s ease;
@@ -908,38 +914,42 @@ function makeCard(p) {
     openSlideshow(p, side);
   });
 
-  // ── MOBILE: swipe op afbeelding = kleur, tap op kaart = detail ──
+  // ── MOBILE: Pinterest-stijl tap detectie ──
+  // Track scroll op de parent kolom — als die beweegt is het geen tap
   (function(){
-    // Swipe op afbeelding = kleur toggle
-    let swX=0, swY=0, swDone=false;
+    if(!isMobile()) return;
+    const col = card.closest('.projects-col');
+    let scrolled = false;
+    let scrollY = 0;
+
+    // Horizontale swipe op afbeelding = kleur toggle
+    let swX=0, swY=0;
     iw.addEventListener('touchstart', e=>{
-      swX=e.touches[0].clientX; swY=e.touches[0].clientY; swDone=false;
+      swX=e.touches[0].clientX; swY=e.touches[0].clientY;
     },{passive:true});
     iw.addEventListener('touchmove', e=>{
-      if(swDone) return;
       const dx=Math.abs(e.touches[0].clientX-swX);
       const dy=Math.abs(e.touches[0].clientY-swY);
-      if(dx>20 && dx>dy*2){ swDone=true; iw.classList.toggle('coloured'); }
+      if(dx>20 && dx>dy*2) iw.classList.toggle('coloured');
     },{passive:true});
 
-    // Tap op de kaart = open detail (apart van swipe logica)
-    let tapX=0, tapY=0, tapTime=0;
-    card.addEventListener('touchstart', e=>{
-      tapX=e.touches[0].clientX;
-      tapY=e.touches[0].clientY;
-      tapTime=Date.now();
-    },{passive:true});
-    card.addEventListener('touchend', e=>{
+    // Kaart tap = open detail
+    // Gebruik pointerdown/pointerup voor betrouwbare tap detectie
+    let ptX=0, ptY=0;
+    card.addEventListener('pointerdown', e=>{
+      ptX=e.clientX; ptY=e.clientY;
+      scrollY = col ? col.scrollTop : 0;
+    });
+    card.addEventListener('pointerup', e=>{
       if(!isMobile()) return;
-      const dx=Math.abs(e.changedTouches[0].clientX-tapX);
-      const dy=Math.abs(e.changedTouches[0].clientY-tapY);
-      const dt=Date.now()-tapTime;
-      // Tap = weinig beweging (<15px) en kort (<300ms)
-      if(dx<15 && dy<15 && dt<300){
-        e.preventDefault();
+      const dx=Math.abs(e.clientX-ptX);
+      const dy=Math.abs(e.clientY-ptY);
+      const scrollDelta = col ? Math.abs(col.scrollTop - scrollY) : 0;
+      // Tap: nauwelijks beweging en kolom niet gescrolld
+      if(dx<10 && dy<10 && scrollDelta<5){
         openMobDetail(p);
       }
-    },{passive:false});
+    });
   })();
 
   // Desktop hover
