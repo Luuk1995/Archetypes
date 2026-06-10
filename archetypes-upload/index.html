@@ -352,7 +352,7 @@
       display:block;
       filter:none !important;
     }
-    .mob-detail-text{padding:.4rem 1.2rem .2rem;}
+    .mob-detail-text{padding:.35rem 1.2rem .1rem;}
     .mob-detail-title{
       font-size:1rem;font-weight:600;
       letter-spacing:.14em;text-transform:uppercase;
@@ -361,7 +361,7 @@
     }
     .mob-detail-sub{
       font-size:.7rem;letter-spacing:.14em;
-      color:var(--fg);margin-bottom:1.2rem;
+      color:var(--fg);margin-bottom:.5rem;
       font-family:'WastedYear','SometypeMono',monospace;
     }
     .mob-detail-desc{
@@ -413,13 +413,13 @@
       }
       #nav.mob-visible{opacity:1;pointer-events:all;}
       #nav-left{gap:1rem;align-items:center;}
-      .nav-link{font-size:.75rem;letter-spacing:.1em;}
-      #logo-full,#logo-short{font-size:.75rem;letter-spacing:.1em;padding-right:0;}
+      .nav-link{font-size:.75rem !important;letter-spacing:.1em !important;}
+      #logo-full,#logo-short{font-size:.75rem !important;letter-spacing:.1em !important;}
 
       /* ── CORNERS: verborgen op hero ── */
       .corner{
-        font-size:.75rem;letter-spacing:.1em;
-        padding:.75rem .6rem;
+        font-size:.75rem !important;letter-spacing:.1em !important;
+        padding:.75rem 0;
         background:rgba(8,8,14,.95);
         backdrop-filter:blur(16px);
         border:none;
@@ -428,8 +428,10 @@
         pointer-events:none;
       }
       .corner.mob-visible{opacity:1;pointer-events:all;}
-      #corner-bl{left:0;text-align:left;}
-      #corner-br{right:0;text-align:right;}
+      /* Arche: tekst begint op .6rem van schermrand links = gelijk aan afbeeldingsrand */
+      #corner-bl{left:0;padding-left:.6rem;text-align:left;}
+      /* Types: tekst eindigt op .6rem van schermrand rechts = gelijk aan afbeeldingsrand */
+      #corner-br{right:0;padding-right:.6rem;text-align:right;}
 
       /* ── HERO: ! en tekst altijd op vaste plek ── */
       #hero{position:relative;height:100dvh;overflow:hidden;}
