@@ -338,9 +338,9 @@
       padding:.75rem 1.2rem;
       background:rgba(8,8,14,.95);
       backdrop-filter:blur(12px);
-      border-bottom:1px solid rgba(240,237,230,.08);
+      border:none;
       font-size:1.8rem;line-height:1;
-      color:rgba(240,237,230,.8);
+      color:rgba(240,237,230,1);
     }
     .mob-detail-img{
       width:calc(100% - 2.4rem);
@@ -352,7 +352,7 @@
       display:block;
       filter:none !important;
     }
-    .mob-detail-text{padding:1.4rem 1.4rem .6rem;}
+    .mob-detail-text{padding:.8rem 1.2rem .4rem;}
     .mob-detail-title{
       font-size:1rem;font-weight:600;
       letter-spacing:.14em;text-transform:uppercase;
@@ -372,9 +372,9 @@
       font-family:'WastedYear','SometypeMono',monospace;font-size:1.05em;
     }
     .mob-detail-divider{
-      display:block;width:calc(100% - 2.4rem);
-      margin:1.2rem auto;height:1px;
-      background:rgba(240,237,230,.08);
+      display:block;
+      margin:.8rem 0;height:0;
+      background:none;border:none;
     }
     .mob-detail-more-imgs{padding:0 1.2rem;}
     .mob-detail-more-imgs .mob-detail-img{width:100%;margin:0 0 1rem;}
@@ -404,7 +404,7 @@
         padding:.75rem 1.2rem;
         background:rgba(8,8,14,.95);
         backdrop-filter:blur(16px);
-        border-bottom:1px solid rgba(240,237,230,.1);
+        border-bottom:none;
         opacity:0;
         transition:opacity .4s ease;
         pointer-events:none;
@@ -421,13 +421,13 @@
         padding:.75rem 1.2rem;
         background:rgba(8,8,14,.95);
         backdrop-filter:blur(16px);
-        border-top:1px solid rgba(240,237,230,.1);
+        border:none;
         width:50%;bottom:0;
         opacity:0;transition:opacity .4s ease;
         pointer-events:none;
       }
       .corner.mob-visible{opacity:1;pointer-events:all;}
-      #corner-bl{left:0;border-right:1px solid rgba(240,237,230,.1);text-align:left;}
+      #corner-bl{left:0;text-align:left;}
       #corner-br{right:0;text-align:right;}
 
       /* ── HERO: ! en tekst altijd op vaste plek ── */
@@ -639,8 +639,10 @@ const DEFAULTS = {
 function renderMd(text) {
   if (!text) return '';
   text = text.replace(/^>\s*-?\s*/gm, '');
+  text = text.replace(/\\n/g,'\n');
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/==(.+?)==/g,'<span class="wasted-inline">$1</span>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/!/g,'<em class="exclaim">!</em>')
