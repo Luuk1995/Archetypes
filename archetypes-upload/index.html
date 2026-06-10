@@ -335,16 +335,16 @@
     #mob-detail-close{
       position:sticky;top:0;z-index:10;
       display:flex;justify-content:flex-end;align-items:center;
-      padding:.55rem 1.2rem;
+      padding:.75rem 1.2rem;
       background:rgba(8,8,14,.95);
       backdrop-filter:blur(12px);
-      border:none;
+      border-bottom:1px solid rgba(240,237,230,.08);
       font-size:1.8rem;line-height:1;
-      color:rgba(240,237,230,1);
+      color:rgba(240,237,230,.8);
     }
     .mob-detail-img{
       width:calc(100% - 2.4rem);
-      margin:.55rem auto 0;
+      margin:1.2rem auto 0;
       display:block;
     }
     .mob-detail-img img{
@@ -352,7 +352,7 @@
       display:block;
       filter:none !important;
     }
-    .mob-detail-text{padding:.35rem 1.2rem .1rem;}
+    .mob-detail-text{padding:1.4rem 1.4rem .6rem;}
     .mob-detail-title{
       font-size:1rem;font-weight:600;
       letter-spacing:.14em;text-transform:uppercase;
@@ -361,24 +361,23 @@
     }
     .mob-detail-sub{
       font-size:.7rem;letter-spacing:.14em;
-      color:var(--fg);margin-bottom:.5rem;
+      color:var(--fg);margin-bottom:1.2rem;
       font-family:'WastedYear','SometypeMono',monospace;
     }
     .mob-detail-desc{
       font-size:.7rem;line-height:2;letter-spacing:.05em;
       color:rgba(240,237,230,.8);
-      margin-bottom:1rem;
     }
     .mob-detail-desc .wasted-inline{
       font-family:'WastedYear','SometypeMono',monospace;font-size:1.05em;
     }
     .mob-detail-divider{
-      display:block;
-      margin:.8rem 0;height:0;
-      background:none;border:none;
+      display:block;width:calc(100% - 2.4rem);
+      margin:1.2rem auto;height:1px;
+      background:rgba(240,237,230,.08);
     }
     .mob-detail-more-imgs{padding:0 1.2rem;}
-    .mob-detail-more-imgs .mob-detail-img{width:100%;margin:0 0 .6rem;}
+    .mob-detail-more-imgs .mob-detail-img{width:100%;margin:0 0 1rem;}
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:rgba(240,237,230,.12)}
@@ -402,36 +401,34 @@
 
       /* ── NAV: verborgen op hero ── */
       #nav{
-        padding:.75rem .6rem;
+        padding:.75rem 1.2rem;
         background:rgba(8,8,14,.95);
         backdrop-filter:blur(16px);
-        border:none;
+        border-bottom:1px solid rgba(240,237,230,.1);
         opacity:0;
         transition:opacity .4s ease;
         pointer-events:none;
         align-items:center;
       }
       #nav.mob-visible{opacity:1;pointer-events:all;}
-      #nav-left{gap:1rem;align-items:center;}
-      .nav-link{font-size:.75rem !important;letter-spacing:.1em !important;}
-      #logo-full,#logo-short{font-size:.75rem !important;letter-spacing:.1em !important;}
+      #nav-left{gap:1.4rem;align-items:center;}
+      .nav-link{font-size:.62rem;letter-spacing:.12em;}
+      #logo-full,#logo-short{font-size:.62rem;letter-spacing:.12em;}
 
       /* ── CORNERS: verborgen op hero ── */
       .corner{
-        font-size:.75rem !important;letter-spacing:.1em !important;
-        padding:.75rem 0;
+        font-size:.62rem;letter-spacing:.12em;
+        padding:.75rem 1.2rem;
         background:rgba(8,8,14,.95);
         backdrop-filter:blur(16px);
-        border:none;
+        border-top:1px solid rgba(240,237,230,.1);
         width:50%;bottom:0;
         opacity:0;transition:opacity .4s ease;
         pointer-events:none;
       }
       .corner.mob-visible{opacity:1;pointer-events:all;}
-      /* Arche: uitgelijnd met linkerrand afbeelding linkerkolom */
-      #corner-bl{left:0;padding-left:.6rem;text-align:left;}
-      /* Types: uitgelijnd met linkerrand afbeelding rechterkolom */
-      #corner-br{right:0;padding-left:.6rem;padding-right:0;text-align:left;}
+      #corner-bl{left:0;text-align:left;}
+      #corner-br{right:0;padding-right:.6rem;text-align:right;}
 
       /* ── HERO: ! en tekst altijd op vaste plek ── */
       #hero{position:relative;height:100dvh;overflow:hidden;}
@@ -639,10 +636,8 @@ const DEFAULTS = {
 function renderMd(text) {
   if (!text) return '';
   text = text.replace(/^>\s*-?\s*/gm, '');
-  text = text.replace(/\\n/g,'\n');
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/==(.+?)==/g,'<span class="wasted-inline">$1</span>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/!/g,'<em class="exclaim">!</em>')
