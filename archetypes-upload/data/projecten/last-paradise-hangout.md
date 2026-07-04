@@ -11,7 +11,7 @@ image3: /images/hangout_last-paradise_arche-types4.jpg
 image4: /images/hangout_last-paradise_arche-types5.jpg
 image5: /images/hangout_last-paradise_arche-types.jpg
 image6: /images/hangout_last-paradise_arche-types3.jpg
-order: 5
+order: 1
 label1: ""
 label2: ""
 label3: ""
