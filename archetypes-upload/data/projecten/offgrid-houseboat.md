@@ -6,10 +6,11 @@ desc: Zelfbouw boothuis met 40m2 leefruimte. Compleet zelfvoorzienend. ==Vanuit
   lig je daar een paar dagen voor Pampus. ==Ultiem woonvrijheid op het water.==
   In het ontwerp is rekening gehouden met plaatsing van o.a. ballast van accu
   pakketten zodat de boot in balans blijft.
-image: /images/houseboat_arche-types.jpg
-image2: /images/houseboat_arche-types2.jpg
+image: /images/houseboat_arche-types_hero.jpg
+image2: /images/houseboat_arche-types.jpg
 image3: /images/houseboat_arche-types4.jpg
 image4: /images/houseboat_arche-types3.jpg
+image5: /images/houseboat_arche-types2.jpg
 order: 99
 label1: ""
 label2: ""
