@@ -26,7 +26,7 @@ desc_slider: >
   De architectuur is met passieve ontwerpprincipes ontworpen. Het hoofdvolume staat verhoogd boven 
 
   het maaiveld, waardoor lucht onder het gebouw kan circuleren en bescherming ontstaat tegen invloeden van buitenaf. Royale dakoverstekken bieden schaduw en beschutting tegen zon en tropische regen, terwijl grote openingen aan weerszijden zorgen voor continue natuurlijke ventilatie. Lokale ambachtslieden bouwden met lokale materialen, volgens een vernaculaire bouw logica.
-image: /images/surfstay_last-paradise_arche-types.jpg
+image: /images/surfstay_last-paradise_arche-types_cian-salmon.jpg
 image5: /images/surfstay_last-paradise_arche-types_proces4.jpg
 order: 5
 waarde1: ""
@@ -36,6 +36,7 @@ image2: /images/surfstay_last-paradise_arche-types_proces_2.jpg
 image3: /images/surfstay_last-paradise_arche-types_proces.jpg
 programma: Sleeping residence – detached bathhouse – kitchen / hangout
 image4: /images/surfstay_last-paradise_arche-types_detailjpg.jpg
+image6: /images/Project_Last Paradise_1.jpg
 quote: "''Hier begint het avontuur''"
 label1: ""
 label2: ""
