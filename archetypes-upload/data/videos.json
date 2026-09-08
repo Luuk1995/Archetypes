@@ -1,13 +1,13 @@
 {
   "left": {
-    "type": "video",
+    "type": "image",
     "src": "",
     "label": "VIDEO ARCHITECTUUR",
     "src_url": ""
   },
   "right": {
     "type": "video",
-    "src": "OBJECT VIDEO HERO_LR.mp4",
+    "src": "",
     "label": "VIDEO OBJECTEN",
     "src_url": ""
   }
