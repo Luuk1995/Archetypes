@@ -1,14 +1,4 @@
 {
-  "left": {
-    "type": "image",
-    "src": "/images/project-hero-video_lr.mp4",
-    "label": "VIDEO ARCHITECTUUR",
-    "src_url": ""
-  },
-  "right": {
-    "type": "image",
-    "src": "/images/object-video-hero_lr.mp4",
-    "label": "VIDEO OBJECTEN",
-    "src_url": ""
-  }
+  "left": { "type": "video", "src": "/images/NAAM-LINKER-VIDEO.mp4" },
+  "right": { "type": "video", "src": "/images/NAAM-RECHTER-VIDEO.mp4" }
 }
