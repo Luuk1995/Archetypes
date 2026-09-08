@@ -1,12 +1,14 @@
 {
   "left": {
-    "type": "video",
-    "src": "videos/Video_Projects_Placeholder_2.mp4",
-    "label": "VIDEO ARCHITECTUUR"
+    "type": "youtube",
+    "src": "",
+    "label": "VIDEO ARCHITECTUUR",
+    "src_url": "https://youtube.com/shorts/A8w3NvgooGI"
   },
   "right": {
-    "type": "video",
-    "src": "videos/Video_Objects_Placeholder_2.mp4",
-    "label": "VIDEO OBJECTEN"
+    "type": "youtube",
+    "src": "",
+    "label": "VIDEO OBJECTEN",
+    "src_url": "https://youtube.com/shorts/mX2jJ5S4FmM"
   }
 }
