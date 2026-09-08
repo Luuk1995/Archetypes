@@ -22,19 +22,35 @@ collections:
         label: "Hero Video's"
         file: "archetypes-upload/data/videos.json"
         fields:
-          - label: "Video Links"
+          - label: "Video Links (Architectuur)"
             name: "left"
             widget: "object"
             fields:
               - { label: "Type", name: "type", widget: "select", options: ["youtube", "video", "image", "placeholder"], default: "placeholder" }
-              - { label: "URL / bestandsnaam", name: "src", widget: "string", required: false }
+              - label: "Videobestand uploaden"
+                name: "src"
+                widget: "file"
+                required: false
+                hint: "Upload een .mp4 bestand, of vul hieronder een URL in. Bij YouTube: plak alleen de video-ID (bijv. dQw4w9WgXcQ)."
+                media_folder: "archetypes-upload/images"
+                public_folder: "/images"
+                allow_multiple: false
+              - { label: "Of vul een URL / YouTube ID in", name: "src_url", widget: "string", required: false }
               - { label: "Label (bij placeholder)", name: "label", widget: "string", default: "VIDEO ARCHITECTUUR", required: false }
-          - label: "Video Rechts"
+          - label: "Video Rechts (Objecten)"
             name: "right"
             widget: "object"
             fields:
               - { label: "Type", name: "type", widget: "select", options: ["youtube", "video", "image", "placeholder"], default: "placeholder" }
-              - { label: "URL / bestandsnaam", name: "src", widget: "string", required: false }
+              - label: "Videobestand uploaden"
+                name: "src"
+                widget: "file"
+                required: false
+                hint: "Upload een .mp4 bestand, of vul hieronder een URL in. Bij YouTube: plak alleen de video-ID (bijv. dQw4w9WgXcQ)."
+                media_folder: "archetypes-upload/images"
+                public_folder: "/images"
+                allow_multiple: false
+              - { label: "Of vul een URL / YouTube ID in", name: "src_url", widget: "string", required: false }
               - { label: "Label (bij placeholder)", name: "label", widget: "string", default: "VIDEO OBJECTEN", required: false }
 
   - name: "projecten"
