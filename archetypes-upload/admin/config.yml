@@ -27,14 +27,30 @@ collections:
             widget: "object"
             fields:
               - { label: "Type", name: "type", widget: "select", options: ["youtube", "video", "image", "placeholder"], default: "placeholder" }
-              - { label: "Bestandspad of YouTube ID", name: "src", widget: "string", required: false, hint: "Lokale video: /images/bestandsnaam.mp4 — YouTube: plak de volledige URL of alleen het video-ID" }
+              - label: "Videobestand uploaden"
+                name: "src"
+                widget: "file"
+                required: false
+                hint: "Upload een .mp4 bestand, of vul hieronder een URL in. Bij YouTube: plak alleen de video-ID (bijv. dQw4w9WgXcQ)."
+                media_folder: "archetypes-upload/images"
+                public_folder: "/images"
+                allow_multiple: false
+              - { label: "Of vul een URL / YouTube ID in", name: "src_url", widget: "string", required: false }
               - { label: "Label (bij placeholder)", name: "label", widget: "string", default: "VIDEO ARCHITECTUUR", required: false }
           - label: "Video Rechts (Objecten)"
             name: "right"
             widget: "object"
             fields:
               - { label: "Type", name: "type", widget: "select", options: ["youtube", "video", "image", "placeholder"], default: "placeholder" }
-              - { label: "Bestandspad of YouTube ID", name: "src", widget: "string", required: false, hint: "Lokale video: /images/bestandsnaam.mp4 — YouTube: plak de volledige URL of alleen het video-ID" }
+              - label: "Videobestand uploaden"
+                name: "src"
+                widget: "file"
+                required: false
+                hint: "Upload een .mp4 bestand, of vul hieronder een URL in. Bij YouTube: plak alleen de video-ID (bijv. dQw4w9WgXcQ)."
+                media_folder: "archetypes-upload/images"
+                public_folder: "/images"
+                allow_multiple: false
+              - { label: "Of vul een URL / YouTube ID in", name: "src_url", widget: "string", required: false }
               - { label: "Label (bij placeholder)", name: "label", widget: "string", default: "VIDEO OBJECTEN", required: false }
 
   - name: "projecten"
@@ -62,6 +78,7 @@ collections:
         name: "image"
         widget: "image"
         required: false
+        hint: "Verschijnt op de scrollpagina als kaartafbeelding."
       - label: "Slideshow afbeelding 2"
         name: "image2"
         widget: "image"
@@ -117,6 +134,7 @@ collections:
         name: "image"
         widget: "image"
         required: false
+        hint: "Verschijnt op de scrollpagina als kaartafbeelding."
       - label: "Slideshow afbeelding 2"
         name: "image2"
         widget: "image"
