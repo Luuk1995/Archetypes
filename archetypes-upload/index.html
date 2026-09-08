@@ -198,11 +198,17 @@
     /* Typed text — triggered via JS class only */
     .project-hover{
       flex:1;
-      opacity:0;transition:opacity .4s ease;
+      opacity:0;
+      max-width:0;
+      overflow:hidden;
       display:flex;flex-direction:column;justify-content:flex-start;
-      overflow:visible;
+      transition:opacity .35s ease, max-width .45s cubic-bezier(.4,0,.2,1);
+      white-space:normal;
     }
-    .project-card.img-hovered .project-hover{opacity:1}
+    .project-card.img-hovered .project-hover{
+      opacity:1;
+      max-width:600px;
+    }
 
     .project-desc{
       font-size:.68rem;line-height:1.9;letter-spacing:.05em;
@@ -952,33 +958,19 @@ function makeCard(p) {
     });
   })();
 
-  // Desktop hover
-  let ti=null;
+  // Desktop hover — tekst schuift uit naast afbeelding
   iw.addEventListener('mouseenter',()=>{
     if(isMobile()) return;
+    // Render tekst direct (geen typewriter)
+    descEl.innerHTML = renderMd(p.desc||'');
+    metaEl.innerHTML = '';
     card.classList.add('img-hovered');
-    // Only show meta if waarde fields are explicitly filled
-    let metaHtml='';
-    if(p.waarde1&&p.waarde1.trim()){
-      metaHtml+=`<strong>${p.label1||'Opdrachtgever'}:</strong>${p.waarde1}`;
-    }
-    if(p.waarde2&&p.waarde2.trim()){
-      metaHtml+=`<strong>${p.label2||'Programma'}:</strong>${p.waarde2}`;
-    }
-    if(p.waarde3&&p.waarde3.trim()){
-      metaHtml+=`<strong>${p.label3||'Ontwerp'}:</strong>${p.waarde3}`;
-    }
-    metaEl.innerHTML=metaHtml;
-    const fullText=p.desc||'';
-    descEl.innerHTML='';let i=0;clearInterval(ti);
-    ti=setInterval(()=>{
-      if(i<fullText.length){i++;descEl.innerHTML=renderMd(fullText.substring(0,i));}
-      else clearInterval(ti);
-    },20);
   });
   iw.addEventListener('mouseleave',()=>{
     if(isMobile()) return;
-    clearInterval(ti);descEl.innerHTML='';metaEl.innerHTML='';card.classList.remove('img-hovered');
+    card.classList.remove('img-hovered');
+    descEl.innerHTML='';
+    metaEl.innerHTML='';
   });
 
   return card;
