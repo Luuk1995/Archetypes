@@ -198,16 +198,21 @@
     /* Typed text — triggered via JS class only */
     .project-hover{
       flex:1;
-      opacity:0;
-      max-width:0;
-      overflow:hidden;
       display:flex;flex-direction:column;justify-content:flex-start;
-      transition:opacity .35s ease, max-width .45s cubic-bezier(.4,0,.2,1);
-      white-space:normal;
+      overflow:hidden;
+      /* Clip van links: tekst verborgen achter afbeelding, schuift open */
+      clip-path:inset(0 100% 0 0);
+      opacity:0;
+      transition:clip-path .7s cubic-bezier(.4,0,.2,1),
+                 opacity .5s ease;
+    }
+    /* Even kaarten: afbeelding rechts, tekst links — schuift van rechts open */
+    .project-card:nth-child(even) .project-hover{
+      clip-path:inset(0 0 0 100%);
     }
     .project-card.img-hovered .project-hover{
+      clip-path:inset(0 0 0 0);
       opacity:1;
-      max-width:600px;
     }
 
     .project-desc{
@@ -958,19 +963,27 @@ function makeCard(p) {
     });
   })();
 
-  // Desktop hover — tekst schuift uit naast afbeelding
+  // Desktop hover — tekst schuift uit via clip-path (geen layout shift)
   iw.addEventListener('mouseenter',()=>{
     if(isMobile()) return;
-    // Render tekst direct (geen typewriter)
+    // Render inhoud eerst zodat animatie start met correcte hoogte
     descEl.innerHTML = renderMd(p.desc||'');
     metaEl.innerHTML = '';
-    card.classList.add('img-hovered');
+    // Kleine delay zodat browser de inhoud heeft gerenderd voor de animatie
+    requestAnimationFrame(()=>{
+      card.classList.add('img-hovered');
+    });
   });
   iw.addEventListener('mouseleave',()=>{
     if(isMobile()) return;
     card.classList.remove('img-hovered');
-    descEl.innerHTML='';
-    metaEl.innerHTML='';
+    // Inhoud pas leegmaken na animatie
+    setTimeout(()=>{
+      if(!card.classList.contains('img-hovered')){
+        descEl.innerHTML='';
+        metaEl.innerHTML='';
+      }
+    }, 750);
   });
 
   return card;
