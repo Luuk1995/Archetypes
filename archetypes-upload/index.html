@@ -36,7 +36,7 @@
     /* Beide gebruiken hetzelfde 1fr/1fr grid als de hero videos.
        ! en tekst hugggen de middellijn — split zit exact op de videogrens. */
     #intro{
-      position:fixed;inset:0;z-index:5000;background:#000;
+      position:fixed;inset:0;z-index:5000;background:#0a0a0e;
       display:grid;grid-template-columns:1fr 1fr;
       transition:opacity 1.4s ease;
     }
@@ -781,30 +781,37 @@ document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.styl
 window.addEventListener('load',()=>{
   const heroVideos = document.getElementById('hero-videos');
   const intro = document.getElementById('intro');
+  let shown = false;
 
   function showHero(){
+    if(shown) return;
+    shown = true;
     heroVideos.classList.add('visible');
     intro.classList.add('fade-out');
     setTimeout(()=>{ intro.style.display='none'; }, 1600);
   }
 
-  // Wacht maximaal 2.5s op eerste video — daarna altijd doorgaan
-  const maxWait = setTimeout(showHero, 2500);
+  // Toon hero na maximaal 1.5s — niet langer wachten
+  const maxWait = setTimeout(showHero, 1500);
 
-  // Zodra een video kan spelen: toon hero
+  // Zodra een video ook maar iets geladen heeft: toon hero
   const vids = heroVideos.querySelectorAll('video');
-  let shown = false;
   vids.forEach(v => {
-    v.addEventListener('canplay', ()=>{
-      if(shown) return;
-      shown = true;
+    // loadeddata = eerste frame beschikbaar (Safari + Chrome)
+    ['loadeddata','canplay'].forEach(evt=>{
+      v.addEventListener(evt, ()=>{
+        clearTimeout(maxWait);
+        showHero();
+      }, {once:true});
+    });
+    // Als video al data heeft (cached)
+    if(v.readyState >= 2){
       clearTimeout(maxWait);
-      // Korte fade zodat de overgang vloeiend is
-      setTimeout(showHero, 100);
-    }, {once:true});
+      showHero();
+    }
   });
 
-  // Fallback als er geen video's zijn (YouTube of placeholder)
+  // Geen video's: toon meteen
   if(!vids.length){
     clearTimeout(maxWait);
     setTimeout(showHero, 200);
@@ -917,21 +924,35 @@ function renderVideos(videos){
       vid.muted = true;
       vid.loop = true;
       vid.playsInline = true;
-      // preload=auto: hero video's moeten direct laden en spelen
       vid.setAttribute('preload','auto');
-      vid.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1);transition:filter .5s ease;display:block;background:#0a0a0e;';
+      // Video start transparant, faded in zodra eerste frame er is
+      vid.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1);transition:filter .5s ease, opacity .6s ease;display:block;opacity:0;';
       const src = document.createElement('source');
       src.src = vsrc;
       src.type = 'video/mp4';
       vid.appendChild(src);
-      wrap.style.cssText += 'position:relative;overflow:hidden;background:#0a0a0e;';
-      // Direct laden en spelen — geen wachten op observer
-      vid.load();
-      // Speel zodra genoeg data beschikbaar is
-      vid.addEventListener('canplay', () => { vid.play().catch(()=>{}); }, {once:true});
-      // Fallback: probeer ook na korte tijd
-      setTimeout(()=>{ if(vid.paused) vid.play().catch(()=>{}); }, 500);
+      wrap.style.cssText += 'position:relative;overflow:hidden;background:#111116;';
       wrap.appendChild(vid);
+      // Cross-browser play aanpak
+      function tryPlay(){
+        const p = vid.play();
+        if(p && p.catch) p.catch(()=>{});
+      }
+      // Safari: loadeddata triggert eerder dan canplay
+      ['loadeddata','canplay','canplaythrough'].forEach(evt=>{
+        vid.addEventListener(evt, ()=>{
+          vid.style.opacity='1';
+          tryPlay();
+        }, {once:true});
+      });
+      // Directe poging — werkt in Chrome/Firefox
+      vid.load();
+      tryPlay();
+      // Hard fallback na 800ms voor trage verbindingen
+      setTimeout(()=>{
+        vid.style.opacity='1';
+        tryPlay();
+      }, 800);
       wrap.addEventListener('mouseenter',()=>vid.style.filter='grayscale(0)');
       wrap.addEventListener('mouseleave',()=>vid.style.filter='grayscale(1)');
     } else if(vd&&vd.type==='image'&&vd.src){
