@@ -312,23 +312,22 @@
       position:absolute;top:50%;transform:translateY(-50%);
       z-index:10;
       font-size:clamp(1.6rem,3.2vw,2.27rem);letter-spacing:.1em;
-      font-weight:100;font-family:'SometypeMono',monospace;
-      color:rgba(240,237,230,.88);
+      font-weight:200;font-family:'SometypeMono',monospace;
+      color:#ffffff;
       cursor:none;padding:1.2rem;
-      transition:color .2s;
       user-select:none;
     }
-    .slide-arrow:hover{color:rgba(240,237,230,1);}
+    .slide-arrow:hover{color:#ffffff;}
     #slide-prev{left:.4rem;}
     #slide-next{right:.4rem;}
     #slide-close{
       position:absolute;top:1.4rem;left:1.8rem;
-      z-index:10;font-size:2.8rem;line-height:1;
-      font-weight:100;font-family:'SometypeMono',monospace;
-      color:rgba(240,237,230,1);
-      cursor:none;transition:color .2s;
+      z-index:10;font-size:3.8rem;line-height:1;
+      font-weight:200;font-family:'SometypeMono',monospace;
+      color:#ffffff;
+      cursor:none;
     }
-    #slide-close:hover{color:rgba(240,237,230,1);}
+    #slide-close:hover{color:#ffffff;}
 
     /* ── MOBILE DETAIL VIEWER ── */
     #mob-detail{
@@ -411,6 +410,10 @@
     }
     .project-img-wrap:hover::after{
       color:rgba(240,237,230,1);
+    }
+    .logo-exclaim{
+      font-family:'WastedYear','SometypeMono',monospace;
+      font-style:normal;font-weight:400;
     }
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-track{background:transparent}
@@ -591,19 +594,19 @@
     <a href="#" class="nav-link" id="nav-info">Info<span class="nav-exclaim">!</span></a>
   </div>
   <div id="nav-right">
-    <a href="#" id="logo-full">ARCHE<em class="exclaim">!</em>TYPES</a>
-    <a href="#" id="logo-short">a<em class="exclaim">!</em>t</a>
+    <a href="#" id="logo-full">ARCHE<span class="logo-exclaim">!</span>TYPES</a>
+    <a href="#" id="logo-short">a<span class="logo-exclaim">!</span>t</a>
   </div>
 </nav>
 
 <div class="corner" id="corner-bl">Arche<span class="corner-exclaim">!</span></div>
 <div class="corner" id="corner-br">Types<span class="corner-exclaim">!</span></div>
 <div id="contact-btn" onclick="window.open('https://wa.me/31624807856?text=Hallo%2C%20ik%20zag%20je%20werk%20op%20arche-types.nl%20en%20wil%20graag%20contact%20opnemen.','_blank')">
-  <svg id="contact-icon" viewBox="0 0 80 95" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Bovenste ballon — licht ruw getekend -->
-    <path d="M9 7 C8 3 11 1 14 2 L63 2 C67 1 69 4 68 7 L68 41 C69 45 66 47 63 46 L30 46 L15 59 L19 46 L13 46 C9 47 7 44 9 41 Z" stroke-dasharray="0" />
-    <!-- Onderste ballon — verschoven, ook ruw -->
-    <path d="M21 53 C20 49 23 47 27 48 L69 48 C73 47 75 50 74 53 L74 79 C75 83 72 85 69 84 L59 84 L65 95 L53 84 L27 84 C23 85 21 82 21 79 Z" />
+  <svg id="contact-icon" viewBox="0 0 80 95" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bovenste ballon: expressief, ruw, punk -->
+    <path d="M7 8 C5 1 13 -1 17 2 L61 1 C67 0 71 3 70 9 L69 40 C71 47 65 49 61 47 L32 47 L13 62 L18 47 L11 48 C5 49 5 43 7 38 Z" stroke-width="3.2"/>
+    <!-- Onderste ballon: kleiner, verschoven, ook ruw -->
+    <path d="M20 55 C18 48 25 46 29 48 L68 47 C74 46 76 51 75 55 L74 78 C76 85 69 87 66 85 L57 85 L63 97 L50 85 L29 86 C22 87 19 82 20 78 Z" stroke-width="2.8"/>
   </svg>
 </div>
 <canvas id="starfield"></canvas>
