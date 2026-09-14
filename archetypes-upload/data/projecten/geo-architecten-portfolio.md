@@ -1,5 +1,5 @@
 ---
-title: GeO Architecten - Portfolio
+title: GEO ARCHITECTEN - PORTFOLIO
 sub: De Fruittuin
 desc: >-
   Onder de vlag van GeO Architecten heb ik meegetekend aan een ==agrarische
