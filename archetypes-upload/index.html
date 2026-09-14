@@ -91,7 +91,7 @@
     .nav-link{font-size:clamp(.65rem,1vw,.8rem);letter-spacing:.15em;text-transform:none;color:var(--fg);text-decoration:none;cursor:none}
     .nav-link .nav-exclaim{font-style:italic;font-family:'SometypeMono',monospace;opacity:0;transition:opacity .2s}
     .nav-link:hover .nav-exclaim{opacity:1}
-    #logo-full,#logo-short{font-size:clamp(.75rem,1.3vw,1rem);font-weight:600;letter-spacing:.12em;color:var(--fg);cursor:none;text-decoration:none}
+    #logo-full,#logo-short{font-size:clamp(.75rem,1.3vw,1rem);font-weight:400;letter-spacing:.08em;color:var(--fg);cursor:none;text-decoration:none;font-family:'WastedYear','SometypeMono',monospace;}
     #logo-short{display:none}
 
     /* ── CORNERS ── */
@@ -311,7 +311,7 @@
     .slide-arrow{
       position:absolute;top:50%;transform:translateY(-50%);
       z-index:10;
-      font-size:clamp(1.2rem,2.4vw,1.7rem);letter-spacing:.1em;
+      font-size:clamp(1.6rem,3.2vw,2.27rem);letter-spacing:.1em;
       font-weight:100;font-family:'SometypeMono',monospace;
       color:rgba(240,237,230,.88);
       cursor:none;padding:1.2rem;
@@ -394,15 +394,15 @@
     }
     #contact-btn:hover{opacity:1;}
     #contact-icon{
-      width:36px;height:40px;
-      filter:drop-shadow(0 0 6px rgba(240,237,230,.2));
+      width:26px;height:29px;
+      filter:drop-shadow(0 0 4px rgba(240,237,230,.15));
     }
 
     /* Plus indicator op afbeeldingen */
     .project-img-wrap::after{
       content:'+';
       position:absolute;top:.5rem;right:.6rem;
-      font-size:1.1rem;font-weight:300;
+      font-size:1.47rem;font-weight:300;
       font-family:'SometypeMono',monospace;
       color:rgba(240,237,230,0);
       transition:color .3s ease;
@@ -599,11 +599,11 @@
 <div class="corner" id="corner-bl">Arche<span class="corner-exclaim">!</span></div>
 <div class="corner" id="corner-br">Types<span class="corner-exclaim">!</span></div>
 <div id="contact-btn" onclick="window.open('https://wa.me/31624807856?text=Hallo%2C%20ik%20zag%20je%20werk%20op%20arche-types.nl%20en%20wil%20graag%20contact%20opnemen.','_blank')">
-  <svg id="contact-icon" viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-    <!-- Bovenste tekstballon (groot, ronde hoeken) -->
-    <path d="M8 6 Q8 2 12 2 L64 2 Q68 2 68 6 L68 42 Q68 46 64 46 L28 46 L14 58 L18 46 L12 46 Q8 46 8 42 Z"/>
-    <!-- Onderste tekstballon (kleiner, verschoven naar rechts) -->
-    <path d="M22 52 Q22 48 26 48 L70 48 Q74 48 74 52 L74 80 Q74 84 70 84 L58 84 L64 94 L52 84 L26 84 Q22 84 22 80 Z"/>
+  <svg id="contact-icon" viewBox="0 0 80 95" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bovenste ballon — licht ruw getekend -->
+    <path d="M9 7 C8 3 11 1 14 2 L63 2 C67 1 69 4 68 7 L68 41 C69 45 66 47 63 46 L30 46 L15 59 L19 46 L13 46 C9 47 7 44 9 41 Z" stroke-dasharray="0" />
+    <!-- Onderste ballon — verschoven, ook ruw -->
+    <path d="M21 53 C20 49 23 47 27 48 L69 48 C73 47 75 50 74 53 L74 79 C75 83 72 85 69 84 L59 84 L65 95 L53 84 L27 84 C23 85 21 82 21 79 Z" />
   </svg>
 </div>
 <canvas id="starfield"></canvas>
