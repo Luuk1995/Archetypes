@@ -101,10 +101,7 @@
     #corner-bl{bottom:0;left:0;padding-left:2.5rem}
     #corner-br{bottom:0;right:0;padding-right:1.8rem}
 
-    #audio-toggle{position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);z-index:500;font-size:.6rem;letter-spacing:.2em;color:rgba(240,237,230,.3);cursor:none;transition:color .3s;text-transform:uppercase}
-    #audio-toggle:hover{color:rgba(240,237,230,.7)}
-    #audio-toggle::before{content:'◎ '}
-    #audio-toggle.playing::before{content:'● ';color:var(--accent)}
+
 
     /* ── MAIN SCROLL CONTAINER ── */
     /* Single vertical scroll that snaps between hero and projects */
@@ -243,7 +240,7 @@
     #info-overlay{position:fixed;inset:0;z-index:2000;background:rgba(8,8,14,.95);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding-top:10vh;opacity:0;pointer-events:none;transition:opacity .5s ease}
     #info-overlay.active{opacity:1;pointer-events:all}
     #info-box{max-width:480px;width:90%;text-align:center;position:relative}
-    #info-close{position:fixed;top:1.4rem;right:1.8rem;font-size:1.4rem;cursor:none;color:rgba(240,237,230,.4);transition:color .2s;line-height:1}
+    #info-close{position:fixed;top:1.4rem;right:1.8rem;font-size:1.4rem;cursor:none;color:rgba(240,237,230,1);transition:color .2s;line-height:1}
     #info-close:hover{color:var(--fg)}
     #info-logo-mark{font-size:3.5rem;font-weight:400;font-style:normal;font-family:'WastedYear','SometypeMono',monospace;line-height:1;margin-bottom:2rem;color:var(--fg)}
     #info-box p{font-size:.72rem;line-height:2.1;letter-spacing:.05em;color:rgba(240,237,230,.65);margin-bottom:.8rem;white-space:pre-wrap}
@@ -328,7 +325,7 @@
       position:absolute;top:1.4rem;left:1.8rem;
       z-index:10;font-size:2.8rem;line-height:1;
       font-weight:100;font-family:'SometypeMono',monospace;
-      color:rgba(240,237,230,.88);
+      color:rgba(240,237,230,1);
       cursor:none;transition:color .2s;
     }
     #slide-close:hover{color:rgba(240,237,230,1);}
@@ -390,6 +387,31 @@
     }
     .mob-detail-more-imgs{padding:0 1.2rem;}
     .mob-detail-more-imgs .mob-detail-img{width:100%;margin:0 0 .6rem;}
+    #contact-btn{
+      position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);
+      z-index:500;cursor:none;
+      opacity:.7;transition:opacity .3s ease;
+    }
+    #contact-btn:hover{opacity:1;}
+    #contact-icon{
+      width:36px;height:40px;
+      filter:drop-shadow(0 0 6px rgba(240,237,230,.2));
+    }
+
+    /* Plus indicator op afbeeldingen */
+    .project-img-wrap::after{
+      content:'+';
+      position:absolute;top:.5rem;right:.6rem;
+      font-size:1.1rem;font-weight:300;
+      font-family:'SometypeMono',monospace;
+      color:rgba(240,237,230,0);
+      transition:color .3s ease;
+      pointer-events:none;
+      z-index:5;line-height:1;
+    }
+    .project-img-wrap:hover::after{
+      color:rgba(240,237,230,1);
+    }
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:rgba(240,237,230,.12)}
@@ -576,7 +598,14 @@
 
 <div class="corner" id="corner-bl">Arche<span class="corner-exclaim">!</span></div>
 <div class="corner" id="corner-br">Types<span class="corner-exclaim">!</span></div>
-<div id="audio-toggle" onclick="toggleAudio()">Geluid</div>
+<div id="contact-btn" onclick="window.open('https://wa.me/31624807856?text=Hallo%2C%20ik%20zag%20je%20werk%20op%20arche-types.nl%20en%20wil%20graag%20contact%20opnemen.','_blank')">
+  <svg id="contact-icon" viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bovenste tekstballon (groot, ronde hoeken) -->
+    <path d="M8 6 Q8 2 12 2 L64 2 Q68 2 68 6 L68 42 Q68 46 64 46 L28 46 L14 58 L18 46 L12 46 Q8 46 8 42 Z"/>
+    <!-- Onderste tekstballon (kleiner, verschoven naar rechts) -->
+    <path d="M22 52 Q22 48 26 48 L70 48 Q74 48 74 52 L74 80 Q74 84 70 84 L58 84 L64 94 L52 84 L26 84 Q22 84 22 80 Z"/>
+  </svg>
+</div>
 <canvas id="starfield"></canvas>
 
 <div id="scroll-root">
@@ -1090,178 +1119,7 @@ document.getElementById('nav-info').addEventListener('click',e=>{e.preventDefaul
 document.getElementById('info-close').addEventListener('click',()=>document.getElementById('info-overlay').classList.remove('active'));
 document.getElementById('info-overlay').addEventListener('click',e=>{if(e.target.id==='info-overlay')document.getElementById('info-overlay').classList.remove('active');});
 
-// ── AUDIO — Night forest soundscape ──
-let ac=null,mg=null,ip=false;const at=document.getElementById('audio-toggle');
 
-function startAmbient(){
-  ac=new(window.AudioContext||window.webkitAudioContext)();
-  mg=ac.createGain();
-  mg.gain.setValueAtTime(0,ac.currentTime);
-  mg.gain.linearRampToValueAtTime(.45,ac.currentTime+5);
-  mg.connect(ac.destination);
-
-  // ── Wind: very low, slow filtered noise ──
-  const wBuf=ac.createBuffer(1,ac.sampleRate*10,ac.sampleRate);
-  const wd=wBuf.getChannelData(0);for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
-  const wind=ac.createBufferSource();wind.buffer=wBuf;wind.loop=true;
-  const wf1=ac.createBiquadFilter();wf1.type='lowpass';wf1.frequency.value=120;
-  const wf2=ac.createBiquadFilter();wf2.type='lowpass';wf2.frequency.value=80;
-  const wg=ac.createGain();wg.gain.value=.06;
-  wind.connect(wf1);wf1.connect(wf2);wf2.connect(wg);wg.connect(mg);wind.start();
-
-  // ── Distant crickets: subtle, high, barely there ──
-  const cBuf=ac.createBuffer(1,ac.sampleRate*4,ac.sampleRate);
-  const cd=cBuf.getChannelData(0);for(let i=0;i<cd.length;i++)cd[i]=Math.random()*2-1;
-  const cricket=ac.createBufferSource();cricket.buffer=cBuf;cricket.loop=true;
-  const cf=ac.createBiquadFilter();cf.type='bandpass';cf.frequency.value=5500;cf.Q.value=12;
-  const cg=ac.createGain();cg.gain.value=.04;
-  cricket.connect(cf);cf.connect(cg);cg.connect(mg);cricket.start();
-
-  // ── Schedule varied night sounds ──
-  scheduleNight();
-}
-
-function scheduleNight(){
-  if(!ip||!ac)return;
-  const delay=12000+Math.random()*25000;
-  setTimeout(()=>{
-    if(!ip||!ac)return;
-    const pick=Math.random();
-    if(pick<.22) playOwl();
-    else if(pick<.38) playOwl2();
-    else if(pick<.52) playCrow();
-    else if(pick<.65) playFrogs();
-    else if(pick<.78) playRustle();
-    else if(pick<.88) playCreak();
-    else playDistantBird();
-    scheduleNight();
-  },delay);
-}
-
-function node(gain){const g=ac.createGain();g.gain.value=gain;g.connect(mg);return g;}
-
-function playOwl(){
-  // Classic two-note hoo-HOO
-  [[0,.35,320,285],[.75,.4,360,310]].forEach(([t,dur,f1,f2])=>{
-    const o=ac.createOscillator();o.type='sine';
-    o.frequency.setValueAtTime(f1,ac.currentTime+t);
-    o.frequency.exponentialRampToValueAtTime(f2,ac.currentTime+t+dur);
-    const g=ac.createGain();g.connect(mg);
-    g.gain.setValueAtTime(0,ac.currentTime+t);
-    g.gain.linearRampToValueAtTime(.07,ac.currentTime+t+.06);
-    g.gain.linearRampToValueAtTime(0,ac.currentTime+t+dur+.06);
-    o.connect(g);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+dur+.1);
-  });
-}
-
-function playOwl2(){
-  // Triple hoot: hoo-hoo-hooooo
-  [[0,.2,340,300],[.3,.2,340,300],[.6,.5,360,290]].forEach(([t,dur,f1,f2])=>{
-    const o=ac.createOscillator();o.type='sine';
-    o.frequency.setValueAtTime(f1,ac.currentTime+t);
-    o.frequency.exponentialRampToValueAtTime(f2,ac.currentTime+t+dur);
-    const g=ac.createGain();g.connect(mg);
-    g.gain.setValueAtTime(0,ac.currentTime+t);
-    g.gain.linearRampToValueAtTime(.06,ac.currentTime+t+.04);
-    g.gain.linearRampToValueAtTime(0,ac.currentTime+t+dur+.05);
-    o.connect(g);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+dur+.1);
-  });
-}
-
-function playCrow(){
-  // Crow: harsh "caw caw" — sawtooth + noise, 2-3 calls
-  const calls=2+Math.floor(Math.random()*2);
-  for(let c=0;c<calls;c++){
-    const t=ac.currentTime+c*.55+Math.random()*.1;
-    // Harsh tone
-    const o=ac.createOscillator();o.type='sawtooth';
-    o.frequency.setValueAtTime(280,t);
-    o.frequency.linearRampToValueAtTime(320,t+.08);
-    o.frequency.linearRampToValueAtTime(240,t+.18);
-    const bf=ac.createBiquadFilter();bf.type='bandpass';bf.frequency.value=600;bf.Q.value=2;
-    const g=ac.createGain();g.connect(mg);
-    g.gain.setValueAtTime(0,t);
-    g.gain.linearRampToValueAtTime(.065,t+.03);
-    g.gain.linearRampToValueAtTime(0,t+.22);
-    o.connect(bf);bf.connect(g);o.start(t);o.stop(t+.25);
-    // Rough noise layer on top
-    const nBuf=ac.createBuffer(1,Math.floor(ac.sampleRate*.2),ac.sampleRate);
-    const nd=nBuf.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
-    const ns=ac.createBufferSource();ns.buffer=nBuf;
-    const nf=ac.createBiquadFilter();nf.type='bandpass';nf.frequency.value=900;nf.Q.value=3;
-    const ng=ac.createGain();ng.connect(mg);
-    ng.gain.setValueAtTime(0,t);
-    ng.gain.linearRampToValueAtTime(.03,t+.03);
-    ng.gain.linearRampToValueAtTime(0,t+.2);
-    ns.connect(nf);nf.connect(ng);ns.start(t);
-  }
-}
-
-function playFrogs(){
-  // 2-4 frogs, each slightly different pitch, staggered
-  const count=2+Math.floor(Math.random()*3);
-  for(let f=0;f<count;f++){
-    const t=f*.4+Math.random()*.2;
-    const freq=600+Math.random()*300;
-    for(let p=0;p<2;p++){
-      const pt=ac.currentTime+t+p*.15;
-      const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.07),ac.sampleRate);
-      const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
-      const src=ac.createBufferSource();src.buffer=buf;
-      const bf=ac.createBiquadFilter();bf.type='bandpass';bf.frequency.value=freq;bf.Q.value=5;
-      const g=node(.04);src.connect(bf);bf.connect(g);src.start(pt);
-    }
-  }
-}
-
-function playRustle(){
-  const buf=ac.createBuffer(1,Math.floor(ac.sampleRate*.6),ac.sampleRate);
-  const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
-  const src=ac.createBufferSource();src.buffer=buf;
-  const bf=ac.createBiquadFilter();bf.type='highpass';bf.frequency.value=3000;
-  const g=ac.createGain();g.gain.setValueAtTime(0,ac.currentTime);
-  g.gain.linearRampToValueAtTime(.05,ac.currentTime+.12);
-  g.gain.linearRampToValueAtTime(.02,ac.currentTime+.35);
-  g.gain.linearRampToValueAtTime(0,ac.currentTime+.6);
-  g.connect(mg);src.connect(bf);bf.connect(g);src.start();
-}
-
-function playCreak(){
-  const o=ac.createOscillator();o.type='sawtooth';
-  o.frequency.setValueAtTime(55,ac.currentTime);
-  o.frequency.linearRampToValueAtTime(85,ac.currentTime+.5);
-  o.frequency.linearRampToValueAtTime(45,ac.currentTime+1);
-  const bf=ac.createBiquadFilter();bf.type='lowpass';bf.frequency.value=250;
-  const g=ac.createGain();
-  g.gain.setValueAtTime(0,ac.currentTime);
-  g.gain.linearRampToValueAtTime(.035,ac.currentTime+.1);
-  g.gain.linearRampToValueAtTime(0,ac.currentTime+1);
-  g.connect(mg);o.connect(bf);bf.connect(g);o.start();o.stop(ac.currentTime+1.1);
-}
-
-function playDistantBird(){
-  // Short high chirps
-  const chirps=2+Math.floor(Math.random()*3);
-  for(let i=0;i<chirps;i++){
-    const t=ac.currentTime+i*.25+Math.random()*.1;
-    const o=ac.createOscillator();o.type='sine';
-    const freq=2200+Math.random()*800;
-    o.frequency.setValueAtTime(freq,t);
-    o.frequency.linearRampToValueAtTime(freq*1.15,t+.08);
-    const g=ac.createGain();
-    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.04,t+.02);
-    g.gain.linearRampToValueAtTime(0,t+.1);
-    g.connect(mg);o.connect(g);o.start(t);o.stop(t+.12);
-  }
-}
-
-function toggleAudio(){
-  if(!ip){ip=true;at.classList.add('playing');startAmbient();}
-  else{ip=false;at.classList.remove('playing');
-    if(mg){mg.gain.linearRampToValueAtTime(0,ac.currentTime+2);
-      setTimeout(()=>{ac.close();ac=null;mg=null;},2500);}
-  }
-}
 // ── MOBILE DETAIL VIEWER ──
 (function(){
   const detail   = document.getElementById('mob-detail');
