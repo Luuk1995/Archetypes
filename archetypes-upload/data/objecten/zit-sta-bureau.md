@@ -11,5 +11,5 @@ opdrachtgever: PK Waterbouw
 programma: 5 bureaus
 ontwerp: Arche!Types
 image: /images/zit-sta-bureau_arche-types.jpg
-order: 99
+order: 4
 ---
