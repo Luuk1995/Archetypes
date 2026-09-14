@@ -10,5 +10,5 @@ image: /images/fruittuin_lr-4-.jpg
 image2: /images/fruittuin_lr-2-.jpg
 image3: /images/fruittuin_lr-1-.jpg
 image4: ""
-order: 99
+order: 4
 ---
