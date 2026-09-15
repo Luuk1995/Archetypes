@@ -234,7 +234,17 @@
     .project-label{padding:.5rem 0 0;flex-shrink:0}
     .project-card:nth-child(even) .project-label{text-align:right}
     .project-title{font-size:clamp(.84rem,1.17vw,1.05rem);font-weight:600;letter-spacing:.06em;text-transform:uppercase;line-height:1.4}
-    .project-subtitle{font-size:.7rem;letter-spacing:.14em;color:rgba(240,237,230,.6);text-transform:uppercase;margin-top:.2rem;font-family:'SometypeMono',monospace;font-weight:400;}
+    .project-subtitle{
+      font-size:.82rem;letter-spacing:.04em;
+      color:rgba(240,237,230,.9);text-transform:none;
+      margin-bottom:.3rem;
+      font-family:'WastedYear','SometypeMono',monospace;font-weight:400;
+      opacity:0;max-height:0;overflow:hidden;
+      transition:opacity .4s ease, max-height .4s ease;
+    }
+    .project-card.img-hovered .project-subtitle{
+      opacity:1;max-height:3rem;
+    }
 
     /* ── INFO OVERLAY ── */
     #info-overlay{position:fixed;inset:0;z-index:2000;background:rgba(8,8,14,.95);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding-top:10vh;opacity:0;pointer-events:none;transition:opacity .5s ease}
@@ -400,20 +410,19 @@
       filter:drop-shadow(0 0 4px rgba(240,237,230,.15));
     }
 
-    /* Plus indicator: midden van afbeelding, SVG kruisje via pseudo-element */
-    .project-img-wrap::before{
-      content:'';
-      position:absolute;inset:0;
+    /* > teken rechts in midden van afbeelding bij hover */
+    .project-img-wrap::after{
+      content:'›';
+      position:absolute;right:1rem;top:50%;
+      transform:translateY(-50%);
       z-index:5;pointer-events:none;
-      display:flex;align-items:center;justify-content:center;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='white' stroke-width='1.2' stroke-linecap='round'%3E%3Cline x1='20' y1='4' x2='20' y2='36'/%3E%3Cline x1='4' y1='20' x2='36' y2='20'/%3E%3C/svg%3E");
-      background-repeat:no-repeat;
-      background-position:center;
-      background-size:44px 44px;
+      font-size:2rem;font-weight:100;
+      font-family:'SometypeMono',monospace;
+      color:#ffffff;line-height:1;
       opacity:0;
       transition:opacity .3s ease;
     }
-    .project-img-wrap:hover::before{
+    .project-img-wrap:hover::after{
       opacity:1;
     }
     .logo-exclaim{
@@ -1025,16 +1034,18 @@ function makeCard(p) {
   hoverEl.appendChild(descEl);hoverEl.appendChild(metaEl);
   const label=document.createElement('div');
   label.className='project-label';
-  const titleEl=document.createElement('div');
-  titleEl.className='project-title';
-  titleEl.textContent=p.title;
-  label.appendChild(titleEl);
+  // Subtitle boven title, verborgen — verschijnt bij hover
+  let subEl=null;
   if(p.sub && p.sub.trim()){
-    const subEl=document.createElement('div');
+    subEl=document.createElement('div');
     subEl.className='project-subtitle';
     subEl.textContent=p.sub;
     label.appendChild(subEl);
   }
+  const titleEl=document.createElement('div');
+  titleEl.className='project-title';
+  titleEl.textContent=p.title;
+  label.appendChild(titleEl);
   right.appendChild(hoverEl);right.appendChild(label);
 
   inner.appendChild(iw);inner.appendChild(right);
