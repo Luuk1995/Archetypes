@@ -446,15 +446,55 @@
       #hero{scroll-snap-align:start;}
       #projects-snap{scroll-snap-align:start;}
 
-      /* ── NAV: Info linksboven, zelfde stijl als Arche/Types ── */
+      /* ── HERO: ! boven, tekst onder — stacked ── */
+      #hero{position:relative;height:100dvh;overflow:hidden;}
+      #hero-videos{display:flex !important;flex-direction:column !important;grid-template-columns:unset !important;}
+      #video-left, #video-right{flex:1;width:100%;position:relative;overflow:hidden;}
+      #video-left video, #video-right video,
+      #video-left iframe, #video-right iframe{
+        position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+      }
+
+      /* hero-logo: gestapeld, ! boven in bovenste video, tekst onder in onderste video */
+      #hero-logo{
+        position:absolute;inset:0;z-index:11;pointer-events:none;
+        display:grid !important;
+        grid-template-columns:1fr !important;
+        grid-template-rows:1fr 1fr;
+        opacity:1 !important;
+      }
+      #hero-logo-mark{
+        display:flex;align-items:center;justify-content:center;
+        font-size:4rem;
+        font-family:'WastedYear','SometypeMono',monospace;
+        padding:0;
+      }
+      #hero-logo-sub{
+        display:flex;align-items:center;justify-content:center;
+        font-size:.8rem;letter-spacing:.12em;line-height:1.9;
+        font-family:'WastedYear','SometypeMono',monospace;
+        padding:0;text-align:center;
+      }
+
+      /* Intro zelfde stacked layout */
+      #intro{
+        display:grid !important;
+        grid-template-columns:1fr !important;
+        grid-template-rows:1fr 1fr;
+      }
+      #intro-left{display:flex;align-items:center;justify-content:center;padding:0;}
+      #intro-right{display:flex;align-items:center;justify-content:center;padding:0;}
+      #intro-logo{font-size:4rem;}
+      #intro-sub{font-size:.8rem;letter-spacing:.12em;line-height:1.9;text-align:center;}
+
+      /* ── NAV: Info linksboven — zelfde font/grootte als Arche/Types ── */
       #nav{
         position:fixed;top:0;left:0;right:auto;
         padding:.65rem .6rem;
-        background:rgba(8,8,14,.95);
-        backdrop-filter:blur(16px);
+        background:transparent;
+        backdrop-filter:none;
         border:none;
-        opacity:0;
-        transition:opacity .4s ease;
+        opacity:0;transition:opacity .4s ease;
         pointer-events:none;
         z-index:1000;
         width:auto;
@@ -463,63 +503,68 @@
       #nav.mob-visible{opacity:1;pointer-events:all;}
       #nav-left{gap:0;align-items:center;}
       #nav-right{display:none;}
-      .nav-link{font-size:.75rem !important;letter-spacing:.1em !important;}
+      /* Verberg alles behalve info link */
+      #nav-home, [data-filter="arche"], [data-filter="types"]{display:none !important;}
+      .nav-link{
+        font-size:.75rem !important;
+        letter-spacing:.1em !important;
+        font-family:'SometypeMono',monospace !important;
+        font-weight:600 !important;
+      }
       .nav-exclaim{display:none;}
-      #logo-full,#logo-short{display:none;}
+      /* a!t logo rechtsboven — terug naar start bij klik */
+      #logo-full,#logo-short{
+        display:block !important;
+        font-size:.75rem !important;
+        letter-spacing:.1em !important;
+        font-family:'WastedYear','SometypeMono',monospace !important;
+        font-weight:400 !important;
+      }
+      #nav-right{display:flex !important;align-items:center;}
 
-      /* ── CORNERS: verborgen op hero ── */
+      /* ── CORNERS: onderin, zelfde font als nav ── */
       .corner{
         font-size:.75rem !important;letter-spacing:.1em !important;
+        font-family:'SometypeMono',monospace !important;font-weight:600 !important;
         padding:.65rem .6rem;
-        background:rgba(8,8,14,.95);
-        backdrop-filter:blur(16px);
+        background:transparent;
+        backdrop-filter:none;
         border:none;
-        width:auto;bottom:0;
+        bottom:0;
         opacity:0;transition:opacity .4s ease;
         pointer-events:none;
+        width:auto;
       }
       .corner.mob-visible{opacity:1;pointer-events:all;}
       #corner-bl{left:0;text-align:left;}
-      #corner-br{right:0;text-align:right;padding-right:.6rem;}
-
-      /* ── HERO: ! en tekst altijd op vaste plek ── */
-      #hero{position:relative;height:100dvh;overflow:hidden;}
-      #hero-logo{
-        position:absolute;inset:0;
-        display:grid;grid-template-columns:1fr 1fr;
-        z-index:11;pointer-events:none;opacity:1 !important;
-      }
-      #hero-logo-mark{display:flex;align-items:center;justify-content:flex-end;padding-right:1.2rem;font-size:4.5rem;font-family:'WastedYear','SometypeMono',monospace;}
-      #hero-logo-sub{display:flex;align-items:center;justify-content:flex-start;padding-left:1.2rem;font-size:.75rem;letter-spacing:.12em;line-height:1.8;font-family:'WastedYear','SometypeMono',monospace;}
-      #intro{grid-template-columns:1fr 1fr;}
-      #intro-left{justify-content:flex-end;padding-right:1.2rem;}
-      #intro-right{justify-content:flex-start;padding-left:1.2rem;}
-      #intro-logo{font-size:4.5rem;}
-      #intro-sub{font-size:.75rem;letter-spacing:.12em;line-height:1.8;}
+      #corner-br{right:0;text-align:right;}
 
       /* ── TWEE ONAFHANKELIJKE SCROLLERS ── */
       #projects-snap{
         display:grid;grid-template-columns:1fr 1fr;
         height:100dvh;overflow:hidden;
+        position:relative;
       }
+      /* Ruimte onderaan voor Arche/Types balk */
       .projects-col{
-        height:100%;overflow-y:scroll;overflow-x:hidden;
+        height:calc(100% - 2.2rem);
+        overflow-y:scroll;overflow-x:hidden;
         -webkit-overflow-scrolling:touch;scrollbar-width:none;
       }
       .projects-col::-webkit-scrollbar{display:none;}
 
-      /* ── KAARTEN: maximaal gecomprimeerd ── */
+      /* ── KAARTEN: Pinterest dichtheid ── */
       .card-inner{grid-template-columns:1fr !important;direction:ltr !important;}
       .project-card{
-        padding:.3rem .4rem;
+        padding:.25rem .25rem;
         -webkit-tap-highlight-color:transparent;
       }
-      .project-card:first-child{padding-top:2.5rem;}
-      .project-card:last-child{padding-bottom:4rem;}
+      .project-card:first-child{padding-top:2.2rem;}
+      .project-card:last-child{padding-bottom:2.5rem;}
       .project-card:nth-child(even) .card-inner .project-img-wrap{order:0;}
       .project-card:nth-child(even) .card-inner .project-right{order:1;}
 
-      /* Afbeelding: natuurlijke hoogte, geen vaste ratio */
+      /* Afbeelding: volledig breedte, geen gaps */
       .project-img-wrap{
         position:relative;width:100%;aspect-ratio:unset;height:auto;overflow:hidden;
       }
@@ -531,19 +576,22 @@
       .project-img-wrap.coloured img{filter:grayscale(0) !important;}
       .project-img-wrap::after{display:none;}
 
-      /* Label: mini, vlak onder afbeelding */
-      .project-right{padding:.2rem 0 0;text-align:left !important;}
+      /* Label: minimaal, vlak onder afbeelding */
+      .project-right{padding:.15rem 0 0;text-align:left !important;}
       .project-label{border-top:none;padding-top:.1rem;}
       .project-card:nth-child(even) .project-label{text-align:left;}
-      .project-title{font-size:.55rem !important;letter-spacing:.06em !important;}
+      .project-title{font-size:.52rem !important;letter-spacing:.05em !important;}
       .project-subtitle{display:none !important;}
       .project-hover{display:none !important;}
 
-      /* ── MOB DETAIL ── */
+      /* ── INFO + SLIDESHOW ── */
       #info-box{padding:0 1rem;}
       #info-close{top:1rem;right:1.2rem;}
       #slideshow-overlay{width:100% !important;left:0 !important;right:0 !important;}
       #slideshow-bg-close{display:none !important;}
+
+      /* ── MOB DETAIL ── */
+      #mob-detail-close{padding:.5rem 1.2rem;}
     }
 
     /* Very small screens */
