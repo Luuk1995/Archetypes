@@ -436,6 +436,7 @@
     /* ── MOBILE ── */
     @media (max-width:768px){
 
+      /* ── BASIS ── */
       body{cursor:auto}
       #cursor,#cursor-glow{display:none}
       #audio-toggle{display:none !important}
@@ -445,138 +446,83 @@
       #hero{scroll-snap-align:start;}
       #projects-snap{scroll-snap-align:start;}
 
-      /* ── DESKTOP NAV: volledig verbergen op mobiel ── */
-      #nav{display:none !important;}
-
-      /* ── HERO: videos gestapeld, ! boven, slogan onder ── */
-      #hero{position:relative;height:100dvh;overflow:hidden;}
-      #hero-videos{
-        display:flex !important;
-        flex-direction:column !important;
-      }
-      #video-left,#video-right{
-        flex:1;width:100%;position:relative;overflow:hidden;
-      }
-      #video-left video,#video-right video,
-      #video-left iframe,#video-right iframe{
-        position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-      }
-
-      /* Hero logo: gestapeld, ! boven exact op grens videos, slogan onder */
-      #hero-logo{
-        position:absolute;inset:0;z-index:11;pointer-events:none;
-        display:flex !important;
-        flex-direction:column !important;
-        align-items:center;
-        justify-content:center;
-        gap:.6rem;
-        opacity:1 !important;
-      }
-      #hero-logo-mark{
-        font-size:3.5rem;
-        font-family:'WastedYear','SometypeMono',monospace;
-        display:flex;align-items:flex-end;justify-content:center;
-        padding:0;line-height:1;
-      }
-      #hero-logo-sub{
-        font-size:.72rem;letter-spacing:.12em;line-height:1.8;
-        font-family:'WastedYear','SometypeMono',monospace;
-        display:flex;align-items:flex-start;justify-content:center;
-        padding:0;text-align:center;
-      }
-
-      /* Intro zelfde */
-      #intro{
-        display:flex !important;
-        flex-direction:column !important;
-        align-items:center;justify-content:center;
-        gap:.6rem;
-      }
-      #intro-left{display:flex;align-items:flex-end;justify-content:center;padding:0;}
-      #intro-right{display:flex;align-items:flex-start;justify-content:center;padding:0;}
-      #intro-logo{font-size:3.5rem;line-height:1;}
-      #intro-sub{font-size:.72rem;letter-spacing:.12em;line-height:1.8;text-align:center;}
-
-      /* ── MOBIELE HOEK ELEMENTEN ── */
-      /* A!t rechtsboven — terugknop naar start */
-      #logo-short{
-        display:block !important;
-        position:fixed;top:0;right:0;
-        font-size:.75rem !important;letter-spacing:.1em !important;
-        font-family:'WastedYear','SometypeMono',monospace !important;
-        font-weight:400 !important;
+      /* ── NAV: Info linksboven, zelfde stijl als Arche/Types ── */
+      #nav{
+        position:fixed;top:0;left:0;right:auto;
         padding:.65rem .6rem;
-        color:var(--fg);text-decoration:none;
-        opacity:0;transition:opacity .4s ease;
-        pointer-events:none;z-index:1000;
-      }
-      #logo-full{display:none !important;}
-      #logo-short.mob-visible{opacity:1;pointer-events:all;}
-
-      /* Info linksboven */
-      #nav-info-mob{
-        position:fixed;top:0;left:0;
-        font-size:.75rem;letter-spacing:.1em;
-        font-family:'SometypeMono',monospace;font-weight:600;
-        padding:.65rem .6rem;
-        color:var(--fg);text-decoration:none;
-        opacity:0;transition:opacity .4s ease;
-        pointer-events:none;z-index:1000;
-        cursor:pointer;
-      }
-      #nav-info-mob.mob-visible{opacity:1;pointer-events:all;}
-
-      /* Arche linksboven — zelfde hoogte als A!t */
-      #corner-bl{
-        bottom:auto !important;
-        top:0;left:0;
-        font-size:.75rem !important;letter-spacing:.1em !important;
-        font-family:'SometypeMono',monospace !important;font-weight:600 !important;
-        padding:.65rem .6rem;
+        background:rgba(8,8,14,.95);
+        backdrop-filter:blur(16px);
+        border:none;
+        opacity:0;
+        transition:opacity .4s ease;
+        pointer-events:none;
+        z-index:1000;
         width:auto;
-        opacity:0;transition:opacity .4s ease;pointer-events:none;
-        display:none;
+        display:flex;align-items:center;
       }
+      #nav.mob-visible{opacity:1;pointer-events:all;}
+      #nav-left{gap:0;align-items:center;}
+      #nav-right{display:none;}
+      .nav-link{font-size:.75rem !important;letter-spacing:.1em !important;}
+      .nav-exclaim{display:none;}
+      #logo-full,#logo-short{display:none;}
 
-      /* Arche en Types onderaan */
+      /* ── CORNERS: verborgen op hero ── */
       .corner{
         font-size:.75rem !important;letter-spacing:.1em !important;
-        font-family:'SometypeMono',monospace !important;font-weight:600 !important;
         padding:.65rem .6rem;
+        background:rgba(8,8,14,.95);
+        backdrop-filter:blur(16px);
+        border:none;
         width:auto;bottom:0;
-        opacity:0;transition:opacity .4s ease;pointer-events:none;
+        opacity:0;transition:opacity .4s ease;
+        pointer-events:none;
       }
       .corner.mob-visible{opacity:1;pointer-events:all;}
-      #corner-bl{left:0;text-align:left;display:block;}
-      #corner-br{right:0;text-align:right;}
+      #corner-bl{left:0;text-align:left;}
+      #corner-br{right:0;text-align:right;padding-right:.6rem;}
 
-      /* Contact button — zelfde hoogte als Arche en Types */
-      #contact-btn{
-        bottom:0 !important;
-        transform:translateX(-50%) !important;
+      /* ── HERO: ! en tekst altijd op vaste plek ── */
+      #hero{position:relative;height:100dvh;overflow:hidden;}
+      #hero-logo{
+        position:absolute;inset:0;
+        display:grid;grid-template-columns:1fr 1fr;
+        z-index:11;pointer-events:none;opacity:1 !important;
       }
+      #hero-logo-mark{display:flex;align-items:center;justify-content:flex-end;padding-right:1.2rem;font-size:4.5rem;font-family:'WastedYear','SometypeMono',monospace;}
+      #hero-logo-sub{display:flex;align-items:center;justify-content:flex-start;padding-left:1.2rem;font-size:.75rem;letter-spacing:.12em;line-height:1.8;font-family:'WastedYear','SometypeMono',monospace;}
+      #intro{grid-template-columns:1fr 1fr;}
+      #intro-left{justify-content:flex-end;padding-right:1.2rem;}
+      #intro-right{justify-content:flex-start;padding-left:1.2rem;}
+      #intro-logo{font-size:4.5rem;}
+      #intro-sub{font-size:.75rem;letter-spacing:.12em;line-height:1.8;}
 
-      /* ── TWEE SCROLLERS ── */
+      /* ── TWEE ONAFHANKELIJKE SCROLLERS ── */
       #projects-snap{
         display:grid;grid-template-columns:1fr 1fr;
         height:100dvh;overflow:hidden;
       }
       .projects-col{
-        height:100%;
-        overflow-y:scroll;overflow-x:hidden;
+        height:100%;overflow-y:scroll;overflow-x:hidden;
         -webkit-overflow-scrolling:touch;scrollbar-width:none;
-        padding-bottom:2.5rem;
       }
       .projects-col::-webkit-scrollbar{display:none;}
 
-      /* ── KAARTEN ── */
+      /* ── KAARTEN: maximaal gecomprimeerd ── */
       .card-inner{grid-template-columns:1fr !important;direction:ltr !important;}
-      .project-card{padding:.25rem .25rem;-webkit-tap-highlight-color:transparent;}
+      .project-card{
+        padding:.3rem .4rem;
+        -webkit-tap-highlight-color:transparent;
+      }
       .project-card:first-child{padding-top:2.5rem;}
-      .project-card:last-child{padding-bottom:3rem;}
+      .project-card:last-child{padding-bottom:4rem;}
       .project-card:nth-child(even) .card-inner .project-img-wrap{order:0;}
       .project-card:nth-child(even) .card-inner .project-right{order:1;}
-      .project-img-wrap{position:relative;width:100%;aspect-ratio:unset;height:auto;overflow:hidden;}
+
+      /* Afbeelding: natuurlijke hoogte, geen vaste ratio */
+      .project-img-wrap{
+        position:relative;width:100%;aspect-ratio:unset;height:auto;overflow:hidden;
+      }
       .project-img-wrap img{
         position:static !important;width:100% !important;height:auto !important;
         object-fit:unset !important;display:block;
@@ -584,18 +530,20 @@
       }
       .project-img-wrap.coloured img{filter:grayscale(0) !important;}
       .project-img-wrap::after{display:none;}
-      .project-right{padding:.15rem 0 0;text-align:left !important;}
+
+      /* Label: mini, vlak onder afbeelding */
+      .project-right{padding:.2rem 0 0;text-align:left !important;}
       .project-label{border-top:none;padding-top:.1rem;}
       .project-card:nth-child(even) .project-label{text-align:left;}
-      .project-title{font-size:.52rem !important;letter-spacing:.05em !important;}
+      .project-title{font-size:.55rem !important;letter-spacing:.06em !important;}
       .project-subtitle{display:none !important;}
       .project-hover{display:none !important;}
 
-      /* ── SLIDESHOW ── */
-      #slideshow-overlay{width:100% !important;left:0 !important;right:0 !important;}
-      #slideshow-bg-close{display:none !important;}
+      /* ── MOB DETAIL ── */
       #info-box{padding:0 1rem;}
       #info-close{top:1rem;right:1.2rem;}
+      #slideshow-overlay{width:100% !important;left:0 !important;right:0 !important;}
+      #slideshow-bg-close{display:none !important;}
     }
 
     /* Very small screens */
@@ -622,9 +570,6 @@
 
 <nav id="nav">
   <div id="nav-left">
-    <a href="#" class="nav-link" id="nav-home" style="display:none">Home</a>
-    <a href="#" class="nav-link" data-filter="arche" style="display:none">Projects</a>
-    <a href="#" class="nav-link" data-filter="types" style="display:none">Objects</a>
     <a href="#" class="nav-link" id="nav-info">Info<span class="nav-exclaim">!</span></a>
   </div>
   <div id="nav-right">
@@ -687,8 +632,6 @@
 </div>
 
 <div id="mob-detail"><div id="mob-detail-close">×</div><div id="mob-detail-inner"></div></div>
-<!-- Mobile nav: Info linksboven -->
-<div id="nav-info-mob" onclick="document.getElementById('info-overlay').classList.add('active')">Info</div>
 
 <!-- INFO OVERLAY -->
 <div id="info-overlay">
@@ -902,17 +845,14 @@ scrollRoot.addEventListener('scroll',()=>{
     const nav=document.getElementById('nav');
     const bl=document.getElementById('corner-bl');
     const br=document.getElementById('corner-br');
-    if(bl) bl.classList.toggle('mob-visible',!atHero);
-    if(br) br.classList.toggle('mob-visible',!atHero);
-    const logoShort=document.getElementById('logo-short');
-    const infoMob=document.getElementById('nav-info-mob');
-    if(logoShort) logoShort.classList.toggle('mob-visible',!atHero);
-    if(infoMob) infoMob.classList.toggle('mob-visible',!atHero);
+    if(nav) nav.classList.toggle('mob-visible',!atHero);
+    if(bl)  bl.classList.toggle('mob-visible',!atHero);
+    if(br)  br.classList.toggle('mob-visible',!atHero);
   }
 });
 
 // ── NAV: scroll to hero or projects ──
-document.getElementById('nav-home')?.addEventListener('click',e=>{e.preventDefault();scrollRoot.scrollTo({top:0,behavior:'smooth'});});
+document.getElementById('nav-home').addEventListener('click',e=>{e.preventDefault();scrollRoot.scrollTo({top:0,behavior:'smooth'});});
 document.getElementById('logo-full').addEventListener('click',e=>{e.preventDefault();scrollRoot.scrollTo({top:0,behavior:'smooth'});});
 document.getElementById('logo-short').addEventListener('click',e=>{e.preventDefault();scrollRoot.scrollTo({top:0,behavior:'smooth'});});
 
