@@ -5,8 +5,7 @@ opdrachtgever: Private - Municipality tender
 title: BIGPICNIC AMSTERDAM
 desc: Constructieve buitentafel, ontworpen voor intensief gebruik met een lange
   levensduur. Gemaakt van oude houten balken die vroeger gebruikt werden in de
-  fundering van Amsterdam. Deze balken werden verzameld tijdens de renovatie van
-  de kades.
+  fundering van Amsterdam.
 image: /images/bicpicnic_render2_arche-types.jpg
 order: 1
 waarde1: ""
