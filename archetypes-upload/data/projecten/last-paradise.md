@@ -9,9 +9,9 @@ desc2: De plattegrond heeft een open en pragmatische opzet, optimaal
 opdrachtgever: Last Paradise
 title: LAST PARADISE SURFSTAY
 desc: Op een afgelegen eiland in de Mentawai-archipel, is een off-grid verblijf
-  gebouwd voor ==avonturiers op zee.== De plattegrond heeft een open en
-  pragmatische opzet, optimaal georiënteerd voor uitzicht en beschaduwing.
-  Gebouwd met lokale ambachtsmannen. ==Tussen palmbomen en pointbreaks.==
+  gebouwd voor ==avonturiers op zee.== De plattegrond heeft een open opzet,
+  optimaal georiënteerd voor uitzicht en beschaduwing. Gebouwd met lokale
+  ambachtsmannen. ==Tussen palmbomen en pointbreaks.==
 desc_slider: >
   Samen met lokale ambachtslieden is een off-grid verblijf gerealiseerd, direct
   verbonden met het landschap en de omstandigheden van de plek. De opzet is open
