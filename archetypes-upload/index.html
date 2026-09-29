@@ -741,7 +741,8 @@
   .m-bottombar{bottom:0}
   .m-topbar > *,.m-bottombar > *{pointer-events:auto}
   #m-home,#m-info{position:absolute;right:var(--m-edge);top:0;height:100%;display:flex;align-items:center}
-  .m-contact{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;
+  /* icoon: onderkant op de lijn waarop de woorden onderin staan (halve icoonhoogte omhoog, plus de letterdaling) */
+  .m-contact{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) translateY(calc(-14.5px + .3 * var(--m-ui-size)));display:flex;align-items:center;justify-content:center;
     width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}
   .m-contact svg{width:24px;height:auto;display:block}
 
