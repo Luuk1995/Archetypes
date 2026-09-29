@@ -615,12 +615,12 @@
 @media (max-width:768px){
 
   :root{
-    --m-mark-size:4.4rem;      /* ! boven de naad */
-    --m-sub-size:.78rem;       /* slogan onder de naad */
-    --m-seam-gap:1.45rem;      /* afstand logo/slogan tot de naad */
+    --m-mark-size:4.4rem;      /* ! in het midden van de bovenste video */
+    --m-sub-size:.78rem;       /* slogan in het midden van de onderste video */
+    --m-seam-gap:1.45rem;      /* afstand projectinfo tot de naad */
     --m-ui-size:.78rem;        /* Info, a!t, Arche, Types */
-    --m-edge:1rem;             /* binnenmarge voor tekst — beelden gaan tot de rand */
-    --m-seam:1px;              /* haarlijn tussen beelden op de projectpagina */
+    --m-edge:1rem;             /* vaste tekstlijn vanaf de schermrand */
+    --m-bar:calc(2 * var(--m-edge) + var(--m-ui-size)); /* bovenregel: alles op één hartlijn */
     --m-frame:.4rem;           /* dunne lijst rond de galerijen */
     --m-shade:rgba(0,0,0,.42);
   }
@@ -647,23 +647,30 @@
   #m-layer, #m-layer *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
   :where(#m-layer) button{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;cursor:pointer}
 
+  /* Horizontale reis: hero → collectie */
   #m-app{
-    position:fixed;inset:0;z-index:10;
-    overflow-y:auto;overflow-x:hidden;
-    scroll-snap-type:y mandatory;
+    position:fixed;inset:0;z-index:10;display:flex;
+    overflow-x:auto;overflow-y:hidden;
+    scroll-snap-type:x mandatory;
     -webkit-overflow-scrolling:touch;overscroll-behavior:none;
     scrollbar-width:none;background:#0a0a0e;
   }
   #m-app::-webkit-scrollbar{display:none}
-  .m-screen{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden}
+  #m-app.is-locked{overflow-x:hidden}
+  .m-screen{position:relative;flex:0 0 100%;width:100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden}
 
   /* Typografie — gelijk aan de desktop-hoeken */
   .m-ui{font-family:'SometypeMono',monospace;font-size:var(--m-ui-size);font-weight:600;letter-spacing:.12em;color:#fff;line-height:1}
   .m-logo{font-family:'WastedYear','SometypeMono',monospace;font-weight:400;letter-spacing:.08em}
   .m-shadow{text-shadow:0 0 16px rgba(0,0,0,.45)}
 
+  /* Vaste hoeken — exact dezelfde plek op hero en collectie */
+  .m-corner{position:absolute;z-index:4;left:var(--m-edge);transition:opacity .35s ease}
+  .m-corner.is-top{top:var(--m-edge)}
+  .m-corner.is-bottom{bottom:var(--m-edge)}
+
   /* ── HERO ── */
-  .m-hero{display:flex;flex-direction:column;gap:0}
+  .m-hero{display:flex;flex-direction:column}
   .m-half{position:relative;flex:1;overflow:hidden;background:#111116}
   .m-half video,.m-half img,.m-half iframe{
     position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border:0;
@@ -675,22 +682,20 @@
   .m-hero::after{bottom:0;background:linear-gradient(to top,var(--m-shade),rgba(0,0,0,0))}
 
   .m-hero-logo{position:absolute;inset:0;z-index:2;pointer-events:none;display:grid;grid-template-rows:1fr 1fr}
-  .m-hero-top{display:flex;align-items:center;justify-content:center}
-  .m-hero-bottom{display:flex;align-items:center;justify-content:center}
+  .m-hero-top,.m-hero-bottom{display:flex;align-items:center;justify-content:center}
   .m-hero-mark{font-family:'WastedYear','SometypeMono',monospace;font-size:var(--m-mark-size);line-height:1;color:var(--fg);text-shadow:0 0 22px rgba(0,0,0,.35)}
   .m-hero-sub{font-family:'WastedYear','SometypeMono',monospace;font-size:var(--m-sub-size);letter-spacing:.14em;line-height:1.85;color:var(--fg);text-align:center;text-shadow:0 0 18px rgba(0,0,0,.45)}
   .fonts-loading .m-hero-mark,.fonts-loading .m-hero-sub{visibility:hidden}
 
-  .m-hero-label{position:absolute;z-index:3}
-  .m-hero-label.is-top{top:var(--m-edge);left:var(--m-edge)}
-  .m-hero-label.is-bottom{bottom:var(--m-edge);left:var(--m-edge)}
+  /* Hint: dunne lijn met segment dat naar rechts beweegt */
+  .m-cue{position:absolute;z-index:3;left:50%;bottom:var(--m-edge);transform:translateX(-50%);
+    width:44px;height:28px;display:flex;align-items:center;justify-content:center}
+  .m-cue span{position:relative;width:34px;height:1px;background:rgba(255,255,255,.28);overflow:hidden}
+  .m-cue span::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:1px;background:#fff;
+    animation:m-cue 1.8s cubic-bezier(.6,0,.4,1) infinite}
+  @keyframes m-cue{to{left:100%}}
 
-  .m-cue{position:absolute;z-index:3;left:50%;bottom:var(--m-edge);transform:translateX(-50%);width:24px;height:34px;display:flex;justify-content:center}
-  .m-cue span{position:relative;width:1px;height:100%;background:rgba(255,255,255,.28);overflow:hidden}
-  .m-cue span::after{content:'';position:absolute;left:0;top:-40%;width:1px;height:40%;background:#fff;animation:m-cue 1.8s cubic-bezier(.6,0,.4,1) infinite}
-  @keyframes m-cue{to{top:100%}}
-
-  /* ── COLLECTIE: twee galerijen, van rand tot rand, gespiegeld rond de naad ── */
+  /* ── COLLECTIE: twee galerijen, net niet tot de rand ── */
   .m-collection{display:flex;flex-direction:column;gap:var(--m-frame);padding:var(--m-frame)}
   .m-gallery{position:relative;flex:1;min-height:0;overflow:hidden;background:#111116}
 
@@ -698,7 +703,7 @@
     position:absolute;inset:0;display:flex;
     overflow-x:auto;overflow-y:hidden;
     scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;overscroll-behavior-x:auto;scrollbar-width:none;
   }
   .m-slides::-webkit-scrollbar{display:none}
   .m-slide{position:relative;flex:0 0 100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;background:#141419;overflow:hidden}
@@ -710,65 +715,60 @@
   /* Verlopen voor leesbare tekst: buitenrand + naad */
   .m-gallery::before,.m-gallery::after{content:'';position:absolute;left:0;right:0;z-index:1;pointer-events:none}
   .m-gallery.is-top::before{top:0;height:22%;background:linear-gradient(to bottom,var(--m-shade),rgba(0,0,0,0))}
-  .m-gallery.is-top::after{bottom:0;height:34%;background:linear-gradient(to top,var(--m-shade),rgba(0,0,0,0))}
-  .m-gallery.is-bottom::before{top:0;height:34%;background:linear-gradient(to bottom,var(--m-shade),rgba(0,0,0,0))}
+  .m-gallery.is-top::after{bottom:0;height:30%;background:linear-gradient(to top,var(--m-shade),rgba(0,0,0,0))}
+  .m-gallery.is-bottom::before{top:0;height:30%;background:linear-gradient(to bottom,var(--m-shade),rgba(0,0,0,0))}
   .m-gallery.is-bottom::after{bottom:0;height:22%;background:linear-gradient(to top,var(--m-shade),rgba(0,0,0,0))}
 
-  /* Projectinfo: gespiegeld rond de naad */
+  /* Projectnaam + teller rond de naad */
   .m-meta{position:absolute;left:calc(var(--m-edge) - var(--m-frame));right:calc(var(--m-edge) - var(--m-frame));z-index:2;pointer-events:none;
     display:flex;justify-content:space-between;gap:1rem}
   .m-gallery.is-top .m-meta{bottom:var(--m-seam-gap);align-items:flex-end}
   .m-gallery.is-bottom .m-meta{top:var(--m-seam-gap);align-items:flex-start}
-  .m-lockup{display:flex;flex-direction:column;gap:.5rem;min-width:0}
   .m-title{font-family:'SometypeMono',monospace;font-size:.7rem;font-weight:600;letter-spacing:.1em;
-    text-transform:uppercase;color:#fff;line-height:1.35;transition:opacity .18s ease}
+    text-transform:uppercase;color:#fff;line-height:1.35;min-width:0;transition:opacity .18s ease}
   .m-title.is-fading{opacity:0}
   .m-count{font-family:'SometypeMono',monospace;font-size:.62rem;letter-spacing:.12em;color:#fff;
     font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.35}
 
-  /* Menu en contact op de buitenranden */
-  .m-edge-top,.m-edge-bottom{position:absolute;left:0;right:0;z-index:4;display:flex;align-items:center;padding:0 var(--m-edge)}
-  .m-edge-top{top:0;height:3rem;justify-content:space-between}
-  .m-edge-bottom{bottom:0;height:3.4rem;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0)}
-  .m-contact{display:flex;align-items:center;justify-content:center;width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}
+  /* Bovenregel: Info (of ×) midden, a!t rechts — op de hartlijn van Arche */
+  .m-topbar{position:absolute;z-index:4;top:0;left:0;right:0;height:var(--m-bar);pointer-events:none}
+  .m-topbar > *{pointer-events:auto}
+  .m-top-center{position:absolute;left:50%;top:0;transform:translateX(-50%);height:100%;min-width:44px;
+    display:flex;align-items:center;justify-content:center}
+  #m-home{position:absolute;right:var(--m-edge);top:0;height:100%;display:flex;align-items:center}
+  #m-dclose{display:none;font-family:'WastedYear','SometypeMono',monospace;font-size:1.9rem;line-height:1;color:#fff}
+
+  .m-edge-bottom{position:absolute;left:0;right:0;bottom:0;z-index:4;height:3.4rem;display:flex;align-items:center;justify-content:center;
+    padding-bottom:env(safe-area-inset-bottom,0);pointer-events:none}
+  .m-contact{pointer-events:auto;display:flex;align-items:center;justify-content:center;width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}
   .m-contact svg{width:24px;height:auto;display:block}
 
-  /* ── PROJECTPAGINA: beelden van rand tot rand, altijd volledig ── */
-  #m-detail{
-    position:fixed;inset:0;z-index:3000;background:#0a0a0e;
+  /* ── PROJECT OPEN: foto blijft staan, andere helft wordt tekst ── */
+  #m-dtrack{z-index:0;transition:opacity .35s ease}
+  #m-dtrack.is-leaving{opacity:0}
+  #m-dtext{
+    position:absolute;inset:0;z-index:3;background:#0f0f13;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
-    transform:translateY(100%);visibility:hidden;
-    transition:transform .55s cubic-bezier(.2,.8,.2,1),visibility 0s linear .55s;
+    padding:1.6rem calc(var(--m-edge) - var(--m-frame)) 1.8rem;
+    opacity:0;transition:opacity .45s ease;
   }
-  #m-detail.is-open{transform:none;visibility:visible;transition:transform .55s cubic-bezier(.2,.8,.2,1),visibility 0s}
-  .m-detail-bar{position:sticky;top:0;height:0;z-index:5}
-  .m-detail-bar::before{content:'';position:absolute;top:0;left:0;right:0;height:4.5rem;pointer-events:none;
-    background:linear-gradient(to bottom,rgba(0,0,0,.38),rgba(0,0,0,0))}
-  #m-detail-close{position:absolute;top:.2rem;left:calc(var(--m-edge) - .2rem);width:44px;height:44px;
-    display:flex;align-items:center;justify-content:center;
-    font-family:'WastedYear','SometypeMono',monospace;font-size:2.8rem;line-height:1;color:#fff;text-shadow:0 0 14px rgba(0,0,0,.5)}
-  #m-detail-kind{position:absolute;top:1.1rem;right:var(--m-edge)}
-
-  .m-d-img{display:block;margin:0 0 var(--m-seam)}
-  .m-d-img img{display:block;width:100%;height:auto;background:#141419}
-  .m-d-info{padding:1.5rem var(--m-edge) 2.2rem}
+  #m-dtext.is-shown{opacity:1}
+  .m-gallery.is-top #m-dtext{padding-top:calc(var(--m-bar) + .6rem)}
+  .m-gallery.is-bottom #m-dtext{padding-bottom:3.8rem}
   .m-d-title{font-family:'SometypeMono',monospace;font-size:.95rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff;line-height:1.35}
   .m-d-sub{font-family:'WastedYear','SometypeMono',monospace;font-size:.95rem;color:#fff;margin-top:.35rem;line-height:1.4}
   .m-d-text{font-family:'SometypeMono',monospace;font-size:.74rem;line-height:1.9;letter-spacing:.03em;color:#fff;margin-top:1.1rem}
   .m-d-text .wasted-inline{font-family:'WastedYear','SometypeMono',monospace;font-size:1.08em}
-  .m-d-textblock{padding:2rem var(--m-edge) 2.2rem}
 
-  .m-d-next{position:relative;display:block;width:100%;height:62vh;margin-top:var(--m-seam);overflow:hidden;background:#141419}
-  .m-d-next img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1)}
-  .m-d-next::after{content:'';position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(to top,rgba(0,0,0,.5),rgba(0,0,0,0))}
-  .m-d-next-meta{position:absolute;left:var(--m-edge);right:var(--m-edge);bottom:1.2rem;z-index:2;
-    display:flex;justify-content:space-between;align-items:flex-end;text-align:left}
-  .m-d-next-meta .m-lockup{gap:.55rem}
-  .m-d-next-arrow{font-family:'WastedYear','SometypeMono',monospace;font-size:2rem;line-height:.8;color:#fff}
+  .m-collection.is-detail #m-info{display:none}
+  .m-collection.is-detail #m-dclose{display:block}
+  .m-collection.is-detail .m-gallery.is-src .m-title{opacity:0}
+  .m-collection.is-detail-top .m-corner.is-bottom,
+  .m-collection.is-detail-bottom .m-corner.is-top{opacity:0;pointer-events:none}
 
   @media (prefers-reduced-motion:reduce){
     .m-cue span::after{animation:none}
-    #m-detail,#m-detail.is-open,.m-slide img,.m-title{transition:none}
+    .m-slide img,.m-title,#m-dtext,#m-dtrack,.m-corner{transition:none}
   }
 }
 </style>
@@ -1553,46 +1553,38 @@ loadAll();
         <div class="m-hero-top"><span class="m-hero-mark" id="m-hero-mark">!</span></div>
         <div class="m-hero-bottom"><span class="m-hero-sub" id="m-hero-sub"></span></div>
       </div>
-      <button class="m-ui m-shadow m-hero-label is-top" data-m-go="collection">Arche</button>
-      <button class="m-ui m-shadow m-hero-label is-bottom" data-m-go="collection">Types</button>
+      <button class="m-ui m-shadow m-corner is-top" data-m-go="collection">Arche</button>
+      <button class="m-ui m-shadow m-corner is-bottom" data-m-go="collection">Types</button>
       <button class="m-cue" data-m-go="collection" aria-label="Naar de projecten"><span></span></button>
     </section>
 
-    <!-- COLLECTIE: twee galerijen van rand tot rand, gespiegeld rond de naad -->
+    <!-- COLLECTIE: twee galerijen, net niet tot de rand -->
     <section class="m-screen m-collection" id="m-collection">
-      <div class="m-gallery is-top">
+      <div class="m-gallery is-top" id="m-gal-arche">
         <div class="m-slides" id="m-track-arche"></div>
-        <div class="m-meta">
-          <div class="m-lockup"><span class="m-ui m-shadow">Arche</span><span class="m-title m-shadow" id="m-title-arche"></span></div>
-          <span class="m-count m-shadow" id="m-count-arche"></span>
-        </div>
+        <div class="m-meta"><span class="m-title m-shadow" id="m-title-arche"></span><span class="m-count m-shadow" id="m-count-arche"></span></div>
       </div>
-      <div class="m-gallery is-bottom">
+      <div class="m-gallery is-bottom" id="m-gal-types">
         <div class="m-slides" id="m-track-types"></div>
-        <div class="m-meta">
-          <div class="m-lockup"><span class="m-title m-shadow" id="m-title-types"></span><span class="m-ui m-shadow">Types</span></div>
-          <span class="m-count m-shadow" id="m-count-types"></span>
-        </div>
+        <div class="m-meta"><span class="m-title m-shadow" id="m-title-types"></span><span class="m-count m-shadow" id="m-count-types"></span></div>
       </div>
-      <header class="m-edge-top">
-        <button class="m-ui m-shadow" id="m-info">Info</button>
+
+      <span class="m-ui m-shadow m-corner is-top">Arche</span>
+      <span class="m-ui m-shadow m-corner is-bottom">Types</span>
+
+      <div class="m-topbar">
+        <div class="m-top-center">
+          <button class="m-ui m-shadow" id="m-info">Info</button>
+          <button class="m-shadow" id="m-dclose" aria-label="Project sluiten">×</button>
+        </div>
         <button class="m-ui m-logo m-shadow" id="m-home" aria-label="Terug naar start">a<span class="logo-exclaim">!</span>t</button>
-      </header>
-      <footer class="m-edge-bottom">
+      </div>
+      <div class="m-edge-bottom">
         <button class="m-contact" id="m-contact" aria-label="Contact via WhatsApp"></button>
-      </footer>
+      </div>
     </section>
 
   </main>
-
-  <!-- PROJECTPAGINA -->
-  <div id="m-detail" role="dialog" aria-modal="true" aria-label="Project">
-    <div class="m-detail-bar">
-      <button id="m-detail-close" aria-label="Sluiten">×</button>
-      <span class="m-ui m-shadow" id="m-detail-kind"></span>
-    </div>
-    <div id="m-detail-body"></div>
-  </div>
 </div>
 <script id="mobile-layer-js">
 /* ═══════════════════════════════════════════════════════════════
@@ -1606,8 +1598,8 @@ loadAll();
   var MQ = window.matchMedia('(max-width: 768px)');
   var isMob = function(){ return MQ.matches; };
   var $ = function(id){ return document.getElementById(id); };
-  var app = $('m-app'), detail = $('m-detail'), dBody = $('m-detail-body');
-  if(!app || !detail) return;
+  var app = $('m-app'), coll = $('m-collection');
+  if(!app || !coll) return;
 
   var KINDS = ['arche','types'];
   var data = { arche: [], types: [] };
@@ -1633,7 +1625,7 @@ loadAll();
     };
   }
 
-  /* ── 2. Hero ── */
+  /* ── 2. Hero-video's ── */
   function tryPlay(v){ var p = v && v.play && v.play(); if(p && p.catch) p.catch(function(){}); }
   function signal(){ if(window.heroMediaReady) window.heroMediaReady(); }
 
@@ -1642,7 +1634,6 @@ loadAll();
     var src = vd && (vd.src || vd.src_url) || '';
     if(!vd || !src){ signal(); return; }
     var done = false, ready = function(el){ if(done) return; done = true; if(el) el.classList.add('is-ready'); signal(); };
-
     if(vd.type === 'video'){
       var v = document.createElement('video');
       ['muted','playsinline','autoplay','loop'].forEach(function(a){ v.setAttribute(a,''); });
@@ -1676,8 +1667,10 @@ loadAll();
     app.querySelectorAll('.m-hero video').forEach(function(v){ on ? tryPlay(v) : v.pause(); });
   }
 
-  /* ── 3. Galerijen: één beeld per scherm, van rand tot rand ── */
-  function slideSrc(slide){
+  /* ── 3. Galerijen: één beeld per scherm ── */
+  var pad = function(n){ return (n < 10 ? '0' : '') + n; };
+
+  function loadSlide(slide){
     if(!slide || slide._mLoaded) return;
     slide._mLoaded = true;
     var img = slide.querySelector('img'); if(!img || !img.dataset.src) return;
@@ -1685,119 +1678,162 @@ loadAll();
     img.onerror = function(){ img.classList.add('is-loaded'); };
     img.src = img.dataset.src;
   }
+  function makeSlide(src, alt){
+    var s = document.createElement('div'); s.className = 'm-slide';
+    if(src){
+      var img = document.createElement('img');
+      img.alt = alt || ''; img.decoding = 'async'; img.dataset.src = src;
+      s.appendChild(img);
+    }
+    return s;
+  }
+
+  // Werkt voor elke galerij (collectie én geopend project)
+  function trackIndex(track){
+    var slides = track.querySelectorAll('.m-slide');
+    var i = Math.round(track.scrollLeft / (track.clientWidth || 1));
+    return { slides: slides, i: Math.max(0, Math.min(slides.length - 1, i)) };
+  }
+  function syncTrack(track, onChange){
+    var t = trackIndex(track);
+    if(!t.slides.length) return;
+    for(var n = t.i - 1; n <= t.i + 2; n++) loadSlide(t.slides[n]);
+    if(t.i === track._mIndex) return;
+    track._mIndex = t.i;
+    t.slides.forEach(function(s, x){ s.classList.toggle('is-active', x === t.i); });
+    onChange(t.i, t.slides.length);
+  }
+  function bindTrack(track, fn){
+    if(track._mBound) return;
+    track._mBound = true;
+    var raf = 0;
+    track.addEventListener('scroll', function(){
+      if(raf) return;
+      raf = requestAnimationFrame(function(){ raf = 0; fn(); });
+    }, { passive: true });
+  }
 
   function renderRows(){
     KINDS.forEach(function(k){
       var track = $('m-track-'+k); if(!track) return;
       track.innerHTML = '';
       (data[k] || []).forEach(function(p, i){
-        var s = document.createElement('div');
-        s.className = 'm-slide'; s.setAttribute('role','button'); s.tabIndex = 0;
-        s.setAttribute('aria-label', p.title || '');
-        if(p.image){
-          var img = document.createElement('img');
-          img.alt = p.title || ''; img.decoding = 'async'; img.dataset.src = p.image;
-          s.appendChild(img);
-        }
+        var s = makeSlide(p.image, p.title);
+        s.setAttribute('role','button'); s.tabIndex = 0; s.setAttribute('aria-label', p.title || '');
         s.addEventListener('click', function(){ openDetail(k, i); });
         s.addEventListener('keydown', function(e){ if(e.key === 'Enter') openDetail(k, i); });
         track.appendChild(s);
       });
-      track.scrollLeft = 0;
-      if(!track._mBound){
-        track._mBound = true;
-        track.addEventListener('scroll', function(){ schedule(k); }, { passive: true });
-      }
-      track._mIndex = -1;
+      track.scrollLeft = 0; track._mIndex = -1;
+      bindTrack(track, function(){ updateRow(k); });
       updateRow(k);
     });
   }
-
-  var raf = {};
-  function schedule(k){ if(raf[k]) return; raf[k] = requestAnimationFrame(function(){ raf[k] = 0; updateRow(k); }); }
-
   function updateRow(k){
     var track = $('m-track-'+k); if(!track) return;
-    var slides = track.querySelectorAll('.m-slide'), cnt = $('m-count-'+k);
-    if(!slides.length){ if(cnt) cnt.textContent = ''; setTitle(k, ''); return; }
-    var w = track.clientWidth || 1;
-    var i = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / w)));
-    // huidig beeld + buren alvast laden
-    for(var n = i - 1; n <= i + 2; n++) slideSrc(slides[n]);
-    if(i === track._mIndex) return;
-    track._mIndex = i;
-    slides.forEach(function(s, x){ s.classList.toggle('is-active', x === i); });
-    if(cnt) cnt.textContent = pad(i + 1) + ' / ' + pad(slides.length);
-    var p = (data[k] || [])[i];
-    setTitle(k, p ? (p.title || '') : '');
+    if(!track.querySelector('.m-slide')){ setText('m-count-'+k, ''); setTitle(k, ''); return; }
+    syncTrack(track, function(i, n){
+      if(!(openState && openState.k === k)) setText('m-count-'+k, pad(i + 1) + ' / ' + pad(n));
+      var p = (data[k] || [])[i];
+      setTitle(k, p ? (p.title || '') : '');
+    });
   }
-
+  function setText(id, txt){ var el = $(id); if(el) el.textContent = txt; }
   function setTitle(k, txt){
     var t = $('m-title-'+k); if(!t || t.textContent === txt) return;
     if(!t.textContent){ t.textContent = txt; return; }
     t.classList.add('is-fading'); clearTimeout(t._mT);
     t._mT = setTimeout(function(){ t.textContent = txt; t.classList.remove('is-fading'); }, 170);
   }
-  var pad = function(n){ return (n < 10 ? '0' : '') + n; };
 
-  /* ── 4. Projectpagina: beelden van rand tot rand, altijd volledig ── */
-  var isOpen = false, pushed = false;
+  /* ── 4. Project openen op de plek zelf ──
+     Foto blijft staan en wordt de projectgalerij; de andere helft wordt tekst. */
+  var openState = null, pushed = false;
+  var dtrack = document.createElement('div'); dtrack.className = 'm-slides'; dtrack.id = 'm-dtrack';
+  var dtext = document.createElement('div'); dtext.id = 'm-dtext';
+  dtrack.style.overscrollBehaviorX = 'contain';
+
   var esc = function(s){ return String(s || '').replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
   var md = function(t){ return typeof window.renderMd === 'function' ? window.renderMd(t) : esc(t); };
   var imgsOf = function(p){ return ['image','image2','image3','image4','image5','image6','image7','image8'].map(function(x){ return p[x]; }).filter(Boolean); };
 
   function openDetail(k, i){
-    var list = data[k] || [], p = list[i]; if(!p) return;
-    $('m-detail-kind').textContent = k === 'arche' ? 'Arche' : 'Types';
-    var imgs = imgsOf(p), h = '';
-    if(imgs[0]) h += '<div class="m-d-img"><img src="'+esc(imgs[0])+'" alt="'+esc(p.title)+'"></div>';
-    h += '<div class="m-d-info"><div class="m-d-title">'+esc(p.title)+'</div>'
-       + (p.sub && p.sub.trim() ? '<div class="m-d-sub">'+esc(p.sub)+'</div>' : '')
-       + (p.desc && p.desc.trim() ? '<div class="m-d-text">'+md(p.desc)+'</div>' : '')
-       + '</div>';
-    imgs.slice(1).forEach(function(src){
-      h += '<div class="m-d-img"><img src="'+esc(src)+'" alt="" loading="lazy" decoding="async"></div>';
+    var p = (data[k] || [])[i]; if(!p) return;
+    if(openState) finishClose();
+    var src = $('m-gal-'+k), other = $('m-gal-'+(k === 'arche' ? 'types' : 'arche'));
+
+    // Beeldgalerij van het project, eerste foto = de aangetikte foto (staat al in beeld)
+    dtrack.innerHTML = ''; dtrack.classList.remove('is-leaving');
+    imgsOf(p).forEach(function(u, x){
+      var s = makeSlide(u, x ? '' : p.title);
+      if(x === 0){ var im = s.querySelector('img'); im.src = u; im.classList.add('is-loaded'); s._mLoaded = true; s.classList.add('is-active'); }
+      dtrack.appendChild(s);
     });
+    src.insertBefore(dtrack, src.querySelector('.m-meta'));
+    dtrack.scrollLeft = 0; dtrack._mIndex = 0;
+    bindTrack(dtrack, syncDetail);
+    setText('m-count-'+k, pad(1) + ' / ' + pad(dtrack.children.length || 1));
+
+    // Tekst in de andere helft
     var ds = (p.desc_slider || '').trim();
-    if(ds && ds !== (p.desc || '').trim()) h += '<div class="m-d-textblock"><div class="m-d-text" style="margin-top:0">'+md(ds)+'</div></div>';
-    if(list.length > 1){
-      var ni = (i + 1) % list.length, n = list[ni], nImg = imgsOf(n)[0];
-      h += '<button class="m-d-next" id="m-d-next" aria-label="Volgend project">'
-         + (nImg ? '<img src="'+esc(nImg)+'" alt="" loading="lazy" decoding="async">' : '')
-         + '<span class="m-d-next-meta"><span class="m-lockup"><span class="m-ui">Next</span>'
-         + '<span class="m-title">'+esc(n.title)+'</span></span><span class="m-d-next-arrow">›</span></span></button>';
-    }
-    dBody.innerHTML = h;
-    var nb = $('m-d-next');
-    if(nb) nb.addEventListener('click', function(){ openDetail(k, (i + 1) % list.length); });
-    detail.scrollTop = 0;
-    if(!isOpen){
-      isOpen = true; detail.classList.add('is-open');
-      try { history.pushState({ mDetail: 1 }, ''); pushed = true; } catch(e){}
-    }
+    dtext.innerHTML = '<div class="m-d-title">'+esc(p.title)+'</div>'
+      + (p.sub && p.sub.trim() ? '<div class="m-d-sub">'+esc(p.sub)+'</div>' : '')
+      + (p.desc && p.desc.trim() ? '<div class="m-d-text">'+md(p.desc)+'</div>' : '')
+      + (ds && ds !== (p.desc || '').trim() ? '<div class="m-d-text">'+md(ds)+'</div>' : '');
+    dtext.classList.remove('is-shown');
+    other.appendChild(dtext); dtext.scrollTop = 0;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ dtext.classList.add('is-shown'); }); });
+
+    src.classList.add('is-src');
+    coll.classList.add('is-detail', k === 'arche' ? 'is-detail-top' : 'is-detail-bottom');
+    app.classList.add('is-locked');
+    openState = { k: k, i: i };
+    syncDetail();
+    try { history.pushState({ mDetail: 1 }, ''); pushed = true; } catch(e){}
   }
+  function syncDetail(){
+    if(!openState) return;
+    var k = openState.k;
+    syncTrack(dtrack, function(i, n){ setText('m-count-'+k, pad(i + 1) + ' / ' + pad(n)); });
+  }
+
   function closeDetail(fromHistory){
-    if(!isOpen) return;
-    isOpen = false; detail.classList.remove('is-open');
+    if(!openState) return;
+    var k = openState.k;
+    dtext.classList.remove('is-shown'); dtrack.classList.add('is-leaving');
+    coll.classList.remove('is-detail','is-detail-top','is-detail-bottom');
+    app.classList.remove('is-locked');
+    openState = null;
+    var track = $('m-track-'+k); if(track){ track._mIndex = -1; updateRow(k); }
+    clearTimeout(closeDetail._t);
+    closeDetail._t = setTimeout(finishClose, 450);
     if(pushed && !fromHistory){ pushed = false; history.back(); } else { pushed = false; }
   }
-  $('m-detail-close').addEventListener('click', function(){ closeDetail(false); });
-  window.addEventListener('popstate', function(){ if(isOpen) closeDetail(true); });
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && isOpen) closeDetail(false); });
+  function finishClose(){
+    clearTimeout(closeDetail._t);
+    if(dtrack.parentNode) dtrack.parentNode.removeChild(dtrack);
+    if(dtext.parentNode) dtext.parentNode.removeChild(dtext);
+    document.querySelectorAll('.m-gallery.is-src').forEach(function(g){ g.classList.remove('is-src'); });
+  }
+  window.addEventListener('popstate', function(){ if(openState) closeDetail(true); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && openState) closeDetail(false); });
 
-  /* ── 5. Navigatie ── */
-  var toCollection = function(){ app.scrollTo({ top: app.clientHeight, behavior: 'smooth' }); };
-  $('m-hero').addEventListener('click', toCollection);
-  $('m-home').addEventListener('click', function(){ app.scrollTo({ top: 0, behavior: 'smooth' }); });
+  /* ── 5. Navigatie (horizontaal) ── */
+  var go = function(x){ app.scrollTo({ left: x, behavior: 'smooth' }); };
+  app.querySelectorAll('[data-m-go="collection"]').forEach(function(b){
+    b.addEventListener('click', function(e){ e.stopPropagation(); go(app.clientWidth); });
+  });
+  $('m-hero').addEventListener('click', function(){ go(app.clientWidth); });
+  $('m-home').addEventListener('click', function(){ if(openState) closeDetail(false); go(0); });
+  $('m-dclose').addEventListener('click', function(){ closeDetail(false); });
   $('m-info').addEventListener('click', function(){ var n = $('nav-info'); if(n) n.click(); });
   $('m-contact').addEventListener('click', function(){ var c = $('contact-btn'); if(c) c.click(); });
 
   var inColl = false;
   app.addEventListener('scroll', function(){
-    var c = app.scrollTop > app.clientHeight * 0.5;
+    var c = app.scrollLeft > app.clientWidth * 0.5;
     if(c === inColl) return;
     inColl = c;
-    document.documentElement.classList.toggle('m-in-collection', c);
     playHero(!c);
   }, { passive: true });
 
@@ -1814,12 +1850,16 @@ loadAll();
       if(videosData && !mobileVideosDone) renderMobileVideos(videosData);
       renderRows(); playHero(!inColl);
     } else {
-      playHero(false); closeDetail(true);
+      playHero(false); if(openState){ closeDetail(true); finishClose(); }
       if(videosData && !desktopVideosDone && origRenderVideos){ desktopVideosDone = true; origRenderVideos(videosData); }
     }
   }
   if(MQ.addEventListener) MQ.addEventListener('change', onModeChange); else if(MQ.addListener) MQ.addListener(onModeChange);
-  window.addEventListener('resize', function(){ if(isMob()) KINDS.forEach(function(k){ var t=$('m-track-'+k); if(t){ t._mIndex=-1; updateRow(k); } }); });
+  window.addEventListener('resize', function(){
+    if(!isMob()) return;
+    KINDS.forEach(function(k){ var t = $('m-track-'+k); if(t){ t._mIndex = -1; updateRow(k); } });
+    if(openState){ dtrack._mIndex = -1; syncDetail(); }
+  });
 })();
 </script>
 <!-- ═══ /MOBIELE LAAG · APP ═══ -->
