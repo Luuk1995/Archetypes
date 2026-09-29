@@ -664,10 +664,15 @@
   .m-logo{font-family:'WastedYear','SometypeMono',monospace;font-weight:400;letter-spacing:.08em}
   .m-shadow{text-shadow:0 0 16px rgba(0,0,0,.45)}
 
-  /* Vaste hoeken — exact dezelfde plek op hero en collectie */
-  .m-corner{position:absolute;z-index:4;left:var(--m-edge);transition:opacity .35s ease}
-  .m-corner.is-top{top:var(--m-edge)}
-  .m-corner.is-bottom{bottom:var(--m-edge)}
+  /* Vaste laag: Arche, Types en × blijven staan terwijl de schermen schuiven */
+  #m-fixed{position:fixed;inset:0;z-index:20;pointer-events:none}
+  .m-corner{position:absolute;left:var(--m-edge);height:var(--m-bar);display:flex;align-items:center;
+    pointer-events:auto;transition:opacity .35s ease}
+  .m-corner.is-top{top:0}
+  .m-corner.is-bottom{bottom:0}
+  #m-dclose{position:absolute;top:0;left:var(--m-edge);height:var(--m-bar);display:flex;align-items:center;
+    font-family:'WastedYear','SometypeMono',monospace;font-size:1.9rem;line-height:1;color:#fff;
+    opacity:0;pointer-events:none;transition:opacity .35s ease}
 
   /* ── HERO ── */
   .m-hero{display:flex;flex-direction:column}
@@ -688,8 +693,8 @@
   .fonts-loading .m-hero-mark,.fonts-loading .m-hero-sub{visibility:hidden}
 
   /* Hint: dunne lijn met segment dat naar rechts beweegt */
-  .m-cue{position:absolute;z-index:3;left:50%;bottom:var(--m-edge);transform:translateX(-50%);
-    width:44px;height:28px;display:flex;align-items:center;justify-content:center}
+  .m-cue{position:absolute;z-index:3;left:50%;bottom:0;transform:translateX(-50%);
+    width:44px;height:var(--m-bar);display:flex;align-items:center;justify-content:center}
   .m-cue span{position:relative;width:34px;height:1px;background:rgba(255,255,255,.28);overflow:hidden}
   .m-cue span::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:1px;background:#fff;
     animation:m-cue 1.8s cubic-bezier(.6,0,.4,1) infinite}
@@ -722,25 +727,22 @@
   /* Projectnaam + teller rond de naad */
   .m-meta{position:absolute;left:calc(var(--m-edge) - var(--m-frame));right:calc(var(--m-edge) - var(--m-frame));z-index:2;pointer-events:none;
     display:flex;justify-content:space-between;gap:1rem}
-  .m-gallery.is-top .m-meta{bottom:var(--m-seam-gap);align-items:flex-end}
-  .m-gallery.is-bottom .m-meta{top:var(--m-seam-gap);align-items:flex-start}
+  .m-gallery.is-top .m-meta{bottom:calc(var(--m-edge) - var(--m-frame));align-items:flex-end}
+  .m-gallery.is-bottom .m-meta{top:calc(var(--m-edge) - var(--m-frame));align-items:flex-start}
   .m-title{font-family:'SometypeMono',monospace;font-size:.7rem;font-weight:600;letter-spacing:.1em;
     text-transform:uppercase;color:#fff;line-height:1.35;min-width:0;transition:opacity .18s ease}
   .m-title.is-fading{opacity:0}
   .m-count{font-family:'SometypeMono',monospace;font-size:.62rem;letter-spacing:.12em;color:#fff;
     font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.35}
 
-  /* Bovenregel: Info (of ×) midden, a!t rechts — op de hartlijn van Arche */
-  .m-topbar{position:absolute;z-index:4;top:0;left:0;right:0;height:var(--m-bar);pointer-events:none}
-  .m-topbar > *{pointer-events:auto}
-  .m-top-center{position:absolute;left:50%;top:0;transform:translateX(-50%);height:100%;min-width:44px;
-    display:flex;align-items:center;justify-content:center}
-  #m-home{position:absolute;right:var(--m-edge);top:0;height:100%;display:flex;align-items:center}
-  #m-dclose{display:none;font-family:'WastedYear','SometypeMono',monospace;font-size:1.9rem;line-height:1;color:#fff}
-
-  .m-edge-bottom{position:absolute;left:0;right:0;bottom:0;z-index:4;height:3.4rem;display:flex;align-items:center;justify-content:center;
-    padding-bottom:env(safe-area-inset-bottom,0);pointer-events:none}
-  .m-contact{pointer-events:auto;display:flex;align-items:center;justify-content:center;width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}
+  /* Boven: a!t rechts · Onder: contact midden, Info rechts — alles op de hartlijnen van Arche/Types */
+  .m-topbar,.m-bottombar{position:absolute;z-index:4;left:0;right:0;height:var(--m-bar);pointer-events:none}
+  .m-topbar{top:0}
+  .m-bottombar{bottom:0}
+  .m-topbar > *,.m-bottombar > *{pointer-events:auto}
+  #m-home,#m-info{position:absolute;right:var(--m-edge);top:0;height:100%;display:flex;align-items:center}
+  .m-contact{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;
+    width:44px;height:44px;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}
   .m-contact svg{width:24px;height:auto;display:block}
 
   /* ── PROJECT OPEN: foto blijft staan, andere helft wordt tekst ── */
@@ -748,23 +750,24 @@
   #m-dtrack.is-leaving{opacity:0}
   #m-dtext{
     position:absolute;inset:0;z-index:3;background:#0f0f13;
+    display:flex;flex-direction:column;text-align:center;
     overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
-    padding:1.6rem calc(var(--m-edge) - var(--m-frame)) 1.8rem;
+    padding:1.4rem calc(var(--m-edge) - var(--m-frame));
     opacity:0;transition:opacity .45s ease;
   }
   #m-dtext.is-shown{opacity:1}
-  .m-gallery.is-top #m-dtext{padding-top:calc(var(--m-bar) + .6rem)}
-  .m-gallery.is-bottom #m-dtext{padding-bottom:3.8rem}
+  .m-gallery.is-top #m-dtext{padding-top:var(--m-bar)}
+  .m-gallery.is-bottom #m-dtext{padding-bottom:var(--m-bar)}
+  .m-d-inner{margin:auto 0;align-self:center;max-width:34ch}   /* gecentreerd; lange tekst scrolt gewoon */
   .m-d-title{font-family:'SometypeMono',monospace;font-size:.95rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff;line-height:1.35}
   .m-d-sub{font-family:'WastedYear','SometypeMono',monospace;font-size:.95rem;color:#fff;margin-top:.35rem;line-height:1.4}
   .m-d-text{font-family:'SometypeMono',monospace;font-size:.74rem;line-height:1.9;letter-spacing:.03em;color:#fff;margin-top:1.1rem}
   .m-d-text .wasted-inline{font-family:'WastedYear','SometypeMono',monospace;font-size:1.08em}
 
-  .m-collection.is-detail #m-info{display:none}
-  .m-collection.is-detail #m-dclose{display:block}
-  .m-collection.is-detail .m-gallery.is-src .m-title{opacity:0}
-  .m-collection.is-detail-top .m-corner.is-bottom,
-  .m-collection.is-detail-bottom .m-corner.is-top{opacity:0;pointer-events:none}
+  #m-layer.is-detail #m-dclose{opacity:1;pointer-events:auto}
+  #m-layer.is-detail .m-corner.is-top,
+  #m-layer.is-detail-top .m-corner.is-bottom{opacity:0;pointer-events:none}
+  #m-layer.is-detail .m-gallery.is-src .m-title{opacity:0}
 
   @media (prefers-reduced-motion:reduce){
     .m-cue span::after{animation:none}
@@ -1553,8 +1556,6 @@ loadAll();
         <div class="m-hero-top"><span class="m-hero-mark" id="m-hero-mark">!</span></div>
         <div class="m-hero-bottom"><span class="m-hero-sub" id="m-hero-sub"></span></div>
       </div>
-      <button class="m-ui m-shadow m-corner is-top" data-m-go="collection">Arche</button>
-      <button class="m-ui m-shadow m-corner is-bottom" data-m-go="collection">Types</button>
       <button class="m-cue" data-m-go="collection" aria-label="Naar de projecten"><span></span></button>
     </section>
 
@@ -1569,22 +1570,23 @@ loadAll();
         <div class="m-meta"><span class="m-title m-shadow" id="m-title-types"></span><span class="m-count m-shadow" id="m-count-types"></span></div>
       </div>
 
-      <span class="m-ui m-shadow m-corner is-top">Arche</span>
-      <span class="m-ui m-shadow m-corner is-bottom">Types</span>
-
       <div class="m-topbar">
-        <div class="m-top-center">
-          <button class="m-ui m-shadow" id="m-info">Info</button>
-          <button class="m-shadow" id="m-dclose" aria-label="Project sluiten">×</button>
-        </div>
         <button class="m-ui m-logo m-shadow" id="m-home" aria-label="Terug naar start">a<span class="logo-exclaim">!</span>t</button>
       </div>
-      <div class="m-edge-bottom">
+      <div class="m-bottombar">
         <button class="m-contact" id="m-contact" aria-label="Contact via WhatsApp"></button>
+        <button class="m-ui m-shadow" id="m-info">Info</button>
       </div>
     </section>
 
   </main>
+
+  <!-- VASTE LAAG: blijft staan terwijl de schermen schuiven -->
+  <div id="m-fixed">
+    <button class="m-ui m-shadow m-corner is-top" data-m-go="collection">Arche</button>
+    <button class="m-ui m-shadow m-corner is-bottom" data-m-go="collection">Types</button>
+    <button class="m-shadow" id="m-dclose" aria-label="Project sluiten">×</button>
+  </div>
 </div>
 <script id="mobile-layer-js">
 /* ═══════════════════════════════════════════════════════════════
@@ -1598,8 +1600,8 @@ loadAll();
   var MQ = window.matchMedia('(max-width: 768px)');
   var isMob = function(){ return MQ.matches; };
   var $ = function(id){ return document.getElementById(id); };
-  var app = $('m-app'), coll = $('m-collection');
-  if(!app || !coll) return;
+  var app = $('m-app'), coll = $('m-collection'), layer = $('m-layer');
+  if(!app || !coll || !layer) return;
 
   var KINDS = ['arche','types'];
   var data = { arche: [], types: [] };
@@ -1776,16 +1778,16 @@ loadAll();
 
     // Tekst in de andere helft
     var ds = (p.desc_slider || '').trim();
-    dtext.innerHTML = '<div class="m-d-title">'+esc(p.title)+'</div>'
+    dtext.innerHTML = '<div class="m-d-inner"><div class="m-d-title">'+esc(p.title)+'</div>'
       + (p.sub && p.sub.trim() ? '<div class="m-d-sub">'+esc(p.sub)+'</div>' : '')
       + (p.desc && p.desc.trim() ? '<div class="m-d-text">'+md(p.desc)+'</div>' : '')
-      + (ds && ds !== (p.desc || '').trim() ? '<div class="m-d-text">'+md(ds)+'</div>' : '');
+      + (ds && ds !== (p.desc || '').trim() ? '<div class="m-d-text">'+md(ds)+'</div>' : '') + '</div>';
     dtext.classList.remove('is-shown');
     other.appendChild(dtext); dtext.scrollTop = 0;
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ dtext.classList.add('is-shown'); }); });
 
     src.classList.add('is-src');
-    coll.classList.add('is-detail', k === 'arche' ? 'is-detail-top' : 'is-detail-bottom');
+    layer.classList.add('is-detail', k === 'arche' ? 'is-detail-top' : 'is-detail-bottom');
     app.classList.add('is-locked');
     openState = { k: k, i: i };
     syncDetail();
@@ -1801,7 +1803,7 @@ loadAll();
     if(!openState) return;
     var k = openState.k;
     dtext.classList.remove('is-shown'); dtrack.classList.add('is-leaving');
-    coll.classList.remove('is-detail','is-detail-top','is-detail-bottom');
+    layer.classList.remove('is-detail','is-detail-top','is-detail-bottom');
     app.classList.remove('is-locked');
     openState = null;
     var track = $('m-track-'+k); if(track){ track._mIndex = -1; updateRow(k); }
@@ -1820,7 +1822,7 @@ loadAll();
 
   /* ── 5. Navigatie (horizontaal) ── */
   var go = function(x){ app.scrollTo({ left: x, behavior: 'smooth' }); };
-  app.querySelectorAll('[data-m-go="collection"]').forEach(function(b){
+  layer.querySelectorAll('[data-m-go="collection"]').forEach(function(b){
     b.addEventListener('click', function(e){ e.stopPropagation(); go(app.clientWidth); });
   });
   $('m-hero').addEventListener('click', function(){ go(app.clientWidth); });
