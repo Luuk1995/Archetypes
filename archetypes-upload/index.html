@@ -692,13 +692,18 @@
   .m-hero-sub{font-family:'WastedYear','SometypeMono',monospace;font-size:var(--m-sub-size);letter-spacing:.14em;line-height:1.85;color:var(--fg);text-align:center;text-shadow:0 0 18px rgba(0,0,0,.45)}
   .fonts-loading .m-hero-mark,.fonts-loading .m-hero-sub{visibility:hidden}
 
-  /* Hint: dunne lijn met segment dat naar rechts beweegt */
-  .m-cue{position:absolute;z-index:3;left:50%;bottom:0;transform:translateX(-50%);
-    width:44px;height:var(--m-bar);display:flex;align-items:center;justify-content:center}
-  .m-cue span{position:relative;width:34px;height:1px;background:rgba(255,255,255,.28);overflow:hidden}
-  .m-cue span::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:1px;background:#fff;
+  /* Hint-lijn (gedeeld): exact zo lang als de teller "00 / 00", 1px, subtiel */
+  .m-line{position:relative;display:inline-block;height:1px;overflow:hidden;
+    font-family:'SometypeMono',monospace;font-size:.62rem;letter-spacing:.12em;line-height:1px;white-space:nowrap;
+    background:rgba(255,255,255,.28)}
+  .m-line::before{content:'00 / 00';visibility:hidden}
+  .m-line::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:1px;background:#fff;
     animation:m-cue 1.8s cubic-bezier(.6,0,.4,1) infinite}
   @keyframes m-cue{to{left:100%}}
+
+  /* Hero: rechtsonder, op de onderlijn */
+  .m-cue{position:absolute;z-index:3;right:var(--m-edge);bottom:0;height:var(--m-bar);
+    display:flex;align-items:center;justify-content:flex-end;padding-left:1rem}
 
   /* ── COLLECTIE: twee galerijen, net niet tot de rand ── */
   .m-collection{display:flex;flex-direction:column;gap:var(--m-frame);padding:var(--m-frame)}
@@ -718,12 +723,9 @@
   .m-slide.is-active img{filter:grayscale(0)}
   .m-noanim img{transition:filter 1.4s ease .25s!important}   /* sprong in de carrousel: geen fade, wel kleur */
 
-  /* Hint in de naad: verschijnt kort bij verticaal vegen */
-  .m-hint{position:absolute;z-index:6;left:50%;top:50%;transform:translate(-50%,-50%);width:72px;height:var(--m-frame);
+  /* Hint in de naad, rechts: verschijnt kort bij verticaal vegen */
+  .m-hint{position:absolute;z-index:6;right:var(--m-edge);top:50%;transform:translateY(-50%);height:var(--m-frame);
     display:flex;align-items:center;opacity:0;transition:opacity .4s ease;pointer-events:none}
-  .m-hint span{position:relative;width:100%;height:2px;background:rgba(255,255,255,.3);overflow:hidden}
-  .m-hint span::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:2px;background:#fff;
-    animation:m-cue 1.6s cubic-bezier(.6,0,.4,1) infinite}
   .m-hint.is-on{opacity:1}
 
   /* Verlopen voor leesbare tekst: buitenrand + naad */
@@ -780,7 +782,7 @@
   #m-layer.is-detail .m-gallery.is-src .m-title{opacity:0}
 
   @media (prefers-reduced-motion:reduce){
-    .m-cue span::after{animation:none}
+    .m-line::after{animation:none}
     .m-slide img,.m-title,#m-dtext,#m-dtrack,.m-corner{transition:none}
   }
 }
@@ -1566,7 +1568,7 @@ loadAll();
         <div class="m-hero-top"><span class="m-hero-mark" id="m-hero-mark">!</span></div>
         <div class="m-hero-bottom"><span class="m-hero-sub" id="m-hero-sub"></span></div>
       </div>
-      <button class="m-cue" data-m-go="collection" aria-label="Naar de projecten"><span></span></button>
+      <button class="m-cue" data-m-go="collection" aria-label="Naar de projecten"><span class="m-line"></span></button>
     </section>
 
     <!-- COLLECTIE: twee galerijen, net niet tot de rand -->
@@ -1580,7 +1582,7 @@ loadAll();
         <div class="m-meta"><span class="m-title m-shadow" id="m-title-types"></span><span class="m-count m-shadow" id="m-count-types"></span></div>
       </div>
 
-      <div class="m-hint" id="m-hint" aria-hidden="true"><span></span></div>
+      <div class="m-hint" id="m-hint" aria-hidden="true"><span class="m-line"></span></div>
 
       <div class="m-topbar">
         <button class="m-ui m-logo m-shadow" id="m-home" aria-label="Terug naar start">a<span class="logo-exclaim">!</span>t</button>
