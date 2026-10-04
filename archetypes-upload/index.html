@@ -708,7 +708,7 @@
     position:absolute;inset:0;display:flex;
     overflow-x:auto;overflow-y:hidden;
     scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;overscroll-behavior-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none;
   }
   .m-slides::-webkit-scrollbar{display:none}
   .m-slide{position:relative;flex:0 0 100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;background:#141419;overflow:hidden}
@@ -716,6 +716,15 @@
     filter:grayscale(1);opacity:0;transition:filter 1.4s ease .25s,opacity .5s ease}
   .m-slide img.is-loaded{opacity:1}
   .m-slide.is-active img{filter:grayscale(0)}
+  .m-noanim img{transition:filter 1.4s ease .25s!important}   /* sprong in de carrousel: geen fade, wel kleur */
+
+  /* Hint in de naad: verschijnt kort bij verticaal vegen */
+  .m-hint{position:absolute;z-index:6;left:50%;top:50%;transform:translate(-50%,-50%);width:72px;height:var(--m-frame);
+    display:flex;align-items:center;opacity:0;transition:opacity .4s ease;pointer-events:none}
+  .m-hint span{position:relative;width:100%;height:2px;background:rgba(255,255,255,.3);overflow:hidden}
+  .m-hint span::after{content:'';position:absolute;top:0;left:-40%;width:40%;height:2px;background:#fff;
+    animation:m-cue 1.6s cubic-bezier(.6,0,.4,1) infinite}
+  .m-hint.is-on{opacity:1}
 
   /* Verlopen voor leesbare tekst: buitenrand + naad */
   .m-gallery::before,.m-gallery::after{content:'';position:absolute;left:0;right:0;z-index:1;pointer-events:none}
@@ -1571,6 +1580,8 @@ loadAll();
         <div class="m-meta"><span class="m-title m-shadow" id="m-title-types"></span><span class="m-count m-shadow" id="m-count-types"></span></div>
       </div>
 
+      <div class="m-hint" id="m-hint" aria-hidden="true"><span></span></div>
+
       <div class="m-topbar">
         <button class="m-ui m-logo m-shadow" id="m-home" aria-label="Terug naar start">a<span class="logo-exclaim">!</span>t</button>
       </div>
@@ -1670,7 +1681,9 @@ loadAll();
     app.querySelectorAll('.m-hero video').forEach(function(v){ on ? tryPlay(v) : v.pause(); });
   }
 
-  /* ── 3. Galerijen: één beeld per scherm ── */
+  /* ── 3. Galerijen: één beeld per scherm, oneindig rond ──
+     Opbouw: [kopie laatste] 1 2 3 … n [kopie eerste]. Kom je op een kopie tot stilstand,
+     dan springt de galerij onzichtbaar naar het echte beeld. */
   var pad = function(n){ return (n < 10 ? '0' : '') + n; };
 
   function loadSlide(slide){
@@ -1691,20 +1704,59 @@ loadAll();
     return s;
   }
 
-  // Werkt voor elke galerij (collectie én geopend project)
-  function trackIndex(track){
-    var slides = track.querySelectorAll('.m-slide');
-    var i = Math.round(track.scrollLeft / (track.clientWidth || 1));
-    return { slides: slides, i: Math.max(0, Math.min(slides.length - 1, i)) };
+  // items: [{src, alt}] · onTap(i) optioneel
+  function fillTrack(track, items, onTap){
+    track.innerHTML = '';
+    var n = items.length;
+    track._mN = n; track._mLoop = n > 1; track._mIndex = -1; track._mDom = -1;
+    var mk = function(i, clone){
+      var s = makeSlide(items[i].src, clone ? '' : items[i].alt);
+      s._mReal = i;
+      if(clone) s.setAttribute('aria-hidden','true');
+      if(onTap){
+        s.setAttribute('role','button'); s.tabIndex = clone ? -1 : 0;
+        if(!clone) s.setAttribute('aria-label', items[i].alt || '');
+        s.addEventListener('click', function(){ onTap(i); });
+        s.addEventListener('keydown', function(e){ if(e.key === 'Enter') onTap(i); });
+      }
+      return s;
+    };
+    if(track._mLoop) track.appendChild(mk(n - 1, true));
+    for(var i = 0; i < n; i++) track.appendChild(mk(i, false));
+    if(track._mLoop) track.appendChild(mk(0, true));
+  }
+  function startAt(track){ track.scrollLeft = track._mLoop ? track.clientWidth : 0; }
+
+  function domIndex(track){
+    var n = track.children.length, i = Math.round(track.scrollLeft / (track.clientWidth || 1));
+    return Math.max(0, Math.min(n - 1, i));
   }
   function syncTrack(track, onChange){
-    var t = trackIndex(track);
-    if(!t.slides.length) return;
-    for(var n = t.i - 1; n <= t.i + 2; n++) loadSlide(t.slides[n]);
-    if(t.i === track._mIndex) return;
-    track._mIndex = t.i;
-    t.slides.forEach(function(s, x){ s.classList.toggle('is-active', x === t.i); });
-    onChange(t.i, t.slides.length);
+    var slides = track.children; if(!slides.length) return;
+    var d = domIndex(track);
+    for(var x = d - 1; x <= d + 2; x++) loadSlide(slides[x]);
+    if(track._mLoop){ loadSlide(slides[track._mN]); loadSlide(slides[1]); }   // buren van de kopieën
+    if(d !== track._mDom){
+      track._mDom = d;
+      for(var y = 0; y < slides.length; y++) slides[y].classList.toggle('is-active', y === d);
+    }
+    var real = slides[d]._mReal;
+    if(real !== track._mIndex){ track._mIndex = real; onChange(real, track._mN); }
+    if(track._mLoop){ clearTimeout(track._mJ); track._mJ = setTimeout(function(){ settleLoop(track); }, 140); }
+  }
+  function settleLoop(track){
+    var n = track._mN, slides = track.children, w = track.clientWidth, d = domIndex(track);
+    if(Math.abs(track.scrollLeft - d * w) > 2) return;          // nog in beweging
+    var target = d === 0 ? n : (d === n + 1 ? 1 : -1);
+    if(target < 0) return;
+    var to = slides[target], img = to.querySelector('img');
+    to.classList.add('m-noanim');                               // geen fade bij de sprong
+    if(img){ if(!to._mLoaded){ to._mLoaded = true; img.src = img.dataset.src; } img.classList.add('is-loaded'); }
+    to.classList.add('is-active');
+    track._mDom = target;
+    track.scrollLeft = target * w;
+    slides[d].classList.remove('is-active');
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ to.classList.remove('m-noanim'); }); });
   }
   function bindTrack(track, fn){
     if(track._mBound) return;
@@ -1719,22 +1771,16 @@ loadAll();
   function renderRows(){
     KINDS.forEach(function(k){
       var track = $('m-track-'+k); if(!track) return;
-      track.innerHTML = '';
-      (data[k] || []).forEach(function(p, i){
-        var s = makeSlide(p.image, p.title);
-        s.setAttribute('role','button'); s.tabIndex = 0; s.setAttribute('aria-label', p.title || '');
-        s.addEventListener('click', function(){ openDetail(k, i); });
-        s.addEventListener('keydown', function(e){ if(e.key === 'Enter') openDetail(k, i); });
-        track.appendChild(s);
-      });
-      track.scrollLeft = 0; track._mIndex = -1;
+      var list = data[k] || [];
+      fillTrack(track, list.map(function(p){ return { src: p.image, alt: p.title }; }), function(i){ openDetail(k, i); });
+      startAt(track);
       bindTrack(track, function(){ updateRow(k); });
       updateRow(k);
     });
   }
   function updateRow(k){
     var track = $('m-track-'+k); if(!track) return;
-    if(!track.querySelector('.m-slide')){ setText('m-count-'+k, ''); setTitle(k, ''); return; }
+    if(!track.children.length){ setText('m-count-'+k, ''); setTitle(k, ''); return; }
     syncTrack(track, function(i, n){
       if(!(openState && openState.k === k)) setText('m-count-'+k, pad(i + 1) + ' / ' + pad(n));
       var p = (data[k] || [])[i];
@@ -1765,17 +1811,21 @@ loadAll();
     if(openState) finishClose();
     var src = $('m-gal-'+k), other = $('m-gal-'+(k === 'arche' ? 'types' : 'arche'));
 
-    // Beeldgalerij van het project, eerste foto = de aangetikte foto (staat al in beeld)
-    dtrack.innerHTML = ''; dtrack.classList.remove('is-leaving');
-    imgsOf(p).forEach(function(u, x){
-      var s = makeSlide(u, x ? '' : p.title);
-      if(x === 0){ var im = s.querySelector('img'); im.src = u; im.classList.add('is-loaded'); s._mLoaded = true; s.classList.add('is-active'); }
-      dtrack.appendChild(s);
-    });
+    // Beeldgalerij van het project (oneindig rond); eerste foto = de aangetikte foto, direct zichtbaar
+    dtrack.classList.remove('is-leaving');
+    var imgs = imgsOf(p);
+    fillTrack(dtrack, imgs.map(function(u, x){ return { src: u, alt: x ? '' : p.title }; }));
+    var first = dtrack.children[dtrack._mLoop ? 1 : 0];
+    if(first){
+      var im = first.querySelector('img');
+      if(im){ im.src = im.dataset.src; im.classList.add('is-loaded'); }
+      first._mLoaded = true; first.classList.add('is-active');
+    }
     src.insertBefore(dtrack, src.querySelector('.m-meta'));
-    dtrack.scrollLeft = 0; dtrack._mIndex = 0;
+    startAt(dtrack);
+    dtrack._mDom = dtrack._mLoop ? 1 : 0; dtrack._mIndex = 0;
     bindTrack(dtrack, syncDetail);
-    setText('m-count-'+k, pad(1) + ' / ' + pad(dtrack.children.length || 1));
+    setText('m-count-'+k, pad(1) + ' / ' + pad(imgs.length || 1));
 
     // Tekst in de andere helft
     var ds = (p.desc_slider || '').trim();
@@ -1840,6 +1890,25 @@ loadAll();
     playHero(!c);
   }, { passive: true });
 
+
+  /* ── 5b. Hint: wie verticaal veegt op de collectie, ziet kort het horizontale lijntje ── */
+  var hint = $('m-hint'), hintT = 0, hsx = 0, hsy = 0, hinted = false;
+  function showHint(){
+    if(!hint) return;
+    hint.classList.add('is-on'); clearTimeout(hintT);
+    hintT = setTimeout(function(){ hint.classList.remove('is-on'); }, 3200);
+  }
+  coll.addEventListener('touchstart', function(e){
+    if(e.touches.length !== 1) return;
+    hsx = e.touches[0].clientX; hsy = e.touches[0].clientY; hinted = false;
+  }, { passive: true });
+  coll.addEventListener('touchmove', function(e){
+    if(hinted || e.touches.length !== 1) return;
+    if(e.target && e.target.closest && e.target.closest('#m-dtext')) return;   // tekst mag verticaal scrollen
+    var dx = e.touches[0].clientX - hsx, dy = e.touches[0].clientY - hsy;
+    if(Math.abs(dy) > 28 && Math.abs(dy) > Math.abs(dx) * 1.6){ hinted = true; showHint(); }
+  }, { passive: true });
+
   /* ── 6. Start + wisselen tussen mobiel/desktop (bijv. draaien van tablet) ── */
   (function copyFromDesktop(){
     var mark = $('hero-logo-mark'), sub = $('hero-logo-sub'), icon = $('contact-icon');
@@ -1860,8 +1929,9 @@ loadAll();
   if(MQ.addEventListener) MQ.addEventListener('change', onModeChange); else if(MQ.addListener) MQ.addListener(onModeChange);
   window.addEventListener('resize', function(){
     if(!isMob()) return;
-    KINDS.forEach(function(k){ var t = $('m-track-'+k); if(t){ t._mIndex = -1; updateRow(k); } });
-    if(openState){ dtrack._mIndex = -1; syncDetail(); }
+    var keep = function(t){ if(t && t._mDom >= 0) t.scrollLeft = t._mDom * t.clientWidth; };
+    KINDS.forEach(function(k){ keep($('m-track-'+k)); });
+    if(openState) keep(dtrack);
   });
 })();
 </script>
