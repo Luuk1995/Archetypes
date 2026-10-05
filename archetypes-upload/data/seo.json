@@ -1,12 +1,12 @@
 {
-  "title": "Arche!Types — Imme van Straaten · Architectuur & Objectontwerp",
-  "description": "Arche!Types (Archetypes) is de ontwerpstudio van architect Imme van Straaten: avontuurlijke architectuur en objecten van hout, staal en restmateriaal.",
-  "share_image": "",
-  "person_name": "Imme van Straaten",
   "person_role": "Architect",
   "city": "Amsterdam",
+  "instagram": "",
+  "person_name": "Imme van Straaten",
+  "site_url": "https://arche-types.nl",
+  "title": "Arche!Types — Imme van Straaten · Architectuur & Objectontwerp",
+  "share_image": "",
   "email": "studio@arche-types.nl",
-  "instagram": "arche_types",
-  "linkedin": "",
-  "site_url": "https://arche-types.nl"
+  "description": "Arche!Types (Archetypes) is de ontwerpstudio van architect Imme van Straaten: avontuurlijke architectuur en objecten van hout, staal en restmateriaal.",
+  "linkedin": "https://www.linkedin.com/in/imme-van-straaten-09b49821a/?isSelfProfile=true"
 }
