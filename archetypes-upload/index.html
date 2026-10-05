@@ -275,6 +275,14 @@
     .info-meta{margin-top:2rem;font-size:.58rem;letter-spacing:.2em;color:rgba(240,237,230,1);text-transform:uppercase;line-height:2.4}
 
 
+    /* Portret op de info-pagina: klein naast de tekst, bovenkant gelijk met de eerste alinea (voegt geen hoogte toe) */
+    #info-portrait{position:absolute;right:calc(100% + 3.5rem);top:5.5rem;width:150px;height:auto;display:block}
+    @media (max-width:1060px){
+      /* smal venster: geen plek naast de tekst, dan klein erboven en de pagina mag scrollen */
+      #info-overlay{overflow-y:auto;padding-bottom:3rem}
+      #info-portrait{position:static;width:140px;margin:0 auto 2rem}
+    }
+
     /* ── SLIDESHOW OVERLAY ── */
     #slideshow-overlay{
       position:fixed;z-index:3000;
@@ -640,6 +648,7 @@
   /* 3 ── Info-overlay (hergebruikt) mobielvriendelijk */
   #info-overlay{padding:4.5rem var(--m-edge) 3rem!important;overflow-y:auto;align-items:flex-start!important}
   #info-box{width:100%!important;max-width:none!important}
+  #info-portrait{position:static!important;width:min(38vw,140px)!important;margin:0 auto 2rem!important}
   #info-close{top:.55rem!important;right:var(--m-edge)!important;font-family:'WastedYear','SometypeMono',monospace!important;font-size:2.2rem!important;color:#fff!important}
 
   /* ── MOBIELE APP ─────────────────────────────────────────── */
@@ -876,6 +885,7 @@
   <div id="info-box">
     <div id="info-close">×</div>
     <div id="info-logo-mark">!</div>
+    <img id="info-portrait" src="images/profiel-imme.jpg" alt="Imme van Straaten — Arche!Types" width="480" height="720" loading="lazy" decoding="async">
     <p id="info-p1"></p>
     <p id="info-p2"></p>
     <div class="info-meta" id="info-meta"></div>
