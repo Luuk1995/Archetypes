@@ -1,0 +1,15 @@
+{
+  "name": "arche-types-site",
+  "private": true,
+  "type": "module",
+  "description": "Arche!Types — bouwstap voor snelheid en vindbaarheid",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.34.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

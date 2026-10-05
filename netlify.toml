@@ -1,0 +1,36 @@
+# ═══════════════════════════════════════════════════════════════
+#  NETLIFY-INSTELLINGEN ARCHE!TYPES — hier hoef je niets aan te doen.
+#  Bij elke publicatie (ook vanuit de admin) draait het bouwscript,
+#  daarna gaat de map archetypes-upload live.
+# ═══════════════════════════════════════════════════════════════
+[build]
+  publish = "archetypes-upload"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Verkleinde foto's hebben een unieke naam per versie → mogen een jaar in de browser blijven
+[[headers]]
+  for = "/_opt/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Lettertypes veranderen zelden → 30 dagen bewaren
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# Admin nooit in zoekmachines
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+# Het oude Netlify-adres stuurt door naar het echte adres (één adres voor Google)
+[[redirects]]
+  from = "https://heroic-toffee-6effb6.netlify.app/*"
+  to = "https://arche-types.nl/:splat"
+  status = 301
+  force = true

@@ -37,6 +37,21 @@ collections:
               - { label: "Bestandspad of YouTube ID", name: "src", widget: "string", required: false, hint: "Lokale video: /images/bestandsnaam.mp4 — YouTube: plak de volledige URL of alleen het video-ID" }
               - { label: "Label (bij placeholder)", name: "label", widget: "string", default: "VIDEO OBJECTEN", required: false }
 
+      - name: "vindbaarheid"
+        label: "Vindbaarheid (Google & delen)"
+        file: "archetypes-upload/data/seo.json"
+        fields:
+          - { label: "Titel in Google", name: "title", widget: "string", hint: "De blauwe kop in Google. Houd hem rond de 60 tekens en zet je naam en Arche!Types erin." }
+          - { label: "Beschrijving in Google", name: "description", widget: "text", hint: "Het tekstje onder de kop in Google. Rond de 150 tekens. Noem ook 'Archetypes' zodat mensen je ook zo vinden." }
+          - { label: "Afbeelding bij delen (WhatsApp, LinkedIn)", name: "share_image", widget: "image", required: false, hint: "Leeg laten = de foto van je eerste architectuurproject." }
+          - { label: "Naam", name: "person_name", widget: "string" }
+          - { label: "Functie", name: "person_role", widget: "string", hint: "Bijvoorbeeld: Architect" }
+          - { label: "Plaats", name: "city", widget: "string", required: false, hint: "Helpt bij zoeken op bijvoorbeeld 'architect Amsterdam'. Leeg laten mag." }
+          - { label: "E-mailadres", name: "email", widget: "string", required: false }
+          - { label: "Instagram-naam (zonder @)", name: "instagram", widget: "string", required: false }
+          - { label: "LinkedIn-profiel (volledige link)", name: "linkedin", widget: "string", required: false }
+          - { label: "Websiteadres", name: "site_url", widget: "string", hint: "Alleen aanpassen als je domein verandert. Nu: https://arche-types.nl" }
+
   - name: "projecten"
     label: "🏗️ Architectuur Projecten"
     folder: "archetypes-upload/data/projecten"
