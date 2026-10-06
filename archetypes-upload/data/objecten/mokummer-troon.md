@@ -9,7 +9,7 @@ desc: Constructieve balken stoel die verassend lekker zit. Gemaakt van oude
   mooier van.
 image: /images/mokummer-troon_2.png
 image2: /images/object_xl-lounge_1.png
-order: 4
+order: 3
 waarde1: ""
 waarde2: ""
 waarde3: ""
