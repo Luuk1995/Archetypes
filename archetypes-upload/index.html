@@ -542,7 +542,8 @@
   .m-slide img.is-loaded{opacity:1}
   /* Overzicht blijft zwart-wit; alleen een geopend project krijgt kleur (ontwikkelt rustig in) */
   #m-dtrack.is-color .m-slide img{filter:grayscale(0)}
-  .m-noanim img{transition:filter 1.4s ease .25s!important}   /* sprong in de carrousel: geen fade, wel kleur */
+  #m-dtrack .m-slide img{transition:filter .35s ease-out,opacity .5s ease}   /* aangetikt: direct en snel in kleur */
+  .m-noanim img{transition:none!important}   /* onzichtbare sprong in de oneindige carrousel */
 
   /* Hint in de naad, rechts: verschijnt kort bij verticaal vegen */
   .m-hint{position:absolute;z-index:6;right:var(--m-edge);top:50%;transform:translateY(-50%);height:var(--m-frame);
@@ -604,7 +605,7 @@
 
   @media (prefers-reduced-motion:reduce){
     .m-arrow{animation:none}
-    .m-slide img,.m-title,#m-dtext,#m-dtrack,.m-corner{transition:none}
+    .m-slide img,#m-dtrack .m-slide img,.m-title,#m-dtext,#m-dtrack,.m-corner{transition:none}
   }
 }
 </style>
@@ -1598,6 +1599,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
     src.insertBefore(dtrack, src.querySelector('.m-meta'));
     startAt(dtrack);
     dtrack._mDom = dtrack._mLoop ? 1 : 0; dtrack._mIndex = 0;
+    void dtrack.offsetWidth; dtrack.classList.add('is-color');   // grijze beginstand vastleggen → kleur start direct bij het tikken
     bindTrack(dtrack, syncDetail);
     setText('m-count-'+k, pad(1) + ' / ' + pad(imgs.length || 1));
 
@@ -1609,7 +1611,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
       + (ds && ds !== (p.desc || '').trim() ? '<div class="m-d-text">'+md(ds)+'</div>' : '') + '</div>';
     dtext.classList.remove('is-shown');
     other.appendChild(dtext); dtext.scrollTop = 0;
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){ dtext.classList.add('is-shown'); dtrack.classList.add('is-color'); }); });
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ dtext.classList.add('is-shown'); }); });
 
     src.classList.add('is-src');
     layer.classList.add('is-detail', k === 'arche' ? 'is-detail-top' : 'is-detail-bottom');
