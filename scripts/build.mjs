@@ -3,7 +3,9 @@
 
    Wat het doet (jij hoeft hier nooit iets aan te veranderen):
    1. Leest alle projecten, objecten, info, video's en vindbaarheid uit de admin-bestanden.
-   2. Maakt van elke projectfoto een lichte webversie (WebP, max. 1400 px breed).
+   2. Maakt van zware foto's lichtere versies in hoge kwaliteit: 1600 px (overzicht en mobiel) en
+      2800 px (grote slideshow). Scherpte gaat voor: een normale JPEG-export blijft in de slideshow
+      precies zoals jij hem maakte.
    3. Zet alle gegevens direct in de pagina  → geen losse verzoeken meer, dus sneller.
    4. Zet titels, teksten en zoekmachine-gegevens leesbaar in de HTML → beter vindbaar.
    5. Schrijft sitemap.xml en robots.txt.
@@ -74,31 +76,43 @@ let sharp = null;
 const optCache = new Map();
 const stats = { done: 0, before: 0, after: 0, failed: 0 };
 
-async function optimizedURL(value) {
-  if (!sharp) return null;
+// Eén versie van een foto maken. Geeft altijd een bruikbaar pad terug (het origineel als bewerken niets oplevert).
+// Scherpte gaat voor: een JPEG/WebP binnen de maat (of, voor de slideshow, tot 1,5 MB) blijft ONAANGEROERD,
+// want opnieuw inpakken kost detail. Verkleinen gebeurt in JPEG (mozjpeg) — dat bewaart houtnerf en korrel
+// beter dan WebP. Alleen foto's met doorzichtigheid worden WebP.
+const KEEP_ORIGINAL_UP_TO = 1.5 * 1024 * 1024;
+async function variant(value, cap, quality, tag) {
   const raw = String(value).trim().replace(/^"(.*)"$|^'(.*)'$/, '$1$2');
-  if (!raw || /^https?:\/\//i.test(raw)) return null;
-  if (optCache.has(raw)) return optCache.get(raw);
+  if (!sharp || !raw || /^https?:\/\//i.test(raw)) return value;
+  const key = tag + '|' + raw;
+  if (optCache.has(key)) return optCache.get(key);
   let rel = raw.replace(/^\/+/, '');
   try { rel = decodeURI(rel); } catch {}
   const src = path.join(PUB, rel);
-  if (!src.startsWith(PUB) || !fs.existsSync(src)) { optCache.set(raw, null); return null; }
+  if (!src.startsWith(PUB) || !fs.existsSync(src)) { optCache.set(key, value); return value; }
   try {
     const buf = fs.readFileSync(src);
+    const meta = await sharp(buf).metadata();
+    const w = meta.autoOrient?.width || meta.width || 0;
+    const compressed = meta.format === 'jpeg' || meta.format === 'webp';
+    if (compressed && w && w <= cap) { optCache.set(key, value); return value; }
+    if (compressed && tag === 'l' && buf.length <= KEEP_ORIGINAL_UP_TO) { optCache.set(key, value); return value; }
+    const alpha = !!meta.hasAlpha;
     const hash = crypto.createHash('md5').update(buf).digest('hex').slice(0, 10);
     const base = path.basename(rel, path.extname(rel)).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'beeld';
-    const name = `${base}-${hash}.webp`;
+    const name = `${base}-${hash}-${tag}.${alpha ? 'webp' : 'jpg'}`;
     const out = path.join(OPT_DIR, name);
     if (!fs.existsSync(out)) {
-      await sharp(buf).rotate().resize({ width: 1400, withoutEnlargement: true }).webp({ quality: 70, effort: 5 }).toFile(out);
+      const img = sharp(buf).rotate().resize({ width: cap, withoutEnlargement: true });
+      await (alpha ? img.webp({ quality: 86, effort: 5 }) : img.jpeg({ quality, mozjpeg: true })).toFile(out);
     }
     const after = fs.statSync(out).size;
-    if (after >= buf.length) { optCache.set(raw, null); return null; }   // origineel was al kleiner
+    if (after >= buf.length) { optCache.set(key, value); return value; }   // origineel was al kleiner
     stats.done++; stats.before += buf.length; stats.after += after;
     const url = `/_opt/${name}`;
-    optCache.set(raw, url);
+    optCache.set(key, url);
     return url;
-  } catch (e) { stats.failed++; log('foto overgeslagen:', rel, e.message); optCache.set(raw, null); return null; }
+  } catch (e) { stats.failed++; log('foto overgeslagen:', rel, e.message); optCache.set(key, value); return value; }
 }
 
 async function shareImage(value) {
@@ -115,16 +129,19 @@ async function shareImage(value) {
   } catch { return null; }
 }
 
-// Vervangt foto-paden in de projecttekst door de lichte webversie (origineel blijft onaangeroerd)
+// Per foto twee versies: "image…" = overzicht (lijst + mobiel), "l_image…" = groot (desktop-slideshow).
+// Je originele foto's blijven onaangeroerd.
 async function rewriteImages(text) {
-  const lines = text.split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    const m = /^(\s*)(image\d*)(\s*:\s*)(.+)$/.exec(lines[i]);
-    if (!m) continue;
-    const url = await optimizedURL(m[4]);
-    if (url) lines[i] = m[1] + m[2] + m[3] + url;
+  const out = [];
+  for (const line of text.split('\n')) {
+    const m = /^(\s*)(image\d*)(\s*:\s*)(.+)$/.exec(line);
+    if (!m) { out.push(line); continue; }
+    const mid = await variant(m[4], 1600, 84, 'm');   // overzicht + mobiel
+    const big = await variant(m[4], 2800, 86, 'l');   // grote desktop-slideshow
+    out.push(m[1] + m[2] + m[3] + mid);
+    if (big !== mid) out.push(m[1] + 'l_' + m[2] + m[3] + big);
   }
-  return lines.join('\n');
+  return out.join('\n');
 }
 
 /* ── zoekmachine-blok in <head> ─────────────────────────────────────────── */
@@ -230,7 +247,7 @@ async function main() {
 
   // 4. sitemap + robots
   const site = String(seo.site_url).replace(/\/+$/, '');
-  const imgs = [...new Set([...arche, ...types].flatMap((p) => Object.keys(p).filter((k) => /^image\d*$/.test(k)).map((k) => p[k])).filter(Boolean))];
+  const imgs = [...new Set([...arche, ...types].flatMap((p) => Object.keys(p).filter((k) => /^image\d*$/.test(k)).map((k) => p['l_' + k] || p[k])).filter(Boolean))];
   const imgTags = imgs.map((u) => `\n    <image:image><image:loc>${esc(u.startsWith('http') ? u : site + (u.startsWith('/') ? '' : '/') + encodeURI(decodeURI(u)))}</image:loc></image:image>`).join('');
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
