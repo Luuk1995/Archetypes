@@ -34,6 +34,7 @@ image3: /images/surfstay_last-paradise_arche-types_proces.jpg
 programma: Sleeping residence – detached bathhouse – kitchen / hangout
 image4: /images/surfstay_last-paradise_arche-types_detailjpg.jpg
 image6: /images/Project_Last Paradise_1.jpg
+image7: /images/last-paradise_hangout_bed-inside.png
 quote: "''Hier begint het avontuur''"
 label1: ""
 label2: ""
