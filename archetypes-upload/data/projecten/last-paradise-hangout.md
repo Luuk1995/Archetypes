@@ -21,7 +21,7 @@ image3: /images/last-paradise_hangout_schets3d.png
 image4: /images/hangout_last-paradise_arche-types5.jpg
 image5: /images/hangout_last-paradise_arche-types2.jpg
 image6: /images/hangout_last-paradise_topview.png
-image7: /images/last-paradise_hangout_droned.png
+image7: ""
 image8: /images/last-paradise_hangout_tafel.png
 order: 1
 label1: ""
