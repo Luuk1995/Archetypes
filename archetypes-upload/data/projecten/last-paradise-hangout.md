@@ -16,11 +16,13 @@ desc_slider: >-
 
   Het paviljoen achtige gebouwtje is volledig van lokaal hout gefabriceerd door een lokaal bouwteam. Enkel betonnen poeren zijn gemaakt om het gebouw hoog en droog te krijgen. Het dak is geweven van palm bladeren. De hangout is zo gedraaid dat uitzicht vanuit de slaapverblijven optimaal blijft. En in de avond uren levert dit een prachtige silhouetten spel op gezien vanuit het slaapverblijf. De zonsondergang tekent het paviljoen en het leven op Last Paradise daarin. 
 image: /images/hangout_last-paradise_arche-types6.jpg
-image2: /images/hangout_last-paradise_arche-types2.jpg
-image3: /images/hangout_last-paradise_arche-types4.jpg
+image2: /images/last-paradise_hangout_schets.png
+image3: /images/last-paradise_hangout_schets3d.png
 image4: /images/hangout_last-paradise_arche-types5.jpg
-image5: /images/hangout_last-paradise_arche-types.jpg
-image6: /images/hangout_last-paradise_arche-types3.jpg
+image5: /images/hangout_last-paradise_arche-types2.jpg
+image6: /images/hangout_last-paradise_topview.png
+image7: /images/last-paradise_hangout_droned.png
+image8: /images/last-paradise_hangout_tafel.png
 order: 1
 label1: ""
 label2: ""
