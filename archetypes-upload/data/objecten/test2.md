@@ -7,7 +7,7 @@ desc: "Tafel met groenstrook tussen de twee schaaldelen bladen. Het grondvolume
   onder de goot is berekend op de groei van wilde bloemen en diverse soorten
   eetbare kruidenplanten ==om te plukken.== "
 image: /images/goottafel_arche-types.jpg
-order: 3
+order: 1
 waarde1: ""
 waarde2: ""
 waarde3: ""
