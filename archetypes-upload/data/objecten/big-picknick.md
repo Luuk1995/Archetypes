@@ -7,7 +7,7 @@ desc: Constructieve buitentafel, ontworpen voor intensief gebruik met een lange
   levensduur. Gemaakt van oude houten balken die vroeger gebruikt werden in de
   fundering van Amsterdam.
 image: /images/bicpicnic_render2_arche-types.jpg
-order: 1
+order: 3
 waarde1: ""
 waarde2: ""
 image2: /images/bicpicnic_proces_arche-types.jpg
