@@ -34,3 +34,7 @@
   to = "https://arche-types.nl/:splat"
   status = 301
   force = true
+
+# Bewerkte foto's bewaren tussen publicaties (alleen nieuwe foto's worden opnieuw bewerkt)
+[[plugins]]
+  package = "./scripts"
