@@ -13,7 +13,6 @@ desc_slider: >-
 
   Op het deck is er ruimte voor een yoga sessie. Aan de drie lange tafels wordt gezellig gegeten. En de speciaal ontworpen ruimtelijke bank nodigt uit om samen de meest radicale surfclips te bekijken van die dag terwijl je geniet van gekoelde drankjes uit de bar.
 
-
   Het paviljoen achtige gebouwtje is volledig van lokaal hout gefabriceerd door een lokaal bouwteam. Enkel betonnen poeren zijn gemaakt om het gebouw hoog en droog te krijgen. Het dak is geweven van palm bladeren. De hangout is zo gedraaid dat uitzicht vanuit de slaapverblijven optimaal blijft. En in de avond uren levert dit een prachtige silhouetten spel op gezien vanuit het slaapverblijf. De zonsondergang tekent het paviljoen en het leven op Last Paradise daarin. 
 image: /images/hangout_last-paradise_arche-types6.jpg
 image2: /images/last-paradise_hangout_schets.png
@@ -22,7 +21,7 @@ image4: /images/hangout_last-paradise_arche-types5.jpg
 image5: /images/hangout_last-paradise_arche-types2.jpg
 image6: /images/hangout_last-paradise_topview.png
 image7: ""
-image8: /images/last-paradise_hangout_tafel.png
+image8: /images/2screen-shot-2026-08-31-at-7.57.09-pm.png
 order: 1
 label1: ""
 label2: ""
