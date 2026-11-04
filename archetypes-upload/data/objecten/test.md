@@ -6,8 +6,8 @@ title: MONO CABINET 01
 desc: Industrieel upcycled kast op wielen. ==Zwart op zwart.== Stalen frame met
   houten planken. De kast is aan alle kanten open, persoonlijke spullen kunnen
   on display worden vertoond.
-image: /images/monocabinet_arche-types.jpg
-image2: /images/monocabinet_arche-types2.jpg
+image: /images/orginele-foto-detail.jpeg
+image2: /images/minimalistische-zwarte-metalen-stellingkar.jpg
 order: 5
 waarde1: ""
 waarde2: ""
