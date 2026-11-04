@@ -6,7 +6,7 @@ title: KRUIDEN TAFEL
 desc: "Tafel met groenstrook tussen de twee schaaldelen bladen. Het grondvolume
   onder de goot is berekend op de groei van wilde bloemen en diverse soorten
   eetbare kruidenplanten ==om te plukken.== "
-image: /images/minimalistische-eiken-tafel-met-bloementrog.jpg
+image: /images/minimalistische-eiken-tafel-met-bloementrog.png
 order: 1
 waarde1: ""
 waarde2: ""
