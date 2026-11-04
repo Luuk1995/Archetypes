@@ -3,7 +3,8 @@
 
    Wat het doet (jij hoeft hier nooit iets aan te veranderen):
    1. Leest alle projecten, objecten, info, video's en vindbaarheid uit de admin-bestanden.
-   2. Maakt van zware foto's lichtere versies in hoge kwaliteit: 1600 px (overzicht en mobiel) en
+   2. Past bij projecten met de schakelaar "Huisstijl toepassen" de fotohuisstijl toe (archetypes-upload/huisstijl.js).
+   2b. Maakt van zware foto's lichtere versies in hoge kwaliteit: 1600 px (overzicht en mobiel) en
       2800 px (grote slideshow). Scherpte gaat voor: een normale JPEG-export blijft in de slideshow
       precies zoals jij hem maakte.
    3. Zet alle gegevens direct in de pagina  → geen losse verzoeken meer, dus sneller.
@@ -16,6 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { pasHuisstijlToe, receptMet, receptCode } from '../archetypes-upload/huisstijl.js';
 
 const ROOT = process.cwd();
 const PUB = path.join(ROOT, 'archetypes-upload');
@@ -74,7 +76,40 @@ function frontmatter(text) {
 /* ── foto's: lichte webversie per foto, één keer per unieke foto ─────────── */
 let sharp = null;
 const optCache = new Map();
-const stats = { done: 0, before: 0, after: 0, failed: 0 };
+const GEBRUIKT = new Set();   // bewerkte foto's die deze publicatie echt gebruikt (de rest wordt opgeruimd)
+const stats = { done: 0, before: 0, after: 0, failed: 0, stijl: 0, stijlNieuw: 0, stijlMs: 0 };
+
+/* ── HUISSTIJL ───────────────────────────────────────────────────────────
+   Alleen voor projecten met "huisstijl: true" (schakelaar in de admin).
+   Altijd eerst verkleinen, dan het recept (korrel komt als laatste, op de juiste maat).
+   De bestandsnaam bevat de foto én het recept: verandert een van beide, dan wordt
+   de foto opnieuw gemaakt; anders komt hij uit de opslag van vorige publicaties. */
+let RECEPT = receptMet({}), RCODE = receptCode(RECEPT);
+async function gestyled(value, cap, quality, tag) {
+  const raw = String(value).trim().replace(/^"(.*)"$|^'(.*)'$/, '$1$2');
+  if (!sharp || !raw || /^https?:\/\//i.test(raw)) return null;
+  let rel = raw.replace(/^\/+/, ''); try { rel = decodeURI(rel); } catch {}
+  const src = path.join(PUB, rel);
+  if (!src.startsWith(PUB) || !fs.existsSync(src)) return null;
+  const key = 'hs' + tag + '|' + raw; if (optCache.has(key)) return optCache.get(key);
+  try {
+    const buf = fs.readFileSync(src);
+    const hash = crypto.createHash('md5').update(buf).digest('hex').slice(0, 10);
+    const base = path.basename(rel, path.extname(rel)).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'beeld';
+    const name = `${base}-${hash}-${tag}-hs${RCODE}.jpg`, out = path.join(OPT_DIR, name);
+    if (!fs.existsSync(out)) {
+      const t = Date.now();
+      const { data, info } = await sharp(buf).rotate().resize({ width: cap, withoutEnlargement: true })
+        .flatten({ background: '#ffffff' }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+      const px = pasHuisstijlToe(data, info.width, info.height, 3, RECEPT, parseInt(hash.slice(0, 8), 16));
+      await sharp(Buffer.from(px.buffer), { raw: { width: info.width, height: info.height, channels: 3 } })
+        .jpeg({ quality, mozjpeg: true }).toFile(out);
+      stats.stijlNieuw++; stats.stijlMs += Date.now() - t;
+    }
+    stats.stijl++; GEBRUIKT.add(name);
+    const url = `/_opt/${name}`; optCache.set(key, url); return url;
+  } catch (e) { log('huisstijl overgeslagen (gewone versie gebruikt):', rel, e.message); return null; }
+}
 
 // Eén versie van een foto maken. Geeft altijd een bruikbaar pad terug (het origineel als bewerken niets oplevert).
 // Scherpte gaat voor: een JPEG/WebP binnen de maat (of, voor de slideshow, tot 1,5 MB) blijft ONAANGEROERD,
@@ -107,10 +142,10 @@ async function variant(value, cap, quality, tag) {
       await (alpha ? img.webp({ quality: 86, effort: 5 }) : img.jpeg({ quality, mozjpeg: true })).toFile(out);
     }
     const after = fs.statSync(out).size;
-    if (after >= buf.length) { optCache.set(key, value); return value; }   // origineel was al kleiner
+    if (after >= buf.length) { GEBRUIKT.add(name); optCache.set(key, value); return value; }   // origineel was al kleiner (bestand blijft als geheugensteun, zodat dit niet elke keer opnieuw berekend wordt)
     stats.done++; stats.before += buf.length; stats.after += after;
     const url = `/_opt/${name}`;
-    optCache.set(key, url);
+    GEBRUIKT.add(name); optCache.set(key, url);
     return url;
   } catch (e) { stats.failed++; log('foto overgeslagen:', rel, e.message); optCache.set(key, value); return value; }
 }
@@ -125,19 +160,23 @@ async function shareImage(value) {
     const hash = crypto.createHash('md5').update(buf).digest('hex').slice(0, 10);
     const name = `delen-${hash}.jpg`, out = path.join(OPT_DIR, name);
     if (!fs.existsSync(out)) await sharp(buf).rotate().resize(1200, 630, { fit: 'cover' }).jpeg({ quality: 84, mozjpeg: true }).toFile(out);
-    return `/_opt/${name}`;
+    GEBRUIKT.add(name); return `/_opt/${name}`;
   } catch { return null; }
 }
 
 // Per foto twee versies: "image…" = overzicht (lijst + mobiel), "l_image…" = groot (desktop-slideshow).
 // Je originele foto's blijven onaangeroerd.
 async function rewriteImages(text) {
+  const fm = /^---\s*\n([\s\S]*?)\n---/.exec(text);
+  const stijl = !!(fm && /^huisstijl:\s*true\s*$/m.test(fm[1]));     // schakelaar "Huisstijl toepassen"
   const out = [];
   for (const line of text.split('\n')) {
     const m = /^(\s*)(image\d*)(\s*:\s*)(.+)$/.exec(line);
-    if (!m) { out.push(line); continue; }
-    const mid = await variant(m[4], 1600, 84, 'm');   // overzicht + mobiel
-    const big = await variant(m[4], 2800, 86, 'l');   // grote desktop-slideshow
+    if (!m || !m[4].replace(/["']/g, '').trim()) { out.push(line); continue; }
+    let mid = null, big = null;
+    if (stijl) { mid = await gestyled(m[4], 1600, 84, 'm'); big = await gestyled(m[4], 2800, 86, 'l'); }
+    if (!mid) mid = await variant(m[4], 1600, 84, 'm');   // overzicht + mobiel
+    if (!big) big = await variant(m[4], 2800, 86, 'l');   // grote desktop-slideshow
     out.push(m[1] + m[2] + m[3] + mid);
     if (big !== mid) out.push(m[1] + 'l_' + m[2] + m[3] + big);
   }
@@ -211,6 +250,7 @@ async function main() {
       .sort((a, b) => a.localeCompare(b, 'nl', { sensitivity: 'base' }))
       .map((f) => fs.readFileSync(path.join(dir, f), 'utf8'));
   };
+  RECEPT = receptMet(readJSON(path.join(PUB, 'data', 'fotostijl.json')) || {}); RCODE = receptCode(RECEPT);
   const md = { projecten: [], objecten: [] };
   for (const folder of Object.keys(md)) {
     for (const t of readFolder(folder)) md[folder].push(await rewriteImages(t));
@@ -263,10 +303,15 @@ async function main() {
   fs.writeFileSync(indexPath, html);
   fs.writeFileSync(path.join(PUB, 'sitemap.xml'), sitemap);
   fs.writeFileSync(path.join(PUB, 'robots.txt'), robots);
+  // Opruimen: bewerkte foto's die niet meer gebruikt worden (oude receptversies, verwijderde foto's)
+  let weg = 0;
+  if (sharp && fs.existsSync(OPT_DIR)) for (const f of fs.readdirSync(OPT_DIR)) if (!GEBRUIKT.has(f)) { try { fs.unlinkSync(path.join(OPT_DIR, f)); weg++; } catch {} }
+  if (weg) log(`opgeruimd: ${weg} oude fotoversies`);
 
   const mb = (n) => (n / 1048576).toFixed(1);
   log(`klaar: ${arche.length} projecten, ${types.length} objecten in de pagina gezet`);
   log(sharp ? `foto's: ${stats.done} verkleind (${mb(stats.before)} MB → ${mb(stats.after)} MB)${stats.failed ? `, ${stats.failed} overgeslagen` : ''}` : 'foto\'s: originelen gebruikt');
+  if (stats.stijl) log(`huisstijl: ${stats.stijl} fotoversies, waarvan ${stats.stijlNieuw} nieuw gemaakt (${(stats.stijlMs / 1000).toFixed(1)} s), de rest uit de opslag`);
 }
 
 main().catch((e) => {
