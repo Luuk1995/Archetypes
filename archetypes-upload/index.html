@@ -1175,17 +1175,14 @@ document.getElementById('info-overlay').addEventListener('click',e=>{if(e.target
     // Slideshow gebruikt de grote versie van een foto (l_image…) als die er is
     const imgs = imgKeys.filter(k => p[k]).map(k => p['l_' + k] || p[k]);
 
+    // Tekstslide alleen als "Tekst in slider" is ingevuld (leeg = geen tekstslide, hovertekst wordt niet herhaald)
+    const sliderTekst = (p.desc_slider || '').trim();
     imgs.forEach((src, i) => {
       result.push({ type:'img', src });
-      // Insert text slide after first image
-      if (i === 0 && (p.desc || p.waarde1 || p.waarde2 || p.waarde3)) {
-        result.push({ type:'text', p });
-      }
+      if (i === 0 && sliderTekst) result.push({ type:'text', p });
     });
-    // No images but has text
-    if (result.length === 0 && (p.desc || p.waarde1)) {
-      result.push({ type:'text', p });
-    }
+    // Geen foto's maar wel slidertekst
+    if (result.length === 0 && sliderTekst) result.push({ type:'text', p });
     return result;
   }
 
@@ -1196,7 +1193,7 @@ document.getElementById('info-overlay').addEventListener('click',e=>{if(e.target
     if (p.waarde3&&p.waarde3.trim()) mh+=`<strong>${p.label3||'Ontwerp'}</strong>${p.waarde3}<br>`;
     if (p.waarde4&&p.waarde4.trim()) mh+=`<strong>${p.label4||'Aannemer'}</strong>${p.waarde4}<br>`;
     if (p.waarde5&&p.waarde5.trim()) mh+=`<strong>${p.label5||'Video/Foto'}</strong>${p.waarde5}<br>`;
-    descEl.innerHTML = renderMd(p.desc||'');
+    descEl.innerHTML = renderMd(p.desc_slider||'');   // de slidertekst, niet de hovertekst
     metaEl.innerHTML = mh;
   }
 
