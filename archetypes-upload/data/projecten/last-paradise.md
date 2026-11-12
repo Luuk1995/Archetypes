@@ -7,7 +7,7 @@ desc2: De plattegrond heeft een open en pragmatische opzet, optimaal
   georiënteerd voor uitzicht en optimale beschaduwing. Gebouwd met lokale
   ambachtsmannen.
 opdrachtgever: Last Paradise
-title: LAST PARADISE SURFSTAY
+title: LAST PARADISE SURFHOUSE
 desc: Op een afgelegen eiland in de Mentawai-archipel, is een off-grid verblijf
   gebouwd voor avonturiers op zee. De plattegrond heeft een open opzet, optimaal
   georiënteerd voor uitzicht en beschaduwing. Gebouwd met lokale ambachtsmannen.
