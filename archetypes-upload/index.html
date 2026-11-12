@@ -339,7 +339,7 @@
     #slide-text-panel{
       position:absolute;inset:0;
       display:flex;align-items:center;justify-content:center;
-      padding:4rem 3rem;
+      padding:2.5rem 3rem;   /* boven/onder iets ruimer voor lange slidertekst; korte tekst blijft gecentreerd op dezelfde plek */
       opacity:0;pointer-events:none;
       transition:opacity .5s ease;
     }
@@ -347,7 +347,11 @@
     #slide-text-inner{
       position:relative;z-index:1;
       max-width:380px;text-align:center;
+      max-height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;
     }
+    #slide-text-inner::-webkit-scrollbar{display:none;}
+    #slide-text-panel.visible #slide-text-inner{pointer-events:auto;}   /* lange tekst: scrollen in het tekstvak */
+    #slide-text-inner.is-meer{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 3.5rem),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 3.5rem),transparent);}
     #slide-text-inner .slide-desc{
       font-size:.72rem;line-height:2.1;letter-spacing:.05em;
       color:rgba(240,237,230,.75);margin-bottom:1.2rem;
@@ -750,26 +754,46 @@ function parseFrontmatter(text) {
   const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return {};
   const result = {};
-  const lines = match[1].split('\n');
+  const lines = match[1].split(/\r?\n/);
+  const isKey = (l) => /^\w+:(\s|$)/.test(l);
   let i = 0;
   while (i < lines.length) {
-    const line = lines[i];
-    const keyMatch = line.match(/^(\w+):\s*(.*)/);
+    const keyMatch = lines[i].match(/^(\w+):\s*(.*)$/);
     if (!keyMatch) { i++; continue; }
     const key = keyMatch[1];
     let val = keyMatch[2].trim();
     i++;
+    // Vervolgregels tot de volgende sleutel (inclusief witregels ertussen)
+    const cont = [];
+    while (i < lines.length && !isKey(lines[i])) { cont.push(lines[i]); i++; }
+    while (cont.length && cont[cont.length - 1].trim() === '') cont.pop();
 
-    // Collect continuation lines (indented or starting without a key:)
-    while (i < lines.length) {
-      const next = lines[i];
-      // If next line starts a new key, stop
-      if (/^\w+:\s/.test(next) || /^\w+:$/.test(next)) break;
-      // If next line is empty, stop
-      if (next.trim() === '') break;
-      // Continuation line — append with space
-      val += ' ' + next.trim();
-      i++;
+    // Tekstblok (| of >): zo bewaart de admin lange tekst met Enters en witregels
+    if (/^[|>][1-9+-]{0,2}\s*(#.*)?$/.test(val)) {
+      const gevuld = cont.filter((l) => l.trim() !== '');
+      const ins = gevuld.length ? Math.min(...gevuld.map((l) => l.match(/^ */)[0].length)) : 0;
+      const body = cont.map((l) => (l.trim() === '' ? '' : l.slice(ins).replace(/\s+$/, '')));
+      if (val[0] === '|') result[key] = body.join('\n').replace(/\n+$/, '');      // regels behouden
+      else {                                                                     // regels samenvoegen, witregel = nieuwe alinea
+        let out = '', wit = 0, vorigeDiep = false, begonnen = false;
+        for (const l of body) {
+          if (l === '') { wit++; continue; }
+          const diep = /^\s/.test(l);
+          if (!begonnen) { out = l; begonnen = true; }
+          else if (wit) out += '\n'.repeat(wit + (diep || vorigeDiep ? 1 : 0)) + l;
+          else out += (diep || vorigeDiep ? '\n' : ' ') + l;
+          wit = 0; vorigeDiep = diep;
+        }
+        result[key] = out;
+      }
+      continue;
+    }
+
+    // Gewone waarde over meerdere regels: samenvoegen met een spatie, witregel = nieuwe regel
+    let wit = 0;
+    for (const l of cont) {
+      if (l.trim() === '') { wit++; continue; }
+      val += (wit ? '\n'.repeat(wit) : ' ') + l.trim(); wit = 0;
     }
 
     // Remove surrounding quotes if present
@@ -1163,6 +1187,10 @@ document.getElementById('info-overlay').addEventListener('click',e=>{if(e.target
   const textPanel = document.getElementById('slide-text-panel');
   const descEl    = textPanel.querySelector('.slide-desc');
   const metaEl    = textPanel.querySelector('.slide-meta');
+  const textBox   = document.getElementById('slide-text-inner');
+  const meerTekst = () => textBox.classList.toggle('is-meer', textBox.scrollTop + textBox.clientHeight < textBox.scrollHeight - 2);
+  textBox.addEventListener('scroll', meerTekst, { passive: true });
+  window.addEventListener('resize', meerTekst);
 
   let slides  = [];
   let idx     = 0;
@@ -1195,6 +1223,7 @@ document.getElementById('info-overlay').addEventListener('click',e=>{if(e.target
     if (p.waarde5&&p.waarde5.trim()) mh+=`<strong>${p.label5||'Video/Foto'}</strong>${p.waarde5}<br>`;
     descEl.innerHTML = renderMd(p.desc_slider||'');   // de slidertekst, niet de hovertekst
     metaEl.innerHTML = mh;
+    textBox.scrollTop = 0; requestAnimationFrame(meerTekst);
   }
 
   function crossfadeTo(src) {
