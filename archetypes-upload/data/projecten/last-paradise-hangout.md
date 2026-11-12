@@ -2,7 +2,7 @@
 title: LAST PARADISE HANGOUT
 sub: KEUKEN - BAR - HANGOUT
 desc: Sociale hangout voor Last Paradise. Centrale keuken, bar, eettafels en
-  ==relax plekken.== Ingericht met modulaire meubelelementen. De hangout is zo
+  relax plekken. Ingericht met modulaire meubelelementen. De hangout is zo
   gedraaid dat uitzicht vanuit de slaapverblijven optimaal blijft.
 desc_slider: >-
   Na het ontwerpen van het slaapverblijf van Last Paradise kwam er een tweede
@@ -13,7 +13,7 @@ desc_slider: >-
 
   Op het deck is er ruimte voor een yoga sessie. Aan de drie lange tafels wordt gezellig gegeten. En de speciaal ontworpen ruimtelijke bank nodigt uit om samen de meest radicale surfclips te bekijken van die dag terwijl je geniet van gekoelde drankjes uit de bar.
 
-  Het paviljoen achtige gebouwtje is volledig van lokaal hout gefabriceerd door een lokaal bouwteam. Enkel betonnen poeren zijn gemaakt om het gebouw hoog en droog te krijgen. Het dak is geweven van palm bladeren. De hangout is zo gedraaid dat uitzicht vanuit de slaapverblijven optimaal blijft. En in de avond uren levert dit een prachtige silhouetten spel op gezien vanuit het slaapverblijf. De zonsondergang tekent het paviljoen en het leven op Last Paradise daarin. 
+  Het paviljoen achtige gebouwtje is volledig van lokaal hout gefabriceerd door een lokaal bouwteam. Enkel betonnen poeren zijn gemaakt om het gebouw hoog en droog te krijgen. Het dak is geweven van palm bladeren. De hangout is zo gedraaid dat uitzicht vanuit de slaapverblijven optimaal blijft. En in de avond uren levert dit een prachtige silhouetten spel op gezien vanuit het slaapverblijf. De zonsondergang tekent het paviljoen en het leven van Last Paradise daarin. 
 image: /images/hangout_last-paradise_arche-types6.jpg
 image2: /images/last-paradise_hangout_schets.png
 image3: /images/last-paradise_hangout_schets3d.png
