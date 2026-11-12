@@ -20,17 +20,10 @@ In het Netlify-logboek zie je bij een geslaagde publicatie regels die beginnen m
 
 Aan deze bestanden hoef je niets te doen.
 
-## Fotostijl (huisstijl van je foto's)
+## Foto's uploaden
 
-- **Schakelaar per project/object:** *Huisstijl toepassen*. Aan = bij publiceren krijgen de foto's automatisch de Arche!Types-fotostijl (filmkorrel, licht, kleur). Uit = foto's precies zoals geüpload. Nieuwe projecten: standaard aan. Bestaande projecten: uit.
-- **Live voorbeeld:** rechts in de admin, met knoppen *Kleur* (geopend project) en *Zwart-wit* (overzicht).
-- **Grote foto's** worden bij het kiezen in de admin automatisch verkleind (max. 3000 px, hoge kwaliteit). Exporteren in Photoshop is niet meer nodig.
-- **Bijstellen:** *Instellingen → Fotostijl* (korrel, textuur, contrast). Na publiceren krijgen alle projecten met de schakelaar aan de nieuwe stijl.
+Sleep foto's gewoon op volle kwaliteit in de admin. Is een foto groter dan 3000 px of zwaarder dan 2,5 MB, dan verkleint je browser hem automatisch (max. 3000 px, hoge kwaliteit; `archetypes-upload/admin/foto-verkleiner.js`). Bij publiceren maakt het bouwscript er nog lichte webversies van (1600 px voor overzicht en mobiel, 2800 px voor de slideshow).
 
-| Bestand | Wat het doet |
-|---|---|
-| `archetypes-upload/huisstijl.js` | Het fotorecept (v5) — gebruikt door de admin én door het bouwscript |
-| `archetypes-upload/admin/foto-verkleiner.js` | Verkleint grote foto's in je browser |
-| `archetypes-upload/admin/huisstijl-voorbeeld.js` | Het live voorbeeld in de admin |
-| `archetypes-upload/data/fotostijl.json` | Instellingen uit *Instellingen → Fotostijl* |
-| `scripts/index.js` + `scripts/manifest.yml` | Netlify-hulpje: bewaart bewerkte foto's tussen publicaties |
+## Slideshow
+
+De tekstslide in de slideshow verschijnt alleen als *Tekst in slider* is ingevuld. Leeg = geen tekstslide (de hovertekst wordt niet herhaald).
